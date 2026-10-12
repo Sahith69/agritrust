@@ -1,4 +1,4 @@
-import sys; sys.path.insert(0, '/home/sahith/Projects/Hackathon'); import config
+import os, sys; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))); import config
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms

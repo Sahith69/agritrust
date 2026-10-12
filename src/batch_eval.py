@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '/home/sahith/Projects/Hackathon')
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 
 import os

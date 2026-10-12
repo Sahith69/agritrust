@@ -2,7 +2,7 @@
 Data Integrity & Splitting Engine for Arecanut and Paddy datasets.
 Ensures ZERO parent-image leakage across train, val, and test splits.
 """
-import sys; sys.path.insert(0, '/home/sahith/Projects/Hackathon'); import config
+import os, sys; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))); import config
 import os
 import re
 import json

@@ -11,9 +11,9 @@ This document tracks all Kannada (`kn`) and Hindi (`hi`) localized agricultural 
    - **Reason for Review:** In Hindi agronomic terminology, *"झुलसा"* typically denotes Blight (*Bacterial Leaf Blight* or *Phytophthora blight*), whereas Rice Blast (*Magnaporthe oryzae*) is standardly referenced as *"झोंका रोग"* or simply *"ब्लास्ट रोग"* in ICAR / KVK publications.
    - **Proposed native alternatives to verify:** `"झोंका रोग (ब्लास्ट)"` vs `"धान का ब्लास्ट रोग"`.
 
-2. **Kannada: "Downy Mildew" (`downy_mildew`)**
+2. **Kannada: "Downy Mildew" (`downy_mildew`) — 🚨 PROBABLY WRONG**
    - **Current string:** `"ಬೂದಿ ರೋಗ"`
-   - **Reason for Review:** In Kannada agronomic usage, *"ಬೂದಿ ರೋಗ"* (Boodi Roga) traditionally and universally denotes **Powdery Mildew** (*Erysiphe* / *Oidium* powdery spore coating on leaf surfaces). Downy Mildew (*Sclerospora* / *Peronospora*) is an oomycete infection affecting underside leaf tissue and is standardly referred to in UAS Dharwad / GKVK Bangalore literature as *"ಡೌನಿ ಮಿಲ್ಡ್ಯೂ"* (Downy Mildew) or *"ತಳ ಬೂದಿ ರೋಗ"*.
+   - **Reason for Review (FLAGGED AS PROBABLY WRONG):** In Kannada agronomic usage, *"ಬೂದಿ ರೋಗ"* (Boodi Roga) traditionally and universally denotes **Powdery Mildew** (*Erysiphe* / *Oidium* powdery spore coating on leaf surfaces). Downy Mildew (*Sclerospora* / *Peronospora*) is an entirely different oomycete infection affecting underside leaf tissue and is standardly referred to in UAS Dharwad / GKVK Bangalore literature as *"ಡೌನಿ ಮಿಲ್ಡ್ಯೂ"* (Downy Mildew) or *"ತಳ ಬೂದಿ ರೋಗ"*. Using *"ಬೂದಿ ರೋಗ"* for Downy Mildew is scientifically and agronomically erroneous.
    - **Proposed native alternatives to verify:** `"ಡೌನಿ ಮಿಲ್ಡ್ಯೂ (ತಳ ಬೂದಿ ರೋಗ)"` vs `"ಡೌನಿ ಮಿಲ್ಡ್ಯೂ ರೋಗ"`.
 
 3. **Kannada: Garbled Cedar Apple Rust Advisory Sentence (`cedar_apple_rust`)**
@@ -331,4 +331,14 @@ Responses explaining confidence, the 70% decline safety threshold, and visual sy
 - **English:** `"Diagnosis was withheld because confidence ({conf:.1%}) fell below 70%. The app declines to diagnose below 70%. For Hispa and Downy Mildew, Tungro virus can look similar in the field."`
 - **Kannada (`kn`):** `"ಮಾದರಿಯ ವಿಶ್ವಾಸಾರ್ಹತೆ ({conf:.1%}) 70% ಕ್ಕಿಂತ ಕಡಿಮೆಯಾಗಿದೆ. ವಿಶ್ವಾಸಾರ್ಹತೆಯು 70% ಕ್ಕಿಂತ ಕಡಿಮೆಯಾದಾಗ ಆ್ಯಪ್ ರೋಗನಿರ್ಣಯವನ್ನು ತಿರಸ್ಕರಿಸುತ್ತದೆ. ಹಿಸ್ಪಾ ಮತ್ತು ಬೂದಿ ರೋಗಕ್ಕೆ, ತುಂಗ್ರೋ ವೈರಸ್ ಕೂಡ ಇದೇ ರೀತಿ ಕಾಣಿಸಬಹುದು."` # REVIEW
 - **Hindi (`hi`):** `"मॉडल की सटीकता ({conf:.1%}) 70% से कम रही। सटीकता 70% से कम होने पर ऐप निदान करने से मना करता है। हिस्पा और डाउनी फफूंदी के लिए, तुंग्रो वायरस भी इसी तरह का दिख सकता है।"` # REVIEW
+
+---
+
+## 11. 📦 Missing Checkpoints / Model Files Notification Strings
+
+When any of the 9 deployed checkpoints or `ood_params.pt` is missing from the local environment, the app displays a calm info card:
+
+- **English (`en`):** `"Model files not found. Run: python download_models.py"`
+- **Kannada (`kn`):** `"ಮಾದರಿ ಕಡತಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ಚಲಾಯಿಸಿ: python download_models.py"` # REVIEW
+- **Hindi (`hi`):** `"मॉडल फ़ाइलें नहीं मिलीं। चलाएं: python download_models.py"` # REVIEW
 

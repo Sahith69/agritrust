@@ -11,7 +11,6 @@ and 3 retry attempts on failure.
 import os
 import sys
 import time
-import shutil
 import hashlib
 import argparse
 import urllib.request
@@ -222,30 +221,18 @@ def main():
         print(f"  Downloading from: {download_url}")
         success = download_file_with_resume(download_url, dest, expected_size, max_retries=3)
 
-        if not success:
-            # Check local development fallback if remote returned 404
-            local_fallbacks = [
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Hackathon", dest),
-                os.path.join("/home/sahith/Projects/Hackathon", dest)
-            ]
-            for fb in local_fallbacks:
-                if os.path.exists(fb) and verify_file(fb, expected_sha, expected_size):
-                    print(f"  [LOCAL FALLBACK] Remote returned error; copying verified local copy from {fb}")
-                    os.makedirs(os.path.dirname(os.path.abspath(dest)), exist_ok=True)
-                    shutil.copy2(fb, dest)
-                    success = True
-                    break
-
         if success:
             if verify_file(dest, expected_sha, expected_size):
                 print(f"  [SUCCESS] Downloaded and verified SHA-256 ({expected_sha[:16]}...).")
             else:
                 print(f"  [ERROR] Verification failed for {dest}! Checksum mismatch. Deleting file.")
+                print(f"  [FAILING URL] {download_url}")
                 if os.path.exists(dest):
                     os.remove(dest)
                 all_passed = False
         else:
             print(f"  [ERROR] Failed to download {filename} after 3 attempts.")
+            print(f"  [FAILING URL] {download_url}")
             if os.path.exists(dest):
                 os.remove(dest)
             all_passed = False

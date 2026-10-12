@@ -1,4 +1,4 @@
-import sys; sys.path.insert(0, '/home/sahith/Projects/Hackathon'); import config
+import os, sys; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))); import config
 import numpy as np
 
 def otsu_threshold(gray_img, mask=None):

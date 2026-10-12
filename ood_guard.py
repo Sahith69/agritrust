@@ -194,10 +194,8 @@ def load_ood_params():
     global _OOD_PARAMS
     if _OOD_PARAMS is None:
         if not os.path.exists(OOD_PARAMS_FILE):
-            print(f"OOD params file not found at {OOD_PARAMS_FILE}, fitting now...")
-            _OOD_PARAMS = fit_all_crops_and_save()
-        else:
-            _OOD_PARAMS = torch.load(OOD_PARAMS_FILE, map_location="cpu", weights_only=False)
+            raise FileNotFoundError(f"Model files not found at {OOD_PARAMS_FILE}. Run: python download_models.py")
+        _OOD_PARAMS = torch.load(OOD_PARAMS_FILE, map_location="cpu", weights_only=False)
     return _OOD_PARAMS
 
 def check_ood(image: Image.Image, crop_name: str):

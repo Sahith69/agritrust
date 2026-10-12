@@ -12,9 +12,12 @@ bud_borer, yellow_leaf_disease, healthy foliage classes), it asserts:
   - No weather sentence is added to voice advisory
 """
 
+import os
 import sys
 import unittest
-sys.path.insert(0, '/home/sahith/Projects/Hackathon')
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 from weather_live import compute_48h_disease_risk
 from app import PADDY_DISPLAY, ARECA_DISPLAY, APPLE_DISPLAY

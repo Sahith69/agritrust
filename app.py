@@ -1,5 +1,8 @@
+import os
 import sys
-sys.path.insert(0, '/home/sahith/Projects/Hackathon')
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 import config
 
 import logging
@@ -443,9 +446,9 @@ def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, gra
         # 1. Healthy foliage
         if is_healthy_leaf:
             if lang == "kn":
-                return f"ಬೆಳೆ: {crop_lbl}. ಎಲೆಗಳು ಆರೋಗ್ಯಕರವಾಗಿವೆ ಮತ್ತು ಯಾವುದೇ ರೋಗದ ಲಕ್ಷಣಗಳಿಲ್ಲ. ಯಾವುದೇ ಚಿಕಿತ್ಸೆ ಅಗತ್ಯವಿಲ್ಲ."
+                return f"ಬೆಳೆ: {crop_lbl}. ನಿಮ್ಮ ಬೆಳೆ ತುಂಬಾ ಹೆಲ್ದಿ ಆಗಿದೆ ಮತ್ತು ಎಲೆಯಲ್ಲಿ ಯಾವುದೇ ರೋಗ ಇಲ್ಲ. ಯಾವುದೇ ಸ್ಪ್ರೇ ಬೇಕಾಗಿಲ್ಲ."
             elif lang == "hi":
-                return f"फसल: {crop_lbl}। पत्तियां स्वस्थ हैं और किसी रोग के लक्षण नहीं हैं। किसी उपचार की आवश्यकता नहीं है।"
+                return f"फसल: {crop_lbl}। आपकी फसल बिल्कुल हेल्दी है और पत्तों पर कोई बीमारी नहीं है। किसी दवा या स्प्रे की ज़रूरत नहीं है।"
             else:
                 return f"Crop: {crop_lbl}. Foliage is healthy with no disease symptoms. No treatment needed."
 
@@ -483,9 +486,9 @@ def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, gra
         # 3. Incurable disease (Paddy Tungro / Arecanut YLD)
         if is_incurable_dis:
             if lang == "kn":
-                return f"ಬೆಳೆ: {crop_lbl}. ಎಚ್ಚರಿಕೆ: {dis_lbl} ಕಂಡುಬಂದಿದೆ. ಇದಕ್ಕೆ ಯಾವುದೇ ರಾಸಾಯನಿಕ ಪರಿಹಾರವಿಲ್ಲ. ಕೀಟ ವಾಹಕಗಳನ್ನು ನಿಯಂತ್ರಿಸಿ, ಸೋಂಕಿತ ಗಿಡಗಳನ್ನು ಕಿತ್ತುಹಾಕಿ, ಮತ್ತು ನಿಮ್ಮ ಸ್ಥಳೀಯ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+                return f"ಬೆಳೆ: {crop_lbl}. ಅಲರ್ಟ್: {dis_lbl} ಬಂದಿದೆ. ಇದಕ್ಕೆ ಯಾವುದೇ ಕೆಮಿಕಲ್ ಮೆಡಿಸಿನ್ ಇಲ್ಲ. ರೋಗ ಹರಡಿಸೋ ಕೀಟಗಳನ್ನ ಕಂಟ್ರೋಲ್ ಮಾಡಿ, ರೋಗ ಬಂದಿರೋ ಗಿಡನ ಕಿತ್ತು ಬಿಸಾಕಿ, ಮತ್ತು ಕೆವಿಕೆನ ಕಾಂಟ್ಯಾಕ್ಟ್ ಮಾಡಿ."
             elif lang == "hi":
-                return f"फसल: {crop_lbl}। चेतावनी: {dis_lbl} का संक्रमण पाया गया है। इसका कोई रासायनिक उपचार उपलब्ध नहीं है। रसचूसक कीटों को नियंत्रित करें, रोगी पौधों को हटाएं और तुरंत कृषि विज्ञान केंद्र से संपर्क करें।"
+                return f"फसल: {crop_lbl}। अलर्ट: {dis_lbl} पाया गया है। इसका कोई केमिकल इलाज नहीं है। रस चूसने वाले कीड़ों को रोको, बीमार पौधों को उखाड़ कर खेत से बाहर फेंक दो, और केवीके से संपर्क करो।"
             else:
                 return f"Crop: {crop_lbl}. Warning: {disease_name} detected. No chemical cure exists. Manage insect vectors, remove infected plants, and consult your local KVK."
 
@@ -594,16 +597,16 @@ def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, gra
         # 5. Other Treatable disease (Paddy & Arecanut): organic steps first; chemical only if grade >= 2
         if grade_idx < 2:
             if lang == "kn":
-                return f"ಬೆಳೆ: {crop_lbl}. ರೋಗ: {dis_lbl}. ಲಘು ತೀವ್ರತೆ. ಮೊದಲು ಸಾವಯವ ಮತ್ತು ನೈಸರ್ಗಿಕ ಕ್ರಮಗಳನ್ನು ಅನುಸರಿಸಿ: ರೋಗಪೀಡಿತ ಎಲೆಗಳನ್ನು ತೆಗೆಯಿರಿ ಮತ್ತು ತೋಟವನ್ನು ಸ್ವಚ್ಛವಾಗಿಡಿ. ರಾಸಾಯನಿಕ ಬಳಸುವ ಮುನ್ನ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+                return f"ಬೆಳೆ: {crop_lbl}. ರೋಗ: {dis_lbl}. ಇನ್‌ಫೆಕ್ಷನ್ ಈಗ ಸ್ಟಾರ್ಟ್ ಆಗಿದೆ. ಮೊದಲು ಆರ್ಗ್ಯಾನಿಕ್ ಸ್ಟೆಪ್ಸ್ ಮಾಡಿ: ರೋಗ ಬಂದಿರೋ ಎಲೆ ಕಿತ್ತು ಬಿಸಾಕಿ ಮತ್ತು ತೋಟ ಕ್ಲೀನ್ ಆಗಿ ಇಡಿ. ಕೆಮಿಕಲ್ ಸ್ಪ್ರೇ ಮಾಡೋಕಿಂತ ಮುಂಚೆ ಕೆವಿಕೆಯಲ್ಲಿ ಕೇಳಿ."
             elif lang == "hi":
-                return f"फसल: {crop_lbl}। रोग: {dis_lbl}। शुरुआती अवस्था। पहले जैविक और पारंपरिक उपाय अपनाएं: संक्रमित पत्तियों को हटाएं और खेत साफ रखें। रसायन छिड़कने से पहले केवीके से सलाह लें।"
+                return f"फसल: {crop_lbl}। रोग: {dis_lbl}। इन्फेक्शन अभी शुरुआत में है। पहले ऑर्गेनिक स्टेप्स लें: खराब पत्तों को तोड़कर हटा दें और खेत में सफाई रखें। केमिकल स्प्रे से पहले अपने केवीके से ज़रूर पूछें।"
             else:
                 return f"Crop: {crop_lbl}. Disease: {disease_name}. Mild severity. Start with organic and cultural steps: remove infected leaves and maintain field sanitation. Consult your local KVK before using chemicals."
         else:
             if lang == "kn":
-                return f"ಬೆಳೆ: {crop_lbl}. ರೋಗ: {dis_lbl}. ತೀವ್ರತೆಯು ಹೆಚ್ಚಾಗಿದೆ. ಸಾವಯವ ಕ್ರಮಗಳು ಮಾತ್ರ ಸಾಕಾಗುವುದಿಲ್ಲ. ಶಿಫಾರಸು ಮಾಡಿದ ಔಷಧಿಗಳಿಗಾಗಿ ನಿಮ್ಮ ಸ್ಥಳೀಯ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಲೇಬಲ್ ಸೂಚನೆ ಪಾಲಿಸಿ."
+                return f"ಬೆಳೆ: {crop_lbl}. ರೋಗ: {dis_lbl}. ರೋಗ ತುಂಬಾ ಜಾಸ್ತಿ ಆಗಿದೆ ಮತ್ತು ಬರೀ ಆರ್ಗ್ಯಾನಿಕ್ ಸ್ಟೆಪ್ಸ್ ಸಾಲಲ್ಲ. ಕೂಡಲೇ ಕೆವಿಕೆ ಕಾಂಟ್ಯಾಕ್ಟ್ ಮಾಡಿ, ಅವರು ರೆಕಮೆಂಡ್ ಮಾಡಿರೋ ಕೆಮಿಕಲ್ ಸ್ಪ್ರೇನ ಲೇಬಲ್ ಇನ್‌ಸ್ಟ್ರಕ್ಷನ್ ತರ ಯೂಸ್ ಮಾಡಿ."
             elif lang == "hi":
-                return f"फसल: {crop_lbl}। रोग: {dis_lbl}। संक्रमण गंभीर है। केवल जैविक उपाय पर्याप्त नहीं हैं। अनुशंसित दवाओं के लिए अपने नजदीकी कृषि विज्ञान केंद्र से संपर्क करें और लेबल के अनुसार छिड़काव करें।"
+                return f"फसल: {crop_lbl}। रोग: {dis_lbl}। बीमारी काफी बढ़ चुकी है और सिर्फ ऑर्गेनिक स्टेप्स काफी नहीं होंगे। तुरंत अपने केवीके से कांटेक्ट करें और उनके बताए केमिकल को पैकेट पर लिखे इंस्ट्रक्शन के हिसाब से स्प्रे करें।"
             else:
                 return f"Crop: {crop_lbl}. Disease: {disease_name}. Moderate to severe infection. Cultural measures alone are insufficient. Consult your local KVK for registered chemical treatments and follow product label advice."
 
@@ -611,6 +614,26 @@ def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, gra
     if weather_sentence:
         return f"{base_text} {weather_sentence}".strip()
     return base_text
+
+REQUIRED_MODEL_FILES = [
+    "outputs/models/paddy_disease_classifier.pth",
+    "outputs/models/paddy_ordinal.pth",
+    "outputs/models/paddy_baseline.pth",
+    "outputs/models/arecanut_disease_classifier.pth",
+    "outputs/models/arecanut_ordinal.pth",
+    "outputs/models/arecanut_baseline.pth",
+    "outputs/models/apple_disease_classifier.pth",
+    "outputs/models/apple_ordinal.pth",
+    "outputs/ood_params.pt"
+]
+
+def check_missing_models() -> List[str]:
+    missing = []
+    for rel in REQUIRED_MODEL_FILES:
+        pth = os.path.join(PROJECT_ROOT, rel)
+        if not os.path.exists(pth):
+            missing.append(rel)
+    return missing
 
 # ─── LOAD DISEASE CLASSIFIER ─────────────────────────────────────────────────
 @st.cache_resource
@@ -788,31 +811,29 @@ if "use_live_weather" not in st.session_state:
     st.session_state["use_live_weather"] = True
 
 # ─── HEADER (APP NAME, LOCATION PIN, LOCALIZED DATE, LANGUAGE SWITCHER) ──────
-header_col1, header_col2 = st.columns([1.3, 1.0])
-with header_col1:
-    cur_lang = st.session_state["lang_code"]
-    st.markdown(f"""
-    <div style="padding: 4px 0;">
-        <h1 style="margin:0;font-size:26px;color:#275637;display:flex;align-items:center;gap:8px;">
-            🌾 {APP_NAME}
-        </h1>
-        <div style="font-size:13px;color:#556B5C;margin-top:2px;">
-            📅 {format_local_date(datetime.date.today(), cur_lang)}
-        </div>
+cur_lang = st.session_state["lang_code"]
+st.markdown(f"""
+<div style="padding: 2px 0 4px 0;">
+    <h1 style="margin:0;font-size:26px;color:#275637;display:flex;align-items:center;gap:8px;">
+        🌾 {APP_NAME}
+    </h1>
+    <div style="font-size:13px;color:#556B5C;margin-top:2px;">
+        📅 {format_local_date(datetime.date.today(), cur_lang)}
     </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
-with header_col2:
-    lang_opts = ["English", "ಕನ್ನಡ", "हिन्दी"]
-    lang_map = {"English": "en", "ಕನ್ನಡ": "kn", "हिन्दी": "hi"}
-    inv_lang_map = {v: k for k, v in lang_map.items()}
-    chosen_lang_name = st.radio(
-        "Language", lang_opts,
-        index=lang_opts.index(inv_lang_map.get(st.session_state["lang_code"], "English")),
-        horizontal=True,
-        label_visibility="collapsed"
-    )
-    st.session_state["lang_code"] = lang_map[chosen_lang_name]
+lang_opts = ["English", "ಕನ್ನಡ", "हिन्दी"]
+lang_map = {"English": "en", "ಕನ್ನಡ": "kn", "हिन्दी": "hi"}
+inv_lang_map = {v: k for k, v in lang_map.items()}
+chosen_lang_name = st.radio(
+    "Language", lang_opts,
+    index=lang_opts.index(inv_lang_map.get(st.session_state["lang_code"], "English")),
+    horizontal=True,
+    label_visibility="collapsed",
+    key="lang_radio_choice"
+)
+st.session_state["lang_code"] = lang_map[chosen_lang_name]
 
 lang_code = st.session_state["lang_code"]
 
@@ -936,6 +957,16 @@ with tab_home:
                 st.session_state["active_crop"] = "Apple"
                 st.rerun()
 
+        missing_models = check_missing_models()
+        if missing_models:
+            st.markdown(f"""
+            <div class="ui-card" style="border-left: 5px solid {THEME_CONFIG['warn_yellow']}; background:#FFFFFF; padding: 14px 18px; margin: 12px 0;">
+                <div style="font-weight:600; font-size:15px; color:#275637;">
+                    ℹ️ {get_ui_string('models_missing_msg', lang_code)}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
         # Camera input first, upload second
         cam_file = st.camera_input(get_ui_string("take_photo", lang_code), key="home_camera_input")
         up_file = st.file_uploader(get_ui_string("upload_file", lang_code), type=["jpg", "jpeg", "png"], key="home_file_input")
@@ -943,7 +974,7 @@ with tab_home:
         input_file = cam_file if cam_file is not None else up_file
 
         # Process image when submitted
-        if input_file is not None:
+        if input_file is not None and not missing_models:
             active_crop = st.session_state.get("active_crop", "Paddy")
             input_image = Image.open(input_file).convert("RGB")
             image_title = getattr(input_file, "name", "Captured Photo")

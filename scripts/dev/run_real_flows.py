@@ -17,8 +17,9 @@ import sys
 from PIL import Image
 import numpy as np
 
-PROJECT_ROOT = '/home/sahith/Projects/Hackathon'
-sys.path.insert(0, PROJECT_ROOT)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 import app
 from weather_live import DISTRICT_COORDINATES, fetch_forecast, compute_48h_disease_risk
@@ -228,12 +229,14 @@ def main():
     print("RUNNING REAL APP FLOWS (VERIFICATION SUITE)")
     print("=" * 95)
 
+    samples_dir = os.path.join(PROJECT_ROOT, "tests", "samples")
+
     # Flow 1: 4 Tungro images misclassified as Hispa
     tungro_hispa_images = [
-        "/home/sahith/Projects/Crop/data/paddy/paddy-disease-classification/train_images/tungro/102991.jpg",
-        "/home/sahith/Projects/Crop/data/paddy/paddy-disease-classification/train_images/tungro/103609.jpg",
-        "/home/sahith/Projects/Crop/data/paddy/paddy-disease-classification/train_images/tungro/109629.jpg",
-        "/home/sahith/Projects/Crop/data/paddy/paddy-disease-classification/train_images/tungro/109527.jpg",
+        os.path.join(samples_dir, "tungro_102991.jpg"),
+        os.path.join(samples_dir, "tungro_103609.jpg"),
+        os.path.join(samples_dir, "tungro_109629.jpg"),
+        os.path.join(samples_dir, "tungro_109527.jpg"),
     ]
     print("\n" + "#" * 95)
     print("FLOW 1: TUNGRO PADDY (4 IMAGES MISCLASSIFIED AS HISPA)")
@@ -245,7 +248,7 @@ def main():
     print("\n" + "#" * 95)
     print("FLOW 2: PADDY BLAST IN MANGALURU")
     print("#" * 95)
-    paddy_blast = "/home/sahith/Projects/Crop/data/paddy/paddy-disease-classification/train_images/blast/102374.jpg"
+    paddy_blast = os.path.join(samples_dir, "paddy_blast_102374.jpg")
     run_app_pipeline(paddy_blast, crop="Paddy", district="Mangaluru", use_live_weather=True, lang="en")
     print("\n--- Also testing Kannada & Hindi speech for Paddy Blast in Mangaluru ---")
     run_app_pipeline(paddy_blast, crop="Paddy", district="Mangaluru", use_live_weather=True, lang="kn")
@@ -255,28 +258,28 @@ def main():
     print("\n" + "#" * 95)
     print("FLOW 3: APPLE SCAB IN SRINAGAR")
     print("#" * 95)
-    apple_scab = "/home/sahith/Projects/Hackathon/data/apple/dataset/Apple___Apple_scab/f34d9619-f182-4b2f-b1a3-1658cc298f9b___FREC_Scab 3440.JPG"
+    apple_scab = os.path.join(samples_dir, "apple_scab.jpg")
     run_app_pipeline(apple_scab, crop="Apple", district="Srinagar", use_live_weather=True, lang="en")
 
     # Flow 4: Healthy Paddy
     print("\n" + "#" * 95)
     print("FLOW 4: HEALTHY PADDY")
     print("#" * 95)
-    healthy_paddy = "/home/sahith/Projects/Crop/data/paddy/paddy-disease-classification/train_images/normal/101753.jpg"
+    healthy_paddy = os.path.join(samples_dir, "healthy_paddy_101753.jpg")
     run_app_pipeline(healthy_paddy, crop="Paddy", district="Mangaluru", use_live_weather=True, lang="en")
 
     # Flow 5: Blurry Photo
     print("\n" + "#" * 95)
     print("FLOW 5: BLURRY PHOTO (IN PADDY MODE)")
     print("#" * 95)
-    blurry_photo = "/home/sahith/.gemini/antigravity-cli/brain/542f5eb5-2579-41ad-8ce3-8449dbe860b5/scratch/blurry_leaf.jpg"
+    blurry_photo = os.path.join(samples_dir, "blurry_leaf.jpg")
     run_app_pipeline(blurry_photo, crop="Paddy", district="Mangaluru", use_live_weather=True, lang="en")
 
     # Flow 6: Desk in Paddy Mode
     print("\n" + "#" * 95)
     print("FLOW 6: DESK IN PADDY MODE")
     print("#" * 95)
-    desk_photo = "/home/sahith/.gemini/antigravity-cli/brain/542f5eb5-2579-41ad-8ce3-8449dbe860b5/scratch/desk.jpg"
+    desk_photo = os.path.join(samples_dir, "desk.jpg")
     run_app_pipeline(desk_photo, crop="Paddy", district="Mangaluru", use_live_weather=True, lang="en")
 
     # Flow 7: Live Weather Off (Fallback test)
