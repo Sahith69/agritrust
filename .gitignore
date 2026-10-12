@@ -1,0 +1,30 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Datasets and archives
+data/
+archive/
+paper_overleaf_package.zip
+*.zip
+*.tar.gz
+
+# Model checkpoints and large experiment artifacts
+*.pth
+*.pt
+outputs/
+
+# Generated runtime media
+*.mp3
+
+# Editor / OS files
+.DS_Store
+.idea/
+.vscode/
+venv

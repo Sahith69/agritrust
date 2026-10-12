@@ -1,0 +1,91 @@
+{
+  "paddy": {
+    "total_test": 1507,
+    "flagged_twins_phash_le_8": 698,
+    "pct_flagged": 46.317186463171865,
+    "twin_free_test": 809,
+    "pct_twin_free": 53.682813536828135,
+    "twin_free_disease_accuracy": 0.9592088998763906,
+    "twin_free_disease_accuracy_ci": {
+      "mean": 0.9593250927070458,
+      "ci_lower": 0.9456118665018541,
+      "ci_upper": 0.9728059332509271
+    },
+    "twin_free_disease_macro_f1": 0.9542478653437845,
+    "twin_free_disease_macro_f1_ci": {
+      "mean": 0.953893050016897,
+      "ci_lower": 0.9366833941773162,
+      "ci_upper": 0.9698769892631309
+    },
+    "twin_free_lesion_classes_N": 387,
+    "twin_free_lesion_severity_qwk": 0.5828764234500211,
+    "twin_free_lesion_severity_qwk_ci": {
+      "mean": 0.5801691557353893,
+      "ci_lower": 0.45885646263598096,
+      "ci_upper": 0.6941899467142479
+    },
+    "twin_free_lesion_severity_exact_accuracy": 0.8036175710594315,
+    "twin_free_lesion_severity_exact_accuracy_ci": {
+      "mean": 0.8030490956072351,
+      "ci_lower": 0.7622739018087855,
+      "ci_upper": 0.8423772609819121
+    },
+    "twin_free_lesion_class_only_baseline_qwk": 0.0,
+    "twin_free_lesion_class_only_baseline_qwk_ci": {
+      "mean": 0.0,
+      "ci_lower": 0.0,
+      "ci_upper": 0.0
+    },
+    "twin_free_lesion_class_breakdown": {
+      "blast": 107,
+      "tungro": 83,
+      "brown_spot": 63,
+      "bacterial_leaf_blight": 42,
+      "bacterial_panicle_blight": 42,
+      "downy_mildew": 35,
+      "bacterial_leaf_streak": 15
+    }
+  },
+  "arecanut": {
+    "total_dataset": 2661,
+    "images_lacking_timestamp_total": 1781,
+    "images_with_timestamp_total": 880,
+    "test_total": 486,
+    "test_images_lacking_timestamp_uncovered_by_burst": 315,
+    "pct_test_uncovered_by_burst": 64.81481481481481,
+    "test_images_with_timestamp_covered_by_burst": 171,
+    "phash_le_16_overlap_count": 156,
+    "phash_le_16_overlap_pct": 32.098765432098766,
+    "bud_borer": {
+      "test_count": 33,
+      "confusion_row": {
+        "bud_borer": 11,
+        "healthy_foot": 0,
+        "healthy_leaf": 0,
+        "healthy_nut": 0,
+        "healthy_trunk": 0,
+        "mahali_koleroga": 0,
+        "stem_bleeding": 0,
+        "stem_cracking": 0,
+        "yellow_leaf_disease": 22
+      },
+      "train_count": 61,
+      "train_kaggle_count": 18,
+      "train_local_count": 43
+    },
+    "train_total": 1628,
+    "train_kaggle_total": 1160,
+    "train_kaggle_pct": 71.25307125307125,
+    "train_class_counts": {
+      "bud_borer": 61,
+      "healthy_foot": 76,
+      "healthy_leaf": 127,
+      "healthy_nut": 146,
+      "healthy_trunk": 148,
+      "mahali_koleroga": 502,
+      "stem_bleeding": 120,
+      "stem_cracking": 199,
+      "yellow_leaf_disease": 249
+    }
+  }
+}

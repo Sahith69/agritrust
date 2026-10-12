@@ -1,0 +1,502 @@
+{
+  "paddy_train_only": {
+    "variant": "vs Train only",
+    "total_test_N": 1507,
+    "twin_count": 698,
+    "twin_pct": 46.317186463171865,
+    "twin_free_N": 809,
+    "twin_free_pct": 53.682813536828135,
+    "disease_accuracy": 0.9592088998763906,
+    "disease_accuracy_ci": {
+      "mean": 0.9593250927070458,
+      "ci_lower": 0.9456118665018541,
+      "ci_upper": 0.9728059332509271
+    },
+    "disease_macro_f1": 0.9542478653437845,
+    "disease_macro_f1_ci": {
+      "mean": 0.953893050016897,
+      "ci_lower": 0.9366833941773162,
+      "ci_upper": 0.9698769892631309
+    },
+    "lesion_only_N": 387,
+    "lesion_class_breakdown": {
+      "blast": 107,
+      "tungro": 83,
+      "brown_spot": 63,
+      "bacterial_leaf_blight": 42,
+      "bacterial_panicle_blight": 42,
+      "downy_mildew": 35,
+      "bacterial_leaf_streak": 15
+    },
+    "lesion_severity_qwk": 0.5828764234500211,
+    "lesion_severity_qwk_ci": {
+      "mean": 0.5834200498278818,
+      "ci_lower": 0.4579486414848447,
+      "ci_upper": 0.6943847937837919
+    },
+    "lesion_severity_exact_acc": 0.8036175710594315,
+    "lesion_severity_exact_acc_ci": {
+      "mean": 0.8037519379844962,
+      "ci_lower": 0.7648578811369509,
+      "ci_upper": 0.8424418604651159
+    },
+    "lesion_class_only_baseline_qwk": 0.0,
+    "lesion_class_only_baseline_qwk_ci": {
+      "mean": 0.0,
+      "ci_lower": 0.0,
+      "ci_upper": 0.0
+    }
+  },
+  "paddy_train_val": {
+    "variant": "vs Train + Val combined",
+    "total_test_N": 1507,
+    "twin_count": 761,
+    "twin_pct": 50.49767750497678,
+    "twin_free_N": 746,
+    "twin_free_pct": 49.50232249502323,
+    "disease_accuracy": 0.9584450402144772,
+    "disease_accuracy_ci": {
+      "mean": 0.9582801608579088,
+      "ci_lower": 0.9436997319034852,
+      "ci_upper": 0.9718498659517426
+    },
+    "disease_macro_f1": 0.9534286444025677,
+    "disease_macro_f1_ci": {
+      "mean": 0.9527926762642764,
+      "ci_lower": 0.9342022020736643,
+      "ci_upper": 0.9688188699461836
+    },
+    "lesion_only_N": 353,
+    "lesion_class_breakdown": {
+      "blast": 98,
+      "tungro": 74,
+      "brown_spot": 56,
+      "bacterial_leaf_blight": 42,
+      "bacterial_panicle_blight": 38,
+      "downy_mildew": 30,
+      "bacterial_leaf_streak": 15
+    },
+    "lesion_severity_qwk": 0.5732310465346317,
+    "lesion_severity_qwk_ci": {
+      "mean": 0.5727180737069807,
+      "ci_lower": 0.44584838258846016,
+      "ci_upper": 0.6934460729947615
+    },
+    "lesion_severity_exact_acc": 0.7988668555240793,
+    "lesion_severity_exact_acc_ci": {
+      "mean": 0.7988696883852691,
+      "ci_lower": 0.7563739376770539,
+      "ci_upper": 0.8413597733711048
+    },
+    "lesion_class_only_baseline_qwk": 0.0,
+    "lesion_class_only_baseline_qwk_ci": {
+      "mean": 0.0,
+      "ci_lower": 0.0,
+      "ci_upper": 0.0
+    }
+  },
+  "arecanut_split_provenance": {
+    "train": {
+      "total": 1628,
+      "kaggle_merged": 1160,
+      "kaggle_merged_pct": 71.25307125307125,
+      "local_capture": 468,
+      "local_capture_pct": 28.746928746928745
+    },
+    "val": {
+      "total": 547,
+      "kaggle_merged": 338,
+      "kaggle_merged_pct": 61.79159049360147,
+      "local_capture": 209,
+      "local_capture_pct": 38.20840950639854
+    },
+    "test": {
+      "total": 486,
+      "kaggle_merged": 331,
+      "kaggle_merged_pct": 68.10699588477365,
+      "local_capture": 155,
+      "local_capture_pct": 31.893004115226336
+    }
+  },
+  "arecanut_dino_kaggle_twins": {
+    "train_kaggle_N": 1160,
+    "test_all_N": 486,
+    "test_all_twins_of_train_kaggle": 29,
+    "test_all_twins_of_train_kaggle_pct": 5.967078189300412,
+    "test_kaggle_N": 331,
+    "test_kaggle_twins_of_train_kaggle": 25,
+    "test_kaggle_twins_of_train_kaggle_pct": 7.552870090634441
+  },
+  "arecanut_stock_watermark_audit": {
+    "metadata_or_filename_detected": {
+      "train": 0,
+      "val": 0,
+      "test": 0
+    },
+    "visual_montage_watermark_presence": true,
+    "watermarked_agencies_observed_visually": [
+      "dreamstime",
+      "stock photo watermark overlays"
+    ],
+    "reason_for_stripped_metadata": "Kaggle merged dataset downloader re-encoded JPEG files and renamed with UUID suffixes, stripping EXIF headers while preserving image pixel watermarks."
+  },
+  "arecanut_local_test_eval": {
+    "N": 155,
+    "disease_accuracy": 0.8193548387096774,
+    "disease_macro_f1": 0.751642899584076,
+    "per_class_results": {
+      "bud_borer": {
+        "recall": 0.36,
+        "N": 25
+      },
+      "healthy_foot": {
+        "recall": 0.8333333333333334,
+        "N": 12
+      },
+      "healthy_leaf": {
+        "recall": 0.7647058823529411,
+        "N": 17
+      },
+      "healthy_nut": {
+        "recall": 1.0,
+        "N": 24
+      },
+      "healthy_trunk": {
+        "recall": 0.8867924528301887,
+        "N": 53
+      },
+      "mahali_koleroga": {
+        "recall": 1.0,
+        "N": 17
+      },
+      "stem_bleeding": {
+        "recall": 1.0,
+        "N": 7
+      },
+      "stem_cracking": {
+        "recall": 0.0,
+        "N": 0
+      },
+      "yellow_leaf_disease": {
+        "recall": 0.0,
+        "N": 0
+      }
+    }
+  },
+  "arecanut_checkpoints_audit": {
+    "local_capture_only_disease_classifier_exists": false,
+    "total_checkpoints_found": 31,
+    "checkpoints": [
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_mobilenet_v2_ordinal.pth",
+        "filename": "arecanut_mobilenet_v2_ordinal.pth",
+        "size_mb": 8.73853588104248,
+        "modification_date": "2026-10-11 03:24:21",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_mobilenet_v2_ordinal_seed100.pth",
+        "filename": "arecanut_mobilenet_v2_ordinal_seed100.pth",
+        "size_mb": 8.74097728729248,
+        "modification_date": "2026-10-11 03:24:21",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_mobilenet_v2_ordinal_seed2024.pth",
+        "filename": "arecanut_mobilenet_v2_ordinal_seed2024.pth",
+        "size_mb": 8.74128246307373,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_resnet18_ordinal_seed100.pth",
+        "filename": "arecanut_resnet18_ordinal_seed100.pth",
+        "size_mb": 42.71973705291748,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_resnet18_ordinal_seed2024.pth",
+        "filename": "arecanut_resnet18_ordinal_seed2024.pth",
+        "size_mb": 42.71985912322998,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_resnet34_ordinal.pth",
+        "filename": "arecanut_resnet34_ordinal.pth",
+        "size_mb": 81.33832836151123,
+        "modification_date": "2026-10-11 03:24:21",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_resnet34_ordinal_seed100.pth",
+        "filename": "arecanut_resnet34_ordinal_seed100.pth",
+        "size_mb": 81.34003734588623,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/architecture_comparison/arecanut_resnet34_ordinal_seed2024.pth",
+        "filename": "arecanut_resnet34_ordinal_seed2024.pth",
+        "size_mb": 81.3402509689331,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/arecanut_baseline.pth",
+        "filename": "arecanut_baseline.pth",
+        "size_mb": 42.71961498260498,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/arecanut_disease_classifier.pth",
+        "filename": "arecanut_disease_classifier.pth",
+        "size_mb": 42.72730541229248,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Disease Classifier (9 classes)",
+        "training_source": "Trained on Merged Split (71.25% Kaggle images)",
+        "split_version": "honest_baseline_v2",
+        "architecture": "resnet18_honest_baseline"
+      },
+      {
+        "path": "outputs/models/arecanut_disease_classifier_rerun2.pth",
+        "filename": "arecanut_disease_classifier_rerun2.pth",
+        "size_mb": 42.72730541229248,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Disease Classifier (9 classes)",
+        "training_source": "Trained on Merged Split (71.25% Kaggle images)",
+        "split_version": "honest_baseline_v2",
+        "architecture": "resnet18_honest_baseline"
+      },
+      {
+        "path": "outputs/models/arecanut_disease_classifier_v2.pth",
+        "filename": "arecanut_disease_classifier_v2.pth",
+        "size_mb": 42.72761058807373,
+        "modification_date": "2026-10-11 03:24:22",
+        "purpose": "Disease Classifier (9 classes)",
+        "training_source": "Trained on Merged Split (71.25% Kaggle images)",
+        "split_version": "v2_honest_baseline",
+        "architecture": "resnet18_focal_expanded"
+      },
+      {
+        "path": "outputs/models/arecanut_ordinal.pth",
+        "filename": "arecanut_ordinal.pth",
+        "size_mb": 42.71753978729248,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Standard split / Unknown provenance",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_retrain/arecanut_resnet18_corn_seed100.pth",
+        "filename": "arecanut_resnet18_corn_seed100.pth",
+        "size_mb": 42.71937084197998,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_retrain/arecanut_resnet18_corn_seed2024.pth",
+        "filename": "arecanut_resnet18_corn_seed2024.pth",
+        "size_mb": 42.71949291229248,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_retrain/arecanut_resnet18_corn_seed42.pth",
+        "filename": "arecanut_resnet18_corn_seed42.pth",
+        "size_mb": 42.71924877166748,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_retrain/arecanut_resnet18_softmax_seed100.pth",
+        "filename": "arecanut_resnet18_softmax_seed100.pth",
+        "size_mb": 42.72169017791748,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_retrain/arecanut_resnet18_softmax_seed2024.pth",
+        "filename": "arecanut_resnet18_softmax_seed2024.pth",
+        "size_mb": 42.72181224822998,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_retrain/arecanut_resnet18_softmax_seed42.pth",
+        "filename": "arecanut_resnet18_softmax_seed42.pth",
+        "size_mb": 42.72156810760498,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_v2_severity/arecanut_resnet18_corn_seed100.pth",
+        "filename": "arecanut_resnet18_corn_seed100.pth",
+        "size_mb": 42.71955394744873,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_v2_severity/arecanut_resnet18_corn_seed2024.pth",
+        "filename": "arecanut_resnet18_corn_seed2024.pth",
+        "size_mb": 42.71967601776123,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_v2_severity/arecanut_resnet18_corn_seed42.pth",
+        "filename": "arecanut_resnet18_corn_seed42.pth",
+        "size_mb": 42.71943187713623,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_v2_severity/arecanut_resnet18_softmax_seed100.pth",
+        "filename": "arecanut_resnet18_softmax_seed100.pth",
+        "size_mb": 42.72187328338623,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_v2_severity/arecanut_resnet18_softmax_seed2024.pth",
+        "filename": "arecanut_resnet18_softmax_seed2024.pth",
+        "size_mb": 42.72199535369873,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/clean_v2_severity/arecanut_resnet18_softmax_seed42.pth",
+        "filename": "arecanut_resnet18_softmax_seed42.pth",
+        "size_mb": 42.72175121307373,
+        "modification_date": "2026-10-11 03:24:23",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on 871 clean images (Severity only, stock photos removed)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/merged_expanded/arecanut_merged_corn_seed100.pth",
+        "filename": "arecanut_merged_corn_seed100.pth",
+        "size_mb": 42.71912670135498,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on Merged Expanded dataset (Severity only)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/merged_expanded/arecanut_merged_corn_seed2024.pth",
+        "filename": "arecanut_merged_corn_seed2024.pth",
+        "size_mb": 42.71924877166748,
+        "modification_date": "2026-10-11 03:24:25",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on Merged Expanded dataset (Severity only)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/merged_expanded/arecanut_merged_corn_seed42.pth",
+        "filename": "arecanut_merged_corn_seed42.pth",
+        "size_mb": 42.71900463104248,
+        "modification_date": "2026-10-11 03:24:24",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on Merged Expanded dataset (Severity only)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/merged_expanded/arecanut_merged_softmax_seed100.pth",
+        "filename": "arecanut_merged_softmax_seed100.pth",
+        "size_mb": 42.72144603729248,
+        "modification_date": "2026-10-11 03:24:25",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on Merged Expanded dataset (Severity only)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/merged_expanded/arecanut_merged_softmax_seed2024.pth",
+        "filename": "arecanut_merged_softmax_seed2024.pth",
+        "size_mb": 42.72156810760498,
+        "modification_date": "2026-10-11 03:24:25",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on Merged Expanded dataset (Severity only)",
+        "split_version": null,
+        "architecture": null
+      },
+      {
+        "path": "outputs/models/merged_expanded/arecanut_merged_softmax_seed42.pth",
+        "filename": "arecanut_merged_softmax_seed42.pth",
+        "size_mb": 42.72132396697998,
+        "modification_date": "2026-10-11 03:24:25",
+        "purpose": "Severity Grading Model (0-3 grades)",
+        "training_source": "Trained on Merged Expanded dataset (Severity only)",
+        "split_version": null,
+        "architecture": null
+      }
+    ]
+  }
+}

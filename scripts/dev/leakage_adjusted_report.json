@@ -1,0 +1,706 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-11T19:21:04.809483",
+    "random_seed": 42,
+    "bootstrap_resamples": 2000
+  },
+  "crops": {
+    "apple": {
+      "crop": "apple",
+      "step1_dino_distribution": {
+        "total_test_samples": 476,
+        "same_class_pairs": {
+          "count": 474,
+          "mean": 0.926584005355835,
+          "p50_median": 0.930288553237915,
+          "p90": 0.9539777636528015,
+          "p99": 0.9741560816764832
+        },
+        "different_class_pairs": {
+          "count": 2,
+          "mean": 0.8730866312980652,
+          "p50_median": 0.8730866312980652,
+          "p90": 0.8847814202308655,
+          "p99": 0.8874127864837646
+        }
+      },
+      "step2_twin_definition": {
+        "threshold_T": 0.95,
+        "threshold_selection_rationale": "PlantVillage background is uniform grey/black; p99 of different-class nearest neighbours is 0.8874. T=0.95 sits safely above cross-class noise while catching 100% of lab-bench near-identical leaf twins.",
+        "validation_twins": {
+          "total": 476,
+          "flagged_twins": 81,
+          "flagged_pct": 17.016806722689076,
+          "criteria_overlap": {
+            "flagged_phash_le_8_count": 31,
+            "flagged_dino_ge_T_count": 58,
+            "flagged_burst_120s_count": 0,
+            "only_phash_count": 23,
+            "only_dino_count": 50,
+            "only_burst_count": 0,
+            "multiple_criteria_count": 8
+          }
+        },
+        "test_twins": {
+          "total": 476,
+          "flagged_twins": 88,
+          "flagged_pct": 18.487394957983195,
+          "criteria_overlap": {
+            "flagged_phash_le_8_count": 33,
+            "flagged_dino_ge_T_count": 59,
+            "flagged_burst_120s_count": 0,
+            "only_phash_count": 29,
+            "only_dino_count": 55,
+            "only_burst_count": 0,
+            "multiple_criteria_count": 4
+          }
+        }
+      },
+      "step3_model_evaluation": {
+        "full_test": {
+          "subset_name": "full_test",
+          "N": 476,
+          "unreliable_flag_N_lt_100": false,
+          "classes_with_zero_samples": [],
+          "disease_classification": {
+            "accuracy": 0.9978991596638656,
+            "macro_f1": 0.998040524669609,
+            "per_class_recall": {
+              "apple_scab": 0.9887640449438202,
+              "black_rot": 1.0,
+              "cedar_apple_rust": 1.0,
+              "healthy": 1.0
+            }
+          },
+          "severity_corn": {
+            "qwk": 0.968789566978982,
+            "exact_accuracy": 0.957983193277311,
+            "within_1_accuracy": 0.9936974789915967,
+            "mae": 0.0546218487394958,
+            "class_only_baseline_qwk": 0.9936496077698916
+          },
+          "bootstrap_95_ci": {
+            "disease_accuracy_ci": {
+              "mean": 0.9979485294117647,
+              "ci_lower": 0.9936974789915967,
+              "ci_upper": 1.0
+            },
+            "disease_macro_f1_ci": {
+              "mean": 0.9980803094448901,
+              "ci_lower": 0.9936696073311142,
+              "ci_upper": 1.0
+            },
+            "severity_qwk_ci": {
+              "mean": 0.9686227542826628,
+              "ci_lower": 0.9500314265408664,
+              "ci_upper": 0.9848877069431979
+            },
+            "severity_exact_acc_ci": {
+              "mean": 0.9578382352941176,
+              "ci_lower": 0.9390756302521008,
+              "ci_upper": 0.976890756302521
+            },
+            "severity_within1_acc_ci": {
+              "mean": 0.9936911764705882,
+              "ci_lower": 0.9852941176470589,
+              "ci_upper": 1.0
+            },
+            "severity_mae_ci": {
+              "mean": 0.05477941176470588,
+              "ci_lower": 0.029411764705882353,
+              "ci_upper": 0.08403361344537816
+            },
+            "class_only_baseline_qwk_ci": {
+              "mean": 0.993652538483493,
+              "ci_lower": 0.988233816127987,
+              "ci_upper": 0.9978946642121466
+            }
+          }
+        },
+        "twin_free_test": {
+          "subset_name": "twin_free_test",
+          "N": 388,
+          "unreliable_flag_N_lt_100": false,
+          "classes_with_zero_samples": [],
+          "disease_classification": {
+            "accuracy": 0.9974226804123711,
+            "macro_f1": 0.9978433634051159,
+            "per_class_recall": {
+              "apple_scab": 0.9880952380952381,
+              "black_rot": 1.0,
+              "cedar_apple_rust": 1.0,
+              "healthy": 1.0
+            }
+          },
+          "severity_corn": {
+            "qwk": 0.968431330006509,
+            "exact_accuracy": 0.961340206185567,
+            "within_1_accuracy": 0.9922680412371134,
+            "mae": 0.05412371134020619,
+            "class_only_baseline_qwk": 0.9948165762684693
+          },
+          "bootstrap_95_ci": {
+            "disease_accuracy_ci": {
+              "mean": 0.9974420103092781,
+              "ci_lower": 0.9922680412371134,
+              "ci_upper": 1.0
+            },
+            "disease_macro_f1_ci": {
+              "mean": 0.9978465835261131,
+              "ci_lower": 0.9929871108195818,
+              "ci_upper": 1.0
+            },
+            "severity_qwk_ci": {
+              "mean": 0.9683471867365717,
+              "ci_lower": 0.9469250336080319,
+              "ci_upper": 0.9856167040269956
+            },
+            "severity_exact_acc_ci": {
+              "mean": 0.9611559278350514,
+              "ci_lower": 0.9407216494845361,
+              "ci_upper": 0.979381443298969
+            },
+            "severity_within1_acc_ci": {
+              "mean": 0.9923376288659793,
+              "ci_lower": 0.9845360824742269,
+              "ci_upper": 1.0
+            },
+            "severity_mae_ci": {
+              "mean": 0.05416881443298969,
+              "ci_lower": 0.02577319587628866,
+              "ci_upper": 0.08762886597938144
+            },
+            "class_only_baseline_qwk_ci": {
+              "mean": 0.9948336838550192,
+              "ci_lower": 0.9893920415262937,
+              "ci_upper": 0.9987096259245464
+            }
+          }
+        }
+      }
+    },
+    "arecanut": {
+      "crop": "arecanut",
+      "step1_dino_distribution": {
+        "total_test_samples": 486,
+        "same_class_pairs": {
+          "count": 464,
+          "mean": 0.8573964834213257,
+          "p50_median": 0.8603749871253967,
+          "p90": 0.9451566338539124,
+          "p99": 0.9730024337768555
+        },
+        "different_class_pairs": {
+          "count": 22,
+          "mean": 0.7919420599937439,
+          "p50_median": 0.7986913919448853,
+          "p90": 0.8605791330337524,
+          "p99": 0.8676360845565796
+        }
+      },
+      "step2_twin_definition": {
+        "threshold_T": 0.95,
+        "threshold_selection_rationale": "Arecanut field images contain dense foliage; p99 of different-class nearest neighbours is 0.8676. T=0.95 combined with camera burst timestamp <= 120s isolates tree-level repeated burst captures.",
+        "validation_twins": {
+          "total": 547,
+          "flagged_twins": 79,
+          "flagged_pct": 14.442413162705666,
+          "criteria_overlap": {
+            "flagged_phash_le_8_count": 0,
+            "flagged_dino_ge_T_count": 32,
+            "flagged_burst_120s_count": 47,
+            "only_phash_count": 0,
+            "only_dino_count": 32,
+            "only_burst_count": 47,
+            "multiple_criteria_count": 0
+          }
+        },
+        "test_twins": {
+          "total": 486,
+          "flagged_twins": 151,
+          "flagged_pct": 31.069958847736622,
+          "criteria_overlap": {
+            "flagged_phash_le_8_count": 0,
+            "flagged_dino_ge_T_count": 30,
+            "flagged_burst_120s_count": 121,
+            "only_phash_count": 0,
+            "only_dino_count": 30,
+            "only_burst_count": 121,
+            "multiple_criteria_count": 0
+          }
+        }
+      },
+      "step3_model_evaluation": {
+        "full_test": {
+          "subset_name": "full_test",
+          "N": 486,
+          "unreliable_flag_N_lt_100": false,
+          "classes_with_zero_samples": [],
+          "disease_classification": {
+            "accuracy": 0.9032921810699589,
+            "macro_f1": 0.8512688663212529,
+            "per_class_recall": {
+              "bud_borer": 0.3333333333333333,
+              "healthy_foot": 0.7692307692307693,
+              "healthy_leaf": 0.7741935483870968,
+              "healthy_nut": 1.0,
+              "healthy_trunk": 0.9375,
+              "mahali_koleroga": 0.9776119402985075,
+              "stem_bleeding": 1.0,
+              "stem_cracking": 0.7916666666666666,
+              "yellow_leaf_disease": 0.9883720930232558
+            }
+          },
+          "severity_corn": {
+            "qwk": 0.8874764101488781,
+            "exact_accuracy": 0.8497942386831275,
+            "within_1_accuracy": 0.9526748971193416,
+            "mae": 0.22633744855967078,
+            "class_only_baseline_qwk": 0.8899917496985467
+          },
+          "bootstrap_95_ci": {
+            "disease_accuracy_ci": {
+              "mean": 0.9061044628987777,
+              "ci_lower": 0.8405294708938951,
+              "ci_upper": 0.9619693443224027
+            },
+            "disease_macro_f1_ci": {
+              "mean": 0.8047722922124869,
+              "ci_lower": 0.6545016872174728,
+              "ci_upper": 0.9056513169047858
+            },
+            "severity_qwk_ci": {
+              "mean": 0.8821732866253283,
+              "ci_lower": 0.8170770949573466,
+              "ci_upper": 0.9364131296608706
+            },
+            "severity_exact_acc_ci": {
+              "mean": 0.8480216468473111,
+              "ci_lower": 0.7774815522084918,
+              "ci_upper": 0.9054066339066339
+            },
+            "severity_within1_acc_ci": {
+              "mean": 0.9520203569362713,
+              "ci_lower": 0.9230719794344473,
+              "ci_upper": 0.9772222509836406
+            },
+            "severity_mae_ci": {
+              "mean": 0.22888802862321667,
+              "ci_lower": 0.13878653893392287,
+              "ci_upper": 0.33045668743194756
+            },
+            "class_only_baseline_qwk_ci": {
+              "mean": 0.8825569236627445,
+              "ci_lower": 0.8002727737478477,
+              "ci_upper": 0.9406656898144299
+            }
+          }
+        },
+        "twin_free_test": {
+          "subset_name": "twin_free_test",
+          "N": 335,
+          "unreliable_flag_N_lt_100": false,
+          "classes_with_zero_samples": [
+            "stem_bleeding"
+          ],
+          "disease_classification": {
+            "accuracy": 0.8985074626865671,
+            "macro_f1": 0.7703944058210437,
+            "per_class_recall": {
+              "bud_borer": 0.3333333333333333,
+              "healthy_foot": 0.7692307692307693,
+              "healthy_leaf": 1.0,
+              "healthy_nut": 1.0,
+              "healthy_trunk": 1.0,
+              "mahali_koleroga": 0.9741379310344828,
+              "stem_bleeding": null,
+              "stem_cracking": 0.75,
+              "yellow_leaf_disease": 0.984375
+            }
+          },
+          "severity_corn": {
+            "qwk": 0.8737558466892775,
+            "exact_accuracy": 0.844776119402985,
+            "within_1_accuracy": 0.9492537313432836,
+            "mae": 0.23582089552238805,
+            "class_only_baseline_qwk": 0.8578216392099088
+          },
+          "bootstrap_95_ci": {
+            "disease_accuracy_ci": {
+              "mean": 0.9016227712887694,
+              "ci_lower": 0.8186624649859944,
+              "ci_upper": 0.9754407434670592
+            },
+            "disease_macro_f1_ci": {
+              "mean": 0.77650804812397,
+              "ci_lower": 0.6410888835602938,
+              "ci_upper": 0.9024109564090468
+            },
+            "severity_qwk_ci": {
+              "mean": 0.8720377987644654,
+              "ci_lower": 0.7943901924958643,
+              "ci_upper": 0.9356954689231526
+            },
+            "severity_exact_acc_ci": {
+              "mean": 0.8437466230120441,
+              "ci_lower": 0.7796067255628384,
+              "ci_upper": 0.8989673821128211
+            },
+            "severity_within1_acc_ci": {
+              "mean": 0.9490600087470006,
+              "ci_lower": 0.9117647058823529,
+              "ci_upper": 0.9786514593262327
+            },
+            "severity_mae_ci": {
+              "mean": 0.2371049212983927,
+              "ci_lower": 0.14021413623899553,
+              "ci_upper": 0.3504399585921324
+            },
+            "class_only_baseline_qwk_ci": {
+              "mean": 0.8537448583816742,
+              "ci_lower": 0.7728229229171284,
+              "ci_upper": 0.9194045608387859
+            }
+          }
+        }
+      }
+    },
+    "paddy": {
+      "crop": "paddy",
+      "step1_dino_distribution": {
+        "total_test_samples": 1507,
+        "same_class_pairs": {
+          "count": 1448,
+          "mean": 0.9749115109443665,
+          "p50_median": 0.9787086248397827,
+          "p90": 0.9898791313171387,
+          "p99": 0.9951258897781372
+        },
+        "different_class_pairs": {
+          "count": 59,
+          "mean": 0.9565923810005188,
+          "p50_median": 0.9625243544578552,
+          "p90": 0.9863170385360718,
+          "p99": 0.9899305701255798
+        }
+      },
+      "step2_twin_definition": {
+        "threshold_T": 0.96,
+        "threshold_selection_rationale": "Paddy Doctor has dense repetitive field plots where distinct leaves of the same class share p50=0.9787. Setting T=0.96 (above diff-class p99 of 0.9899) selectively removes true burst-shot twins without gutting natural class variation.",
+        "validation_twins": {
+          "total": 1510,
+          "flagged_twins": 1302,
+          "flagged_pct": 86.2251655629139,
+          "criteria_overlap": {
+            "flagged_phash_le_8_count": 678,
+            "flagged_dino_ge_T_count": 1271,
+            "flagged_burst_120s_count": 0,
+            "only_phash_count": 31,
+            "only_dino_count": 624,
+            "only_burst_count": 0,
+            "multiple_criteria_count": 647
+          }
+        },
+        "test_twins": {
+          "total": 1507,
+          "flagged_twins": 1324,
+          "flagged_pct": 87.8566688785667,
+          "criteria_overlap": {
+            "flagged_phash_le_8_count": 698,
+            "flagged_dino_ge_T_count": 1285,
+            "flagged_burst_120s_count": 0,
+            "only_phash_count": 39,
+            "only_dino_count": 626,
+            "only_burst_count": 0,
+            "multiple_criteria_count": 659
+          }
+        }
+      },
+      "step3_model_evaluation": {
+        "full_test": {
+          "subset_name": "full_test",
+          "N": 1507,
+          "unreliable_flag_N_lt_100": false,
+          "classes_with_zero_samples": [],
+          "disease_classification": {
+            "accuracy": 0.9654943596549436,
+            "macro_f1": 0.960937748226223,
+            "per_class_recall": {
+              "bacterial_leaf_blight": 0.9824561403508771,
+              "bacterial_leaf_streak": 0.9803921568627451,
+              "bacterial_panicle_blight": 0.9807692307692307,
+              "blast": 0.9439655172413793,
+              "brown_spot": 0.9615384615384616,
+              "dead_heart": 0.9915611814345991,
+              "downy_mildew": 0.9545454545454546,
+              "hispa": 0.9683257918552036,
+              "normal": 0.9691780821917808,
+              "tungro": 0.9387755102040817
+            }
+          },
+          "severity_corn": {
+            "qwk": 0.9390157891815895,
+            "exact_accuracy": 0.9097544790975448,
+            "within_1_accuracy": 0.9880557398805574,
+            "mae": 0.10484406104844061,
+            "class_only_baseline_qwk": 0.9114101898145368
+          },
+          "bootstrap_95_ci": {
+            "disease_accuracy_ci": {
+              "mean": 0.9653384207033843,
+              "ci_lower": 0.9555408095554081,
+              "ci_upper": 0.973457199734572
+            },
+            "disease_macro_f1_ci": {
+              "mean": 0.9605626682560933,
+              "ci_lower": 0.949013143330965,
+              "ci_upper": 0.9708747473413776
+            },
+            "severity_qwk_ci": {
+              "mean": 0.938708765771935,
+              "ci_lower": 0.923156980079829,
+              "ci_upper": 0.9524660950161487
+            },
+            "severity_exact_acc_ci": {
+              "mean": 0.909363304578633,
+              "ci_lower": 0.8944923689449237,
+              "ci_upper": 0.9230258792302588
+            },
+            "severity_within1_acc_ci": {
+              "mean": 0.9879681486396814,
+              "ci_lower": 0.9820836098208361,
+              "ci_upper": 0.993364299933643
+            },
+            "severity_mae_ci": {
+              "mean": 0.10530258792302587,
+              "ci_lower": 0.08759124087591241,
+              "ci_upper": 0.12408759124087591
+            },
+            "class_only_baseline_qwk_ci": {
+              "mean": 0.9112183112620028,
+              "ci_lower": 0.8997924327947534,
+              "ci_upper": 0.9215900320851587
+            }
+          }
+        },
+        "twin_free_test": {
+          "subset_name": "twin_free_test",
+          "N": 183,
+          "unreliable_flag_N_lt_100": false,
+          "classes_with_zero_samples": [],
+          "disease_classification": {
+            "accuracy": 0.907103825136612,
+            "macro_f1": 0.8973089460253261,
+            "per_class_recall": {
+              "bacterial_leaf_blight": 1.0,
+              "bacterial_leaf_streak": 1.0,
+              "bacterial_panicle_blight": 0.9333333333333333,
+              "blast": 0.8666666666666667,
+              "brown_spot": 0.9090909090909091,
+              "dead_heart": 0.96,
+              "downy_mildew": 0.7692307692307693,
+              "hispa": 0.9166666666666666,
+              "normal": 0.76,
+              "tungro": 1.0
+            }
+          },
+          "severity_corn": {
+            "qwk": 0.8263466368964555,
+            "exact_accuracy": 0.8142076502732241,
+            "within_1_accuracy": 0.9562841530054644,
+            "mae": 0.24043715846994534,
+            "class_only_baseline_qwk": 0.9126036556245387
+          },
+          "bootstrap_95_ci": {
+            "disease_accuracy_ci": {
+              "mean": 0.906622950819672,
+              "ci_lower": 0.8633879781420765,
+              "ci_upper": 0.9453551912568307
+            },
+            "disease_macro_f1_ci": {
+              "mean": 0.8929217159081492,
+              "ci_lower": 0.8357924426051673,
+              "ci_upper": 0.9404822489036921
+            },
+            "severity_qwk_ci": {
+              "mean": 0.8240006471910309,
+              "ci_lower": 0.7367729885030078,
+              "ci_upper": 0.8981936307643416
+            },
+            "severity_exact_acc_ci": {
+              "mean": 0.8128415300546449,
+              "ci_lower": 0.7540983606557377,
+              "ci_upper": 0.8688524590163934
+            },
+            "severity_within1_acc_ci": {
+              "mean": 0.9559262295081967,
+              "ci_lower": 0.9234972677595629,
+              "ci_upper": 0.9836065573770492
+            },
+            "severity_mae_ci": {
+              "mean": 0.24192349726775955,
+              "ci_lower": 0.16393442622950818,
+              "ci_upper": 0.32786885245901637
+            },
+            "class_only_baseline_qwk_ci": {
+              "mean": 0.9113402940629519,
+              "ci_lower": 0.8746919249183545,
+              "ci_upper": 0.9420942570698235
+            }
+          }
+        },
+        "paddy_lesion_classes_only": {
+          "lesion_classes": [
+            "bacterial_leaf_blight",
+            "bacterial_leaf_streak",
+            "bacterial_panicle_blight",
+            "blast",
+            "brown_spot",
+            "downy_mildew",
+            "tungro"
+          ],
+          "full_test": {
+            "subset_name": "paddy_lesion_classes_full_test",
+            "N": 757,
+            "unreliable_flag_N_lt_100": false,
+            "classes_with_zero_samples": [
+              "dead_heart",
+              "hispa",
+              "normal"
+            ],
+            "disease_classification": {
+              "accuracy": 0.9550858652575958,
+              "macro_f1": 0.6753308389941901,
+              "per_class_recall": {
+                "bacterial_leaf_blight": 0.9824561403508771,
+                "bacterial_leaf_streak": 0.9803921568627451,
+                "bacterial_panicle_blight": 0.9807692307692307,
+                "blast": 0.9439655172413793,
+                "brown_spot": 0.9615384615384616,
+                "dead_heart": null,
+                "downy_mildew": 0.9545454545454546,
+                "hispa": null,
+                "normal": null,
+                "tungro": 0.9387755102040817
+              }
+            },
+            "severity_corn": {
+              "qwk": 0.7125791113379717,
+              "exact_accuracy": 0.8560105680317041,
+              "within_1_accuracy": 0.988110964332893,
+              "mae": 0.15984147952443858,
+              "class_only_baseline_qwk": 0.0
+            },
+            "bootstrap_95_ci": {
+              "disease_accuracy_ci": {
+                "mean": 0.9549795244385735,
+                "ci_lower": 0.9392338177014531,
+                "ci_upper": 0.9696169088507266
+              },
+              "disease_macro_f1_ci": {
+                "mean": 0.7140475415007329,
+                "ci_lower": 0.6663114643524767,
+                "ci_upper": 0.8468464717193014
+              },
+              "severity_qwk_ci": {
+                "mean": 0.7128239670712376,
+                "ci_lower": 0.6447537304518968,
+                "ci_upper": 0.7763548702923511
+              },
+              "severity_exact_acc_ci": {
+                "mean": 0.8560257595772787,
+                "ci_lower": 0.8322324966974901,
+                "ci_upper": 0.8797886393659181
+              },
+              "severity_within1_acc_ci": {
+                "mean": 0.988041611624835,
+                "ci_lower": 0.9801849405548216,
+                "ci_upper": 0.9947159841479525
+              },
+              "severity_mae_ci": {
+                "mean": 0.15984940554821664,
+                "ci_lower": 0.13210039630118892,
+                "ci_upper": 0.18758256274768825
+              },
+              "class_only_baseline_qwk_ci": {
+                "mean": 0.0,
+                "ci_lower": 0.0,
+                "ci_upper": 0.0
+              }
+            }
+          },
+          "twin_free_test": {
+            "subset_name": "paddy_lesion_classes_twin_free_test",
+            "N": 84,
+            "unreliable_flag_N_lt_100": true,
+            "classes_with_zero_samples": [
+              "dead_heart",
+              "hispa",
+              "normal"
+            ],
+            "disease_classification": {
+              "accuracy": 0.9166666666666666,
+              "macro_f1": 0.7308340779105397,
+              "per_class_recall": {
+                "bacterial_leaf_blight": 1.0,
+                "bacterial_leaf_streak": 1.0,
+                "bacterial_panicle_blight": 0.9333333333333333,
+                "blast": 0.8666666666666667,
+                "brown_spot": 0.9090909090909091,
+                "dead_heart": null,
+                "downy_mildew": 0.7692307692307693,
+                "hispa": null,
+                "normal": null,
+                "tungro": 1.0
+              }
+            },
+            "severity_corn": {
+              "qwk": 0.39384732244587917,
+              "exact_accuracy": 0.7142857142857143,
+              "within_1_accuracy": 0.9642857142857143,
+              "mae": 0.3333333333333333,
+              "class_only_baseline_qwk": 0.0
+            },
+            "bootstrap_95_ci": {
+              "disease_accuracy_ci": {
+                "mean": 0.9161190476190476,
+                "ci_lower": 0.8571428571428571,
+                "ci_upper": 0.9642857142857143
+              },
+              "disease_macro_f1_ci": {
+                "mean": 0.7967635191315566,
+                "ci_lower": 0.6932961489095002,
+                "ci_upper": 0.964301018696685
+              },
+              "severity_qwk_ci": {
+                "mean": 0.38962861852824676,
+                "ci_lower": 0.11735810019781205,
+                "ci_upper": 0.6276164928481253
+              },
+              "severity_exact_acc_ci": {
+                "mean": 0.7147142857142857,
+                "ci_lower": 0.6190476190476191,
+                "ci_upper": 0.8095238095238095
+              },
+              "severity_within1_acc_ci": {
+                "mean": 0.9637916666666666,
+                "ci_lower": 0.9166666666666666,
+                "ci_upper": 1.0
+              },
+              "severity_mae_ci": {
+                "mean": 0.33373214285714287,
+                "ci_lower": 0.21428571428571427,
+                "ci_upper": 0.4642857142857143
+              },
+              "class_only_baseline_qwk_ci": {
+                "mean": 0.0,
+                "ci_lower": 0.0,
+                "ci_upper": 0.0
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
