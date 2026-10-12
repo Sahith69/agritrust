@@ -5,6 +5,7 @@ import config
 import logging
 import streamlit as st
 import os, glob, json
+import datetime
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -24,41 +25,21 @@ from src.multimodal_fusion import evaluate_environmental_risk, MultimodalCropFus
 from ood_guard import check_ood
 from weather_live import DISTRICT_COORDINATES, fetch_forecast, compute_48h_disease_risk
 
-# ─── PAGE CONFIG ─────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="AgriTrust AI — Multimodal Crop Disease & Severity Engine",
-    page_icon="🌾",
-    layout="wide",
-    initial_sidebar_state="expanded"
+from ui_theme import (
+    APP_NAME, THEME_CONFIG, TRUST_AND_AUDIT, CSS_STYLES,
+    UI_STRINGS, get_ui_string, format_local_date, build_chat_response
 )
 
-# ─── CSS STYLING ─────────────────────────────────────────────────────────────
-st.markdown("""
-<style>
-    .stApp { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); color: #f8fafc; }
-    .upload-card { background: rgba(255,255,255,0.04); border: 2px dashed rgba(56,189,248,0.4);
-        border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px; }
-    .disease-card { background: rgba(15,23,42,0.7); border: 1px solid rgba(56,189,248,0.35);
-        border-radius: 16px; padding: 18px 22px; margin-bottom: 18px; }
-    .multimodal-card { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.22));
-        border: 1px solid rgba(139,92,246,0.5); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
-    .pesticide-card { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.25));
-        border: 1px solid rgba(16,185,129,0.5); border-radius: 16px; padding: 20px; margin-top: 18px; }
-    .result-card-g0 { background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(22,163,74,0.25));
-        border: 1px solid rgba(34,197,94,0.4); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .result-card-g1 { background: linear-gradient(135deg, rgba(234,179,8,0.15), rgba(202,138,4,0.25));
-        border: 1px solid rgba(234,179,8,0.4); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .result-card-g2 { background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.25));
-        border: 1px solid rgba(249,115,22,0.4); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .result-card-g3 { background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.25));
-        border: 1px solid rgba(239,68,68,0.4); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .metric-badge { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 12px; padding: 14px; text-align: center; margin-bottom: 8px; }
-    .metric-val { font-size: 24px; font-weight: 700; color: #38bdf8; }
-    .metric-lbl { font-size: 13px; color: #94a3b8; margin-top: 4px; }
-    .explainer-note { font-size: 12px; color: #64748b; font-style: italic; margin-top: 6px; }
-</style>
-""", unsafe_allow_html=True)
+# ─── PAGE CONFIG ─────────────────────────────────────────────────────────────
+st.set_page_config(
+    page_title=f"{APP_NAME} — Multimodal Crop Disease & Severity Engine",
+    page_icon="🌾",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
+# ─── CSS STYLING (SINGLE BLOCK INJECTION FROM UI_THEME) ─────────────────────
+st.markdown(CSS_STYLES, unsafe_allow_html=True)
 
 # ─── DISPLAY NAMES & FACTS ───────────────────────────────────────────────────
 PADDY_DISPLAY = {
@@ -259,7 +240,6 @@ TREATMENT_DATABASE = {
 }
 
 # ─── LOCALIZED DISEASE & CONDITION NAMES (KANNADA & HINDI) ────────────────────
-# Each entry is explicitly tagged for native-speaker agricultural review.
 DISEASE_LOCALIZATION = {
     "Paddy": {
         "bacterial_leaf_blight": {
@@ -374,7 +354,7 @@ DISEASE_LOCALIZATION = {
         "cedar_apple_rust": {
             "en": "Cedar Apple Rust",
             "kn": "ಸೀಡರ್ ಆಪಲ್ ರಸ್ಟ್ (ತುಕ್ಕು ರೋಗ)",  # REVIEW (Kannada): ಸೀಡರ್ ಆಪಲ್ ರಸ್ಟ್ (Cedar Apple Rust)
-            "hi": "सीडर एप्पल रस्ट (गेरुआ रोग)",  # REVIEW (Hindi): सीडर एप्पल रस्ट (Cedar Apple Rust)
+            "hi": "सीडर एप्पल रस्ट (गेरुआ रोग)",  # REVIEW (Hindi): सीडर एप्पल रस्ट (गेरुआ रोग)
         },
         "healthy": {
             "en": "Healthy (No Disease)",
@@ -388,6 +368,13 @@ ABSTAIN_THRESHOLDS = {
     "Paddy": 0.70,
     "Arecanut": 0.70,
     "Apple": 0.70
+}
+
+# ─── TUNGRO SAFETY WARNING NOTE (EN / KN / HI) ──────────────────────────────
+TUNGRO_SAFETY_NOTE = {
+    "en": "Stunted plants with yellow-orange leaves can also be Tungro virus (no cure). If so, consult your KVK.",
+    "kn": "ಗಿಡ್ಡವಾದ ಸಸಿಗಳು ಹಾಗೂ ಹಳದಿ-ಕಿತ್ತಳೆ ಬಣ್ಣದ ಎಲೆಗಳು ಕಂಡುಬಂದರೆ ಅದು ತುಂಗ್ರೋ ವೈರಸ್ ಆಗಿರಬಹುದು (ಇದಕ್ಕೆ ಯಾವುದೇ ಔಷಧಿಯಿಲ್ಲ). ಹಾಗಿದ್ದಲ್ಲಿ, ನಿಮ್ಮ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ.",  # REVIEW (Kannada): Tungro safety note
+    "hi": "बौने पौधे और पीली-नारंगी पत्तियां तुंग्रो वायरस (जिसका कोई इलाज नहीं है) भी हो सकती हैं। यदि ऐसा है, तो अपने केवीके से सलाह लें।",  # REVIEW (Hindi): Tungro safety note
 }
 
 # ─── SOIL HEALTH ADVISORIES (PER CROP, LOCALIZED) ───────────────────────────
@@ -436,8 +423,7 @@ SOIL_HEALTH_ADVISORY = {
     },
 }
 
-
-# TODO: Review voice advisory templates with native Kannada and Hindi speakers before field deployment.
+# ─── VOICE ADVISORY BUILDER ──────────────────────────────────────────────────
 def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, grade_idx: int, lang: str, weather_sentence: str = "") -> str:
     def _get_base_advisory():
         crop_map = {
@@ -503,7 +489,109 @@ def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, gra
             else:
                 return f"Crop: {crop_lbl}. Warning: {disease_name} detected. No chemical cure exists. Manage insect vectors, remove infected plants, and consult your local KVK."
 
-        # 4. Treatable disease (Paddy & Arecanut): organic steps first; chemical only if grade >= 2
+        # 4. Specific treatable diseases: card-aligned organic (grade 1) / chemical (grade >= 2)
+        SPECIFIC_VOICE_RULES = {
+            "blast": {
+                1: {
+                    "en": "Apply bio-fungicide Trichoderma viride or neem-based formulation; follow product label and local KVK advice.",
+                    "kn": "ಟ್ರೈಕೋಡರ್ಮ ವಿರಿಡೆ ಜೈವಿಕ ಶಿಲೀಂಧ್ರನಾಶಕ ಅಥವಾ ಬೇವಿನ ಸೂತ್ರೀಕರಣವನ್ನು ಸಿಂಪಡಿಸಿ; ಲೇಬಲ್ ಮತ್ತು ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆಯನ್ನು ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "जैव कवकनाशी ट्राइकोडर्मा विरिडे या नीम आधारित कीटनाशक का छिड़काव करें; लेबल और स्थानीय केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Apply systemic fungicide Tricyclazole 75 WP; follow product label and local KVK advice.",
+                    "kn": "ಶಿಫಾರಸು ಮಾಡಿದ ಟ್ರೈಸೈಕ್ಲಾಜೋಲ್ 75 ಡಬ್ಲ್ಯೂಪಿ ಸಿಂಪಡಿಸಿ; ಲೇಬಲ್ ಸೂಚನೆ ಮತ್ತು ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "प्रणालीगत कवकनाशी ट्राइसाइक्लाजोल 75 डब्ल्यूपी का छिड़काव करें; लेबल निर्देश और केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                }
+            },
+            "mahali_koleroga": {
+                1: {
+                    "en": "Tie polythene covers over developing bunches; apply preventive 1% Bordeaux Mixture before monsoon; follow product label and local KVK advice.",
+                    "kn": "ಬೆಳೆಯುತ್ತಿರುವ ಅಡಿಕೆ ಗೊನೆಗಳಿಗೆ ಪಾಲಿಥಿನ್ ಹೊದಿಕೆ ಕಟ್ಟಿ; ಮುಂಗಾರಿಗೆ ಮುನ್ನ ಮುನ್ನೆಚ್ಚರಿಕೆಯಾಗಿ ಶೇಕಡಾ 1 ರ ಬೋರ್ಡೋ ದ್ರಾವಣ ಸಿಂಪಡಿಸಿ ಮತ್ತು ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "सुपारी के गुच्छों पर पॉलीथिन बांधें; मानसून से पहले बचाव के लिए 1% बोर्डो मिश्रण का छिड़काव करें और केवीके की सलाह मानें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Spray 1% Bordeaux Mixture with adhesive sticker on all nut bunches; follow product label and local KVK advice.",
+                    "kn": "ಎಲ್ಲಾ ಅಡಿಕೆ ಗೊನೆಗಳ ಮೇಲೆ ಅಂಟು ದ್ರವದೊಂದಿಗೆ ಶೇಕಡಾ 1 ರ ಬೋರ್ಡೋ ಮಿಶ್ರಣವನ್ನು ಸಿಂಪಡಿಸಿ; ಲೇಬಲ್ ಮತ್ತು ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "सभी गुच्छों पर चिपकाने वाले पदार्थ के साथ 1% बोर्डो मिश्रण का छिड़काव करें; लेबल और केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                }
+            },
+            "bacterial_leaf_blight": {
+                1: {
+                    "en": "Spray neem seed kernel extract. Avoid excess nitrogen top-dressing; follow product label and local KVK advice.",
+                    "kn": "ಬೇವಿನ ಬೀಜದ ಕಷಾಯ ಸಿಂಪಡಿಸಿ. ಹೆಚ್ಚಿನ ಸಾರಜನಕ ಗೊಬ್ಬರ ನೀಡುವುದನ್ನು ತಪ್ಪಿಸಿ; ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "नीम के बीज का काढ़ा छिड़कें। यूरिया का अधिक उपयोग न करें; स्थानीय केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Apply Copper Oxychloride + Streptocycline; follow product label and local KVK advice.",
+                    "kn": "ಕಾಪರ್ ಆಕ್ಸಿಕ್ಲೋರೈಡ್ ಮತ್ತು ಸ್ಟ್ರೆಪ್ಟೊಸೈಕ್ಲಿನ್ ಸಿಂಪಡಿಸಿ; ಲೇಬಲ್ ಸೂಚನೆ ಮತ್ತು ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "कॉपर ऑक्सीक्लोराइड और स्ट्रेप्टोसाइक्लिन का छिड़काव करें; लेबल और केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                }
+            },
+            "brown_spot": {
+                1: {
+                    "en": "Apply compost and correct potassium deficiency; follow local KVK advice.",
+                    "kn": "ಕಾಂಪೋಸ್ಟ್ ಗೊಬ್ಬರ ಹಾಕಿ ಮತ್ತು ಪೊಟ್ಯಾಷ್ ಕೊರತೆಯನ್ನು ಸರಿಪಡಿಸಿ; ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "कम्पोस्ट खाद डालें और पोटाश की कमी को दूर करें; स्थानीय केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Apply Mancozeb protective spray; follow product label and local KVK advice.",
+                    "kn": "ಮ್ಯಾಂಕೋಜೆಬ್ ರಕ್ಷಣಾತ್ಮಕ ಶಿಲೀಂಧ್ರನಾಶಕ ಸಿಂಪಡಿಸಿ; ಲೇಬಲ್ ಮತ್ತು ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "मैंकोजेब कवकनाशी का सुरक्षात्मक छिड़काव करें; लेबल और केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                }
+            },
+            "dead_heart": {
+                1: {
+                    "en": "Clip seedling tips before transplanting; install yellow stem borer pheromone traps; follow local KVK advice.",
+                    "kn": "ನಾಟಿ ಮಾಡುವ ಮುನ್ನ ಸಸಿಗಳ ತುದಿಯನ್ನು ಕತ್ತರಿಸಿ; ಹಳದಿ ಕಾಂಡ ಕೊರೆಯುವ ಕೀಟದ ಮೋಹಕ ಬಲೆಗಳನ್ನು ಅಳವಡಿಸಿ; ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "रोपाई से पहले पौध की नोक काटें; तना छेदक के लिए फेरोमोन ट्रैप लगाएं; केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Release Trichogramma japonicum egg parasitoids; install pheromone traps; follow local KVK advice.",
+                    "kn": "ಟ್ರೈಕೋಗ್ರಾಮಾ ಜಪಾನಿಕಂ ಮೊಟ್ಟೆ ಪರಾವಲಂಬಿಗಳನ್ನು ಬಿಡಿ; ಮೋಹಕ ಬಲೆಗಳನ್ನು ಅಳವಡಿಸಿ; ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "ट्राइकोग्रामा जैपोनिकम परजीवी कीट छोड़ें; फेरोमोन ट्रैप लगाएं; स्थानीय केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                }
+            },
+            "hispa": {
+                1: {
+                    "en": "Manually clip infected leaf tips containing grubs; use sweep nets; follow local KVK advice.",
+                    "kn": "ಮರಿ ಕೀಟಗಳಿರುವ ಎಲೆಗಳ ತುದಿಯನ್ನು ಕೈಯಿಂದ ಕತ್ತರಿಸಿ ನಾಶಪಡಿಸಿ; ಜಾಲರಿ ಬಳಸಿ ಕೀಟ ಹಿಡಿಯಿರಿ; ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "कीट युक्त पत्तियों की नोक को काटकर नष्ट करें; कीट पकड़ने वाले जाल का उपयोग करें; स्थानीय केवीके की सलाह मानें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Manually clip affected leaf tips containing grubs; consult your KVK for a registered product; follow product label and local KVK advice.",
+                    "kn": "ಕೀಟವಿರುವ ಎಲೆಗಳ ತುದಿಯನ್ನು ಕತ್ತರಿಸಿ; ನೋಂದಾಯಿತ ಔಷಧಿಗಾಗಿ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಲೇಬಲ್ ಸೂಚನೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "संक्रमित पत्तियों की नोक काटें; अनुमोदित कीटनाशक के लिए केवीके से संपर्क करें और लेबल का पालन करें।"  # REVIEW (Hindi)
+                }
+            },
+            "stem_bleeding": {
+                1: {
+                    "en": "Chisel out bleeding bark patch down to healthy tissue; apply Bordeaux paste; consult your KVK for a registered product; follow local KVK advice.",
+                    "kn": "ರಸ ಸೋರುವ ತೊಗಟೆಯನ್ನು ಆರೋಗ್ಯಕರ ಭಾಗದವರೆಗೆ ಕೆತ್ತಿ ತೆಗೆಯಿರಿ; ಬೋರ್ಡೋ ಪೇಸ್ಟ್ ಹಚ್ಚಿ; ಸ್ಥಳೀಯ ಕೆವಿಕೆ ಸಲಹೆ ಪಾಲಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "तने से रस बहने वाले हिस्से को स्वस्थ लकड़ी तक छीलें; बोर्डो पेस्ट लगाएं; स्थानीय केवीके की सलाह का पालन करें।"  # REVIEW (Hindi)
+                },
+                2: {
+                    "en": "Chisel out infected bark; apply Bordeaux paste; consult your KVK for a registered product (e.g. Tridemorph); follow product label and local KVK advice.",
+                    "kn": "ಸೋಂಕಿತ ತೊಗಟೆಯನ್ನು ಕೆತ್ತಿ ತೆಗೆದು ಬೋರ್ಡೋ ಪೇಸ್ಟ್ ಹಚ್ಚಿ; ಶಿಫಾರಸು ಮಾಡಿದ ಔಷಧಿಗಾಗಿ ನಿಮ್ಮ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ.",  # REVIEW (Kannada)
+                    "hi": "संक्रमित छाल को छीलें और बोर्डो पेस्ट लगाएं; अनुशंसित दवा के लिए अपने केवीके से संपर्क करें।"  # REVIEW (Hindi)
+                }
+            }
+        }
+
+        if pred_class in SPECIFIC_VOICE_RULES:
+            tier = 1 if grade_idx < 2 else 2
+            act_dict = SPECIFIC_VOICE_RULES[pred_class][tier]
+            act_text = act_dict.get(lang, act_dict["en"])
+            if lang == "kn":
+                sev_prefix = "ಲಘು ತೀವ್ರತೆ. " if tier == 1 else "ಹೆಚ್ಚಿನ ತೀವ್ರತೆ. "
+                return f"ಬೆಳೆ: {crop_lbl}. ರೋಗ: {dis_lbl}. {sev_prefix}{act_text}"
+            elif lang == "hi":
+                sev_prefix = "शुरुआती अवस्था। " if tier == 1 else "गंभीर अवस्था। "
+                return f"फसल: {crop_lbl}। रोग: {dis_lbl}। {sev_prefix}{act_text}"
+            else:
+                sev_prefix = "Mild severity. " if tier == 1 else "Moderate to severe infection. "
+                return f"Crop: {crop_lbl}. Disease: {disease_name}. {sev_prefix}{act_text}"
+
+        # 5. Other Treatable disease (Paddy & Arecanut): organic steps first; chemical only if grade >= 2
         if grade_idx < 2:
             if lang == "kn":
                 return f"ಬೆಳೆ: {crop_lbl}. ರೋಗ: {dis_lbl}. ಲಘು ತೀವ್ರತೆ. ಮೊದಲು ಸಾವಯವ ಮತ್ತು ನೈಸರ್ಗಿಕ ಕ್ರಮಗಳನ್ನು ಅನುಸರಿಸಿ: ರೋಗಪೀಡಿತ ಎಲೆಗಳನ್ನು ತೆಗೆಯಿರಿ ಮತ್ತು ತೋಟವನ್ನು ಸ್ವಚ್ಛವಾಗಿಡಿ. ರಾಸಾಯನಿಕ ಬಳಸುವ ಮುನ್ನ ಕೆವಿಕೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
@@ -518,7 +606,6 @@ def build_voice_advisory(crop_name: str, disease_name: str, pred_class: str, gra
                 return f"फसल: {crop_lbl}। रोग: {dis_lbl}। संक्रमण गंभीर है। केवल जैविक उपाय पर्याप्त नहीं हैं। अनुशंसित दवाओं के लिए अपने नजदीकी कृषि विज्ञान केंद्र से संपर्क करें और लेबल के अनुसार छिड़काव करें।"
             else:
                 return f"Crop: {crop_lbl}. Disease: {disease_name}. Moderate to severe infection. Cultural measures alone are insufficient. Consult your local KVK for registered chemical treatments and follow product label advice."
-
 
     base_text = _get_base_advisory()
     if weather_sentence:
@@ -680,160 +767,233 @@ def run_severity(image: Image.Image, crop_name: str, model_type: str):
 
     return grade, float(probs[grade]), probs, cv_ratio, overlay
 
-# ─── SIDEBAR & IOT SENSOR INPUTS ─────────────────────────────────────────────
-with st.sidebar:
-    st.image("https://img.icons8.com/color/96/000000/leaf.png", width=64)
-    st.title("AgriTrust AI Controls")
+# ─── SESSION STATE INITIALIZATION ────────────────────────────────────────────
+if "lang_code" not in st.session_state:
+    st.session_state["lang_code"] = "en"
+if "selected_district" not in st.session_state:
+    st.session_state["selected_district"] = "Mangaluru"
+if "active_crop" not in st.session_state:
+    st.session_state["active_crop"] = "Paddy"
+if "scan_history" not in st.session_state:
+    st.session_state["scan_history"] = []
+if "last_result" not in st.session_state:
+    st.session_state["last_result"] = None
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
+if "view_result" not in st.session_state:
+    st.session_state["view_result"] = False
+if "severity_arch" not in st.session_state:
+    st.session_state["severity_arch"] = "Ordinal CORN"
+if "use_live_weather" not in st.session_state:
+    st.session_state["use_live_weather"] = True
 
-    crop_mode = st.selectbox("🌱 Select Crop", ["Paddy", "Arecanut", "Apple"])
-    model_type_choice = st.selectbox("🧠 Severity AI Architecture", [
-        "Ordinal CORN", "Baseline Softmax"
-    ])
-    voice_lang = st.selectbox("🎙️ Voice Advisory Language", [
-        "English (en)", "Hindi (hi)", "Kannada (kn)"
-    ])
-    
-    st.markdown("---")
-    st.subheader("📝 Field conditions (entered by user)")
-    
-    st.markdown("---")
-    st.subheader("🌦️ Weather & Field Conditions")
+# ─── HEADER (APP NAME, LOCATION PIN, LOCALIZED DATE, LANGUAGE SWITCHER) ──────
+header_col1, header_col2 = st.columns([1.3, 1.0])
+with header_col1:
+    cur_lang = st.session_state["lang_code"]
+    st.markdown(f"""
+    <div style="padding: 4px 0;">
+        <h1 style="margin:0;font-size:26px;color:#275637;display:flex;align-items:center;gap:8px;">
+            🌾 {APP_NAME}
+        </h1>
+        <div style="font-size:13px;color:#556B5C;margin-top:2px;">
+            📅 {format_local_date(datetime.date.today(), cur_lang)}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    selected_district = st.selectbox("📍 District", [
-        "Mangaluru", "Udupi", "Shivamogga", "Mysuru",
-        "Srinagar", "Shimla", "Kullu", "Dehradun"
-    ])
-    use_live_weather = st.toggle("🛰️ Use live forecast", value=True)
+with header_col2:
+    lang_opts = ["English", "ಕನ್ನಡ", "हिन्दी"]
+    lang_map = {"English": "en", "ಕನ್ನಡ": "kn", "हिन्दी": "hi"}
+    inv_lang_map = {v: k for k, v in lang_map.items()}
+    chosen_lang_name = st.radio(
+        "Language", lang_opts,
+        index=lang_opts.index(inv_lang_map.get(st.session_state["lang_code"], "English")),
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+    st.session_state["lang_code"] = lang_map[chosen_lang_name]
 
-    forecast_data = None
-    fetch_success = False
+lang_code = st.session_state["lang_code"]
 
-    if use_live_weather:
-        coords = DISTRICT_COORDINATES[selected_district]
-        try:
-            forecast_data = fetch_forecast(coords["lat"], coords["lon"], timeout=8.0)
-            fetch_success = True
-            fetch_time_str = forecast_data.get("_fetched_at", "Recent")
-            st.success(f"Live forecast: {selected_district}, fetched {fetch_time_str}")
-            hourly = forecast_data["hourly"]
-            temp_c = float(hourly["temperature_2m"][0])
-            humidity = float(hourly["relative_humidity_2m"][0])
-            precip = float(hourly["precipitation"][0])
+# ─── LIVE WEATHER DATA FETCH ─────────────────────────────────────────────────
+districts_list = list(DISTRICT_COORDINATES.keys())
+selected_district = st.session_state.get("selected_district", "Mangaluru")
+use_live_weather = st.session_state.get("use_live_weather", True)
+forecast_data = None
+fetch_success = False
 
-            # Fetch soil_moisture_0_to_1cm from forecast
-            sm_arr = hourly.get("soil_moisture_0_to_1cm", [])
-            if sm_arr and sm_arr[0] is not None:
-                sm_val = float(sm_arr[0])
-                soil_moist_display = f"{sm_val:.3f} m³/m³ ({sm_val * 100:.1f}%)"
-                soil_moist_pct = float(sm_val * 100.0)
-                soil_moist_available = True
-            else:
-                sm_val = None
-                soil_moist_display = "not available"
-                soil_moist_pct = 72.0  # existing default
-                soil_moist_available = False
+coords = DISTRICT_COORDINATES[selected_district]
+if use_live_weather:
+    try:
+        forecast_data = fetch_forecast(coords["lat"], coords["lon"], timeout=8.0)
+        fetch_success = True
+        hourly = forecast_data["hourly"]
+        temp_c = float(hourly["temperature_2m"][0])
+        humidity = float(hourly["relative_humidity_2m"][0])
+        precip = float(hourly["precipitation"][0])
+        precip_48h = float(sum(hourly["precipitation"][:48]))
 
-            if soil_moist_available:
-                st.caption(f"Current: 🌡️ {temp_c:.1f}°C | 💧 Topsoil moisture (model estimate): {soil_moist_display} | 🌧️ RH {humidity:.0f}% (Precip: {precip:.1f} mm/h)")
-            else:
-                st.caption(f"Current: 🌡️ {temp_c:.1f}°C | 💧 Topsoil moisture (model estimate): not available | 🌧️ RH {humidity:.0f}% (Precip: {precip:.1f} mm/h)")
-        except Exception as e:
-            fetch_success = False
-            forecast_data = None
-            st.warning(f"⚠️ Live forecast fetch failed for {selected_district}. Falling back to manual values.")
-
-    if not use_live_weather or not fetch_success:
-        st.info("Offline: using entered values.")
-        env_preset = st.selectbox("⚡ Weather / Field Presets", [
-            "Custom Sliders",
-            "🌧️ Monsoon Rain / High Humidity (Rot Risk)",
-            "☀️ Sunny & Dry Day (Low Climatic Pressure)",
-            "🍎 Cool Wet Orchard (Mills Period / Scab Risk)"
-        ])
-
-        if "Monsoon" in env_preset:
-            def_temp, def_moist, def_hum = 24.0, 88.0, 92.0
-        elif "Sunny" in env_preset:
-            def_temp, def_moist, def_hum = 33.0, 28.0, 42.0
-        elif "Cool Wet" in env_preset:
-            def_temp, def_moist, def_hum = 18.5, 78.0, 86.0
+        sm_arr = hourly.get("soil_moisture_0_to_1cm", [])
+        if sm_arr and sm_arr[0] is not None:
+            sm_val = float(sm_arr[0])
+            soil_moist_display = f"{sm_val:.3f} m³/m³ ({sm_val * 100:.1f}%)"
+            soil_moist_pct = float(sm_val * 100.0)
+            soil_moist_available = True
         else:
-            def_temp, def_moist, def_hum = 26.0, 72.0, 75.0
+            sm_val = None
+            soil_moist_display = "not available"
+            soil_moist_pct = 72.0
+            soil_moist_available = False
+    except Exception as e:
+        fetch_success = False
+        forecast_data = None
+        temp_c, humidity, precip_48h, soil_moist_pct = 26.0, 75.0, 0.0, 72.0
+        soil_moist_display = "not available"
+        soil_moist_available = False
+else:
+    temp_c, humidity, precip_48h, soil_moist_pct = 26.0, 75.0, 0.0, 72.0
+    soil_moist_display = f"{soil_moist_pct:.0f}%"
+    soil_moist_available = True
 
-        temp_c = st.slider("🌡️ Temperature (°C)", min_value=10.0, max_value=45.0, value=def_temp, step=0.5)
-        soil_moist_pct = st.slider("💧 Soil Moisture (%)", min_value=10.0, max_value=100.0, value=def_moist, step=1.0)
-        humidity = st.slider("🌧️ Relative Humidity (%)", min_value=20.0, max_value=100.0, value=def_hum, step=1.0)
-        soil_moist_display = f"{soil_moist_pct:.0f}%"
-        soil_moist_available = True
+# ─── TOP TABS NAVIGATION ─────────────────────────────────────────────────────
+tab_home, tab_chat, tab_weather = st.tabs([
+    f"🏠 {get_ui_string('tab_home', lang_code)}",
+    f"💬 {get_ui_string('tab_chat', lang_code)}",
+    f"🌦️ {get_ui_string('tab_weather', lang_code)}"
+])
 
-    st.markdown("---")
-    show_gradcam = st.checkbox("🔥 Show Grad-CAM Heatmap", value=True)
-    show_lesion  = st.checkbox("🔴 Show Color-Threshold Lesion Mask", value=True)
+# ═════════════════════════════════════════════════════════════════════════════
+# ─── VIEW 1: HOME TAB ─────────────────────────────────────────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_home:
+    if not st.session_state.get("view_result", False):
+        # 1. Location Bar & Greeting
+        dist_col, _ = st.columns([1.2, 1.0])
+        with dist_col:
+            selected_district = st.selectbox(
+                "📍 " + get_ui_string("district_label", lang_code),
+                districts_list,
+                index=districts_list.index(selected_district) if selected_district in districts_list else 0,
+                key="home_district_selector"
+            )
+            st.session_state["selected_district"] = selected_district
 
-# ─── MAIN HEADER ─────────────────────────────────────────────────────────────
-# ─── LANGUAGE SELECTION (DEFINED ONCE FOR ENTIRE APPLICATION) ───────────────
-lang_code = voice_lang.split("(")[1].replace(")", "").strip()
+        # 2. Greeting & Weather summary
+        col_greet, col_wx = st.columns([1.2, 1.0])
+        with col_greet:
+            st.markdown(f"""
+            <div style="padding: 10px 0;">
+                <h2 style="margin:0;color:#275637;font-size:22px;">{get_ui_string('greeting', lang_code)}</h2>
+                <p style="margin:4px 0 0 0;color:#556B5C;font-size:14px;">Instant leaf pathology, ordinal severity & 48-hour preventive agronomy.</p>
+            </div>
+            """, unsafe_allow_html=True)
 
-st.title("🌾 AgriTrust AI — Multimodal Crop Disease & Severity Engine")
-st.markdown(
-    "Upload a leaf image to receive: **① AI Vision Diagnosis** · **② Field Condition Assessment** "
-    "· **③ Ordinal Severity Grade (0–3)** · **④ Grad-CAM Attention** · **⑤ Management Plan & Multilingual Voice**"
-)
+        with col_wx:
+            badge_text = get_ui_string('live_forecast_badge' if fetch_success else 'offline_badge', lang_code)
+            status_word = get_ui_string('weather_status_rain' if precip_48h > 2.0 else ('weather_status_dry' if humidity < 40 else 'weather_status_normal'), lang_code)
+            st.markdown(f"""
+            <div class="ui-card" style="padding:12px 16px;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-weight:700;font-size:14px;color:#275637;">📍 {selected_district}</span>
+                    <span style="font-size:12px;background:#91BA94;color:#275637;padding:2px 8px;border-radius:12px;font-weight:600;">{badge_text}</span>
+                </div>
+                <div style="margin-top:6px;font-size:14px;color:#275637;">
+                    🌡️ <b>{temp_c:.1f}°C</b> &nbsp;|&nbsp; 🌧️ <b>{humidity:.0f}%</b> &nbsp;|&nbsp; 💧 <b>{precip_48h:.1f} mm</b>
+                </div>
+                <div style="margin-top:4px;font-size:12px;color:#556B5C;font-weight:600;">
+                    {status_word}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-uploaded = st.file_uploader("📷 Upload Crop Leaf Image", type=["jpg", "jpeg", "png"])
+        # 3. Large Scan / Upload Photo Card
+        st.markdown(f"""
+        <div class="ui-card">
+            <h3 style="margin:0;color:#275637;font-size:18px;">📷 {get_ui_string('scan_card_title', lang_code)}</h3>
+            <p style="margin:4px 0 12px 0;font-size:13px;color:#556B5C;">ℹ️ {get_ui_string('tip_line', lang_code)}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-input_image = None
-if uploaded:
-    input_image = Image.open(uploaded).convert("RGB")
-    image_title = uploaded.name
+        # Crop chooser buttons inside the card
+        crop_c1, crop_c2, crop_c3 = st.columns(3)
+        with crop_c1:
+            if st.button("🌾 " + get_ui_string("crop_paddy", lang_code),
+                         type="primary" if st.session_state.get("active_crop") == "Paddy" else "secondary",
+                         key="btn_crop_paddy"):
+                st.session_state["active_crop"] = "Paddy"
+                st.rerun()
+        with crop_c2:
+            if st.button("🌴 " + get_ui_string("crop_arecanut", lang_code),
+                         type="primary" if st.session_state.get("active_crop") == "Arecanut" else "secondary",
+                         key="btn_crop_areca"):
+                st.session_state["active_crop"] = "Arecanut"
+                st.rerun()
+        with crop_c3:
+            if st.button("🍎 " + get_ui_string("crop_apple", lang_code),
+                         type="primary" if st.session_state.get("active_crop") == "Apple" else "secondary",
+                         key="btn_crop_apple"):
+                st.session_state["active_crop"] = "Apple"
+                st.rerun()
 
-# ─── INFERENCE WORKFLOW ───────────────────────────────────────────────────────
-if input_image is not None:
-    st.markdown("---")
-    active_crop = crop_mode
+        # Camera input first, upload second
+        cam_file = st.camera_input(get_ui_string("take_photo", lang_code), key="home_camera_input")
+        up_file = st.file_uploader(get_ui_string("upload_file", lang_code), type=["jpg", "jpeg", "png"], key="home_file_input")
 
-    if active_crop == "Apple":
-        st.warning("⚠️ **Trained on public lab data, not field-validated in orchards.**")
+        input_file = cam_file if cam_file is not None else up_file
 
-    # ── 0. OOD GUARD CHECK ────────────────────────────────────────────────────
-    with st.spinner(f"🛡️ Verifying image domain for {active_crop}..."):
-        is_ood, ood_score, ood_thresh = check_ood(input_image, active_crop)
+        # Process image when submitted
+        if input_file is not None:
+            active_crop = st.session_state.get("active_crop", "Paddy")
+            input_image = Image.open(input_file).convert("RGB")
+            image_title = getattr(input_file, "name", "Captured Photo")
 
-    if is_ood:
-        if os.path.exists("advisory_voice.mp3"):
-            try:
-                os.remove("advisory_voice.mp3")
-            except Exception:
-                pass
-        st.error(f"⚠️ **This does not look like a close-up {active_crop.lower()} photo. Retake a well-lit close-up of the affected leaf, trunk or nut.**")
-        st.info("The image features deviate significantly from close-up crop pathology training distributions. Diagnosis, severity grading, advisory, Grad-CAM, and voice are suppressed for safety.")
-        st.image(input_image, caption=f"Uploaded photo: {image_title}", width=350)
-    else:
-        # 1. DISEASE CLASSIFICATION
-        with st.spinner(f"🔬 Analyzing {active_crop} leaf..."):
+            # ── 0. OOD Guard Check
+            is_ood, ood_score, ood_thresh = check_ood(input_image, active_crop)
+
+            if is_ood:
+                st.session_state["last_result"] = {
+                    "is_ood": True, "is_abstain": False, "status": "unsure",
+                    "crop": active_crop, "display_name": "Unknown / Out-of-Distribution",
+                    "confidence": 0.0, "organic_advice": get_ui_string("refusal_ood_msg", lang_code),
+                    "chemical_advice": "", "weather_alert_text": None, "date": format_local_date(datetime.date.today(), lang_code)
+                }
+                st.session_state["scan_history"].append(st.session_state["last_result"])
+                if len(st.session_state["scan_history"]) > 10:
+                    st.session_state["scan_history"].pop(0)
+                st.session_state["view_result"] = True
+                st.session_state["current_scan_eval"] = {
+                    "is_ood": True, "is_abstain": False, "image": input_image, "title": image_title
+                }
+                st.rerun()
+
+            # ── 1. Disease Classification
             pred_cls, dis_conf, dis_probs, gradcam_img, display_name, clf_available = \
                 run_disease_classification(input_image, active_crop)
 
-        # ── ABSTAIN SAFETY RULE CHECK ─────────────────────────────────────────────
-        abstain_tau = ABSTAIN_THRESHOLDS.get(active_crop, 0.70)
-        if dis_conf < abstain_tau:
-            if os.path.exists("advisory_voice.mp3"):
-                try:
-                    os.remove("advisory_voice.mp3")
-                except Exception:
-                    pass
-            st.error("⚠️ **Not sure about this photo. Retake it in daylight or consult your KVK / agriculture officer.**")
-            st.info("The classifier confidence fell below the safety validation threshold. Disease diagnosis, pesticide prescription, Grad-CAM heatmap, and voice advisory are withheld.")
-            st.image(input_image, caption=f"Uploaded photo: {image_title}", width=350)
-        else:
-            # ── UN-ABSTAINED DIAGNOSIS & REMEDIATION PIPELINE ──────────────────────
-            if active_crop == "Arecanut" and pred_cls in ["bud_borer", "yellow_leaf_disease"]:
-                st.warning("⚠️ **Low Reliability Notice:** The model frequently confuses Bud Borer and Yellow Leaf Disease (YLD). An agricultural expert from your local KVK or CPCRI should confirm this diagnosis before treatment.")
+            # ── 2. Abstain Check
+            abstain_tau = ABSTAIN_THRESHOLDS.get(active_crop, 0.70)
+            if dis_conf < abstain_tau:
+                st.session_state["last_result"] = {
+                    "is_ood": False, "is_abstain": True, "status": "unsure",
+                    "crop": active_crop, "display_name": "Withheld (Low Confidence)",
+                    "confidence": dis_conf, "organic_advice": get_ui_string("refusal_abstain_msg", lang_code),
+                    "chemical_advice": "", "weather_alert_text": None, "date": format_local_date(datetime.date.today(), lang_code)
+                }
+                st.session_state["scan_history"].append(st.session_state["last_result"])
+                if len(st.session_state["scan_history"]) > 10:
+                    st.session_state["scan_history"].pop(0)
+                st.session_state["view_result"] = True
+                st.session_state["current_scan_eval"] = {
+                    "is_ood": False, "is_abstain": True, "image": input_image, "title": image_title, "conf": dis_conf
+                }
+                st.rerun()
 
+            # ── 3. Un-Abstained Successful Diagnosis
             is_healthy = (pred_cls in ["normal", "healthy", "healthy_foot", "healthy_leaf", "healthy_nut", "healthy_trunk"]
                           or display_name.startswith("Healthy"))
 
-            # 2. SEVERITY GRADING (Suppressed for Apple)
+            severity_arch = st.session_state.get("severity_arch", "Ordinal CORN")
             if active_crop != "Apple":
                 if is_healthy:
                     grade = 0
@@ -841,19 +1001,23 @@ if input_image is not None:
                     sev_probs = [1.0, 0.0, 0.0, 0.0]
                     cv_ratio = 0.0
                     lesion_overlay = None
+                elif active_crop == "Paddy" and pred_cls == "hispa":
+                    grade = 1
+                    sev_conf = 1.0
+                    sev_probs = [0.0, 1.0, 0.0, 0.0]
+                    cv_ratio = 0.0
+                    lesion_overlay = None
+                elif active_crop == "Paddy" and pred_cls == "dead_heart":
+                    grade = 3
+                    sev_conf = 1.0
+                    sev_probs = [0.0, 0.0, 0.0, 1.0]
+                    cv_ratio = 0.0
+                    lesion_overlay = None
                 else:
-                    with st.spinner(f"📊 Grading disease severity ({model_type_choice})..."):
-                        grade, sev_conf, sev_probs, cv_ratio, lesion_overlay = \
-                            run_severity(input_image, active_crop, model_type_choice)
+                    grade, sev_conf, sev_probs, cv_ratio, lesion_overlay = \
+                        run_severity(input_image, active_crop, severity_arch)
                     if grade == 0:
-                        grade = 1  # if non-healthy predicted grade 0, promote to grade 1 for advice and display
-
-                grade_info = [
-                    {"name": "Grade 0: Healthy",          "card": "result-card-g0", "color": "#22c55e", "badge": "🟢"},
-                    {"name": "Grade 1: Mild Severity",     "card": "result-card-g1", "color": "#eab308", "badge": "🟡"},
-                    {"name": "Grade 2: Moderate Severity", "card": "result-card-g2", "color": "#f97316", "badge": "🟠"},
-                    {"name": "Grade 3: Severe Severity",   "card": "result-card-g3", "color": "#ef4444", "badge": "🔴"},
-                ][grade]
+                        grade = 1
             else:
                 grade = 0
                 sev_conf = 0.0
@@ -861,251 +1025,587 @@ if input_image is not None:
                 cv_ratio = 0.0
                 lesion_overlay = None
 
-            # 3. BIOCLIMATIC SENSOR RISK EVALUATION (MULTIMODAL FUSION)
-            if use_live_weather and fetch_success:
-                # Live Open-Meteo soil moisture is volumetric fraction (0-1 cm, typically 10-45%),
-                # whereas the legacy risk engine thresholds expect sensor saturation (25-85%).
-                # In live mode, ignore soil moisture by passing neutral 50.0% so it neither
-                # triggers nor suppresses rules.
-                risk_soil_pct = 50.0
-            else:
-                risk_soil_pct = soil_moist_pct
-
+            # ── 4. Bioclimatic Risk Evaluation
+            risk_soil_pct = 50.0 if (use_live_weather and fetch_success) else soil_moist_pct
             risk_score, risk_level, env_alert, action_modifier = evaluate_environmental_risk(
                 crop=active_crop, disease_name=display_name, temp_c=temp_c, soil_moisture_pct=risk_soil_pct, humidity_pct=humidity
             )
 
-            # ── DISEASE BANNER ───────────────────────────────────────────────────
-            if clf_available:
-                fact = DISEASE_FACTS.get(display_name, "")
-                loc_dict = DISEASE_LOCALIZATION.get(active_crop, {}).get(pred_cls, {})
-                localized_name = loc_dict.get(lang_code, display_name)
-                banner_name = f"{display_name} ({localized_name})" if (lang_code != "en" and localized_name != display_name) else display_name
-
-                rust_caption = '<p style="margin-top:6px;font-size:12px;color:#fef08a;font-style:italic;">⚠️ Class from US public data; confirm locally with your KVK.</p>' if (active_crop == "Apple" and pred_cls == "cedar_apple_rust") else ''
-
-                st.markdown(f"""
-                <div class="disease-card">
-                    <h2 style="margin:0;color:#38bdf8;">🦠 Detected Disease: {banner_name}</h2>
-                    <p style="margin-top:8px;font-size:15px;color:#cbd5e1;">
-                        Vision Confidence: <b style="color:#38bdf8;">{dis_conf:.1%}</b>
-                        &nbsp;|&nbsp; Target Crop: <b>{active_crop}</b>
-                    </p>
-                    {rust_caption}
-                    {'<p style="margin-top:8px;font-size:13px;color:#94a3b8;font-style:italic;">' + fact + '</p>' if fact else ''}
-                </div>""", unsafe_allow_html=True)
-
-            # ── MULTIMODAL FUSION PANEL (VISION + FIELD CONDITIONS) ──────────────
-            risk_color = "#ef4444" if risk_score >= 70 else ("#f97316" if risk_score >= 45 else "#22c55e")
-            if use_live_weather and fetch_success:
-                if soil_moist_available:
-                    moist_str = f"<b>💧 Topsoil moisture (model estimate): {soil_moist_display}</b>"
-                else:
-                    moist_str = "<b>💧 Topsoil moisture (model estimate): not available</b>"
-                env_source_label = f"Live forecast ({selected_district})"
-                soil_engine_note = '<p style="margin-top:4px;font-size:12px;color:#94a3b8;font-style:italic;">ℹ️ Soil moisture neutralised (50%) in risk engine due to volumetric scale difference.</p>'
-            else:
-                moist_str = f"<b>💧 Soil Moisture: {soil_moist_pct:.0f}%</b>"
-                env_source_label = "Field conditions (entered by user)"
-                soil_engine_note = ""
-
-            # 48-Hour Preventive Weather Alert gating:
-            # ONLY for non-healthy predictions matching the 3 rules:
-            # apple_scab (Apple), blast (Paddy), mahali_koleroga (Arecanut).
+            # ── 5. 48-Hour Alert Gating
             weather_alert_res = None
             weather_spoken_alert = ""
-
             if (not is_healthy) and use_live_weather and fetch_success and (forecast_data is not None):
                 weather_alert_res = compute_48h_disease_risk(forecast_data, active_crop, display_name, pred_cls=pred_cls)
                 if weather_alert_res is not None:
                     weather_spoken_alert = weather_alert_res["voice_alerts"].get(lang_code, weather_alert_res["voice_alerts"]["en"])
 
-            if not (use_live_weather and fetch_success):
-                alert_html = """
-                <div style="background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.3);
-                            border-radius: 12px; padding: 12px 16px; margin-top: 14px;">
-                    <p style="margin:0;font-size:14px;color:#cbd5e1;">
-                        ℹ️ 48-hour alert needs the live forecast.
-                    </p>
-                </div>
-                """
-            elif weather_alert_res is not None:
-                rcat = weather_alert_res["risk_cat"]
-                rcol = "#ef4444" if rcat == "High" else ("#f97316" if rcat == "Moderate" else "#22c55e")
-                alert_html = f"""
-                <div style="background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.35);
-                            border-radius: 12px; padding: 14px 18px; margin-top: 14px;">
-                    <h4 style="margin:0;color:{rcol};">⏱️ 48-Hour Preventive Disease Alert ({rcat} Risk)</h4>
-                    <p style="margin:8px 0 0 0;font-size:14.5px;color:#f1f5f9;line-height:1.5;">
-                        {weather_alert_res['alert_text']}
-                    </p>
-                    <p style="margin:6px 0 0 0;font-size:11.5px;color:#94a3b8;font-style:italic;">
-                        ⚠️ rule-based risk estimate, not a validated forecast
-                    </p>
-                </div>
-                """
-            else:
-                alert_html = ""
-
-            st.markdown(f"""
-            <div class="multimodal-card">
-                <h3 style="margin:0;color:#a78bfa;">🌦️ Environmental Evaluation (Vision + Field Conditions)</h3>
-                <p style="margin-top:6px;font-size:14px;color:#cbd5e1;">
-                    {env_source_label}: <b>🌡️ {temp_c:.1f}°C</b> &nbsp;|&nbsp; {moist_str} &nbsp;|&nbsp; <b>🌧️ Humidity: {humidity:.0f}%</b>
-                </p>
-                {soil_engine_note}
-                <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
-                    <span style="font-weight:600;color:{risk_color};font-size:16px;">Bioclimatic Outbreak Risk: {risk_score:.0f}% ({risk_level})</span>
-                </div>
-                <p style="margin-top:10px;font-size:14px;color:#e2e8f0;line-height:1.5;">
-                    <b>Agronomic Assessment:</b> {env_alert}
-                </p>
-                {alert_html}
-            </div>
-            """, unsafe_allow_html=True)
-
-            # ── THREE-PANEL VISUAL ROW ───────────────────────────────────────────
-            st.subheader("🖼️ Explainability & Attention Panels")
-            panels = [("Original Photo", input_image, f"Raw uploaded image: {image_title}", "image")]
-            if show_gradcam and gradcam_img is not None and clf_available:
-                panels.append(("🔥 Attention Heatmap (Grad-CAM)", gradcam_img,
-                               f"Grad-CAM Heatmap — red areas show features driving model decision for {display_name}. (Note: Pointing accuracy is only 5–14% on leaf pathology; heatmaps indicate salient regions rather than verified disease localization).", "image"))
-            if show_lesion and lesion_overlay is not None:
-                panels.append(("🔴 Color-Threshold Lesion Mask", lesion_overlay,
-                               f"Lesion Mask — {cv_ratio:.1%} estimated lesion area.", "image"))
-
-            cols = st.columns(len(panels))
-            for p_idx, (p_title, p_content, p_note, p_type) in enumerate(panels):
-                with cols[p_idx]:
-                    st.markdown(f"**{p_title}**")
-                    st.image(p_content, caption="", use_container_width=True)
-                    st.markdown(f'<p class="explainer-note">{p_note}</p>', unsafe_allow_html=True)
-
-            # ── SEVERITY & DISEASE DISTRIBUTION ROW ──────────────────────────────
-            st.markdown("---")
-            left, right = st.columns([1, 1])
-
-            with left:
-                if active_crop == "Apple":
-                    st.info("🍎 **Severity grading is withheld for Apple:** Model trained on public lab data, not field-validated in orchards.")
-                elif is_healthy:
-                    st.success("🌿 **Foliage Healthy:** No disease lesions detected. Severity grading is withheld.")
-                    m1, m2 = st.columns(2)
-                    with m1:
-                        st.markdown(f"""<div class="metric-badge">
-                            <div class="metric-val">{dis_conf:.1%}</div>
-                            <div class="metric-lbl">Vision Confidence</div>
-                        </div>""", unsafe_allow_html=True)
-                    with m2:
-                        st.markdown(f"""<div class="metric-badge">
-                            <div class="metric-val">{cv_ratio:.1%}</div>
-                            <div class="metric-lbl">Lesion Coverage</div>
-                        </div>""", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"""
-                    <div class="{grade_info['card']}">
-                        <h2 style="margin:0;color:{grade_info['color']};">{grade_info['badge']} {grade_info['name']}</h2>
-                    </div>""", unsafe_allow_html=True)
-
-                    if active_crop == "Arecanut":
-                        st.caption("Provisional: not independently validated.")
-                    elif active_crop == "Paddy":
-                        st.caption("Independent-test QWK about 0.67 (twin-free, lesion classes); headline 0.94 is inflated.")
-
-                    m1, m2, m3 = st.columns(3)
-                    with m1:
-                        st.markdown(f"""<div class="metric-badge">
-                            <div class="metric-val">{dis_conf:.1%}</div>
-                            <div class="metric-lbl">Vision Confidence</div>
-                        </div>""", unsafe_allow_html=True)
-                    with m2:
-                        st.markdown(f"""<div class="metric-badge">
-                            <div class="metric-val">{sev_conf:.1%}</div>
-                            <div class="metric-lbl">Severity Confidence</div>
-                        </div>""", unsafe_allow_html=True)
-                    with m3:
-                        st.markdown(f"""<div class="metric-badge">
-                            <div class="metric-val">{cv_ratio:.1%}</div>
-                            <div class="metric-lbl">Lesion Coverage</div>
-                        </div>""", unsafe_allow_html=True)
-
-            with right:
-                if clf_available:
-                    st.markdown("**🦠 Disease Probability Distribution**")
-                    if active_crop == "Paddy": disp_map = PADDY_DISPLAY
-                    elif active_crop == "Apple": disp_map = APPLE_DISPLAY
-                    else: disp_map = ARECA_DISPLAY
-                    
-                    df_dis = pd.DataFrame({
-                        "Disease": [disp_map.get(c, c) for c in dis_probs.keys()],
-                        "Probability": list(dis_probs.values())
-                    }).sort_values("Probability", ascending=False)
-                    st.bar_chart(df_dis.set_index("Disease"), height=160, color="#38bdf8")
-
-            # ── PESTICIDE & TREATMENT RECOMMENDER ─────────────────────────────────
-            st.markdown("---")
-            st.subheader("💊 Actionable Management Plan")
-            
+            # ── 6. Treatment Recommendations
             crop_tx = TREATMENT_DATABASE.get(active_crop, {})
             dis_tx  = crop_tx.get(display_name, {})
-            
             if active_crop == "Apple":
-                if display_name == "Healthy (No Disease)":
+                if is_healthy:
                     title_tx, desc_tx = dis_tx.get(0, ("Healthy Foliage", "No treatment needed."))
+                    org_steps = "No treatment needed."
+                    chem_steps = "No chemical treatment needed."
                 else:
-                    title_tx, desc_tx = dis_tx.get("disease_advice", ("Disease Advisory", "Follow local KVK advice."))
+                    title_tx, desc_tx = dis_tx.get("disease_advice", ("Apple Scab Management", "Follow local KVK advice."))
+                    # Split into cultural/organic and chemical
+                    if "Apply protective" in desc_tx:
+                        parts = desc_tx.split("Apply protective")
+                        org_steps = parts[0].strip()
+                        chem_steps = "Apply protective " + parts[1].strip()
+                    elif "Apply" in desc_tx:
+                        parts = desc_tx.split("Apply")
+                        org_steps = parts[0].strip()
+                        chem_steps = "Apply " + parts[1].strip()
+                    else:
+                        org_steps = desc_tx
+                        chem_steps = "Consult your KVK for registered chemical treatments."
             else:
                 title_tx, desc_tx = dis_tx.get(grade, ("Action Plan", "Follow local KVK advice."))
-            
-            rust_box_note = '<p style="margin-top:6px;font-size:12px;color:#fef08a;font-style:italic;">⚠️ Class from US public data; confirm locally with your KVK.</p>' if (active_crop == "Apple" and pred_cls == "cedar_apple_rust") else ''
+                if is_healthy:
+                    org_steps = "No treatment needed. Maintain optimal water and balanced fertilizer."
+                    chem_steps = "No chemical treatment needed."
+                elif pred_cls in ["tungro", "yellow_leaf_disease"]:
+                    org_steps = "No chemical cure exists. Manage insect vectors, remove infected plants, consult your KVK."
+                    chem_steps = "No chemical cure exists for viral/phytoplasma infections."
+                else:
+                    g1_tx = dis_tx.get(1, ("", "Start with cultural steps and bio-fungicides."))[1]
+                    g_hi_tx = dis_tx.get(max(2, grade), ("", "Apply registered systemic treatment under KVK advice."))[1]
+                    org_steps = g1_tx
+                    chem_steps = g_hi_tx
 
-            st.markdown(f"""
-            <div class="pesticide-card">
-                <h3 style="margin:0;color:#10b981;">📋 Action Plan: {title_tx}</h3>
-                {rust_box_note}
-                <p style="margin-top:10px;font-size:16px;color:#e2e8f0;line-height:1.6;">
-                    {desc_tx}
-                </p>
-                <p style="margin-top:10px;font-size:14px;color:#fef08a;font-weight:600;">
-                    {action_modifier}
-                </p>
-                <div style="margin-top:12px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);font-size:12px;color:#94a3b8;font-style:italic;">
-                    ⚠️ Verify against ICAR / CPCRI / CIB&RC before use.
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # ── SOIL HEALTH CARD ──────────────────────────────────────────────────
-            st.markdown("---")
-            st.subheader("🌱 Soil Health Card")
+            # ── 7. Soil Health Card
             soil_info = SOIL_HEALTH_ADVISORY.get(active_crop, SOIL_HEALTH_ADVISORY["Paddy"])
             soil_title, soil_desc = soil_info.get(lang_code, soil_info["en"])
 
+            # ── 8. Multilingual Spoken Advisory
+            advisory_text = build_voice_advisory(active_crop, display_name, pred_cls, grade, lang_code, weather_spoken_alert)
+
+            # Determine traffic light status
+            if is_healthy:
+                status_type = "healthy"
+            elif pred_cls in ["tungro", "yellow_leaf_disease"]:
+                status_type = "no_cure"
+            else:
+                status_type = "treat"
+
+            scan_record = {
+                "is_ood": False,
+                "is_abstain": False,
+                "status": status_type,
+                "crop": active_crop,
+                "pred_cls": pred_cls,
+                "display_name": display_name,
+                "confidence": dis_conf,
+                "dis_probs": dis_probs,
+                "grade": grade,
+                "sev_conf": sev_conf,
+                "cv_ratio": cv_ratio,
+                "gradcam_img": gradcam_img,
+                "lesion_overlay": lesion_overlay,
+                "organic_advice": org_steps,
+                "chemical_advice": chem_steps,
+                "action_modifier": action_modifier,
+                "weather_alert_res": weather_alert_res,
+                "weather_alert_text": weather_alert_res["alert_text"] if weather_alert_res else None,
+                "soil_title": soil_title,
+                "soil_desc": soil_desc,
+                "advisory_text": advisory_text,
+                "date": format_local_date(datetime.date.today(), lang_code),
+                "tungro_note": TUNGRO_SAFETY_NOTE.get(lang_code, TUNGRO_SAFETY_NOTE["en"]) if (active_crop == "Paddy" and pred_cls in ["hispa", "downy_mildew"]) else None,
+                "cedar_note": get_ui_string("cedar_rust_caption", lang_code) if (active_crop == "Apple" and pred_cls == "cedar_apple_rust") else None,
+                "image": input_image,
+                "image_title": image_title
+            }
+            st.session_state["last_result"] = scan_record
+            st.session_state["scan_history"].append(scan_record)
+            if len(st.session_state["scan_history"]) > 10:
+                st.session_state["scan_history"].pop(0)
+            st.session_state["view_result"] = True
+            st.rerun()
+
+        # 4. "Your Last Result" Card
+        scan_hist = st.session_state.get("scan_history", [])
+        if not scan_hist:
             st.markdown(f"""
-            <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(14, 116, 144, 0.20));
-                        border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 16px; padding: 18px 22px; margin-top: 14px;">
-                <h3 style="margin:0;color:#34d399;">🌱 {soil_title}</h3>
-                <p style="margin-top:10px;font-size:15px;color:#e2e8f0;line-height:1.6;">
-                    {soil_desc}
-                </p>
-                <div style="margin-top:12px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);font-size:12px;color:#94a3b8;font-style:italic;">
-                    ⚠️ Verify with your KVK / soil health card.
+            <div class="ui-card">
+                <h4 style="margin:0;color:#275637;font-size:16px;">📋 {get_ui_string('last_result_title', lang_code)}</h4>
+                <p style="margin:8px 0 0 0;font-size:14px;color:#556B5C;">{get_ui_string('no_scans_yet', lang_code)}</p>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            latest = scan_hist[-1]
+            st.markdown(f"""
+            <div class="ui-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <h4 style="margin:0;color:#275637;font-size:16px;">📋 {get_ui_string('last_result_title', lang_code)}</h4>
+                    <span style="font-size:12px;color:#556B5C;">{latest.get('date', '')}</span>
+                </div>
+                <div style="margin-top:8px;font-size:15px;color:#275637;">
+                    <b>{get_ui_string('crop_label', lang_code)}:</b> {latest.get('crop', '')} &nbsp;|&nbsp;
+                    <b>{latest.get('display_name', '')}</b> &nbsp;|&nbsp;
+                    <b>{get_ui_string('confidence_label', lang_code)}:</b> {latest.get('confidence', 0.0):.1%}
+                </div>
+                <div style="margin-top:6px;font-size:14px;color:#556B5C;">
+                    <b>{get_ui_string('recommendation_label', lang_code)}:</b> {latest.get('organic_advice', '')}
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-            # ── MULTILINGUAL VOICE ASSISTANT ──────────────────────────────────────
-            st.markdown("---")
-            st.subheader("🎙️ Multilingual Voice Advisory")
-            advisory_text = build_voice_advisory(active_crop, display_name, pred_cls, grade, lang_code, weather_spoken_alert)
-            
-            try:
-                tts = gTTS(text=advisory_text, lang=lang_code, slow=False)
-                tts.save("advisory_voice.mp3")
-                st.audio("advisory_voice.mp3", format="audio/mp3")
-                st.caption(f"🔊 Spoken Advisory in **{voice_lang}**")
-            except Exception as e:
-                st.info(f"🔊 Voice Advisory Text: {advisory_text}")
+    else:
+        # ═════════════════════════════════════════════════════════════════════
+        # ─── RESULT SCREEN (AFTER PHOTO IS SUBMITTED) ─────────────────────────
+        # ═════════════════════════════════════════════════════════════════════
+        if st.button(get_ui_string("back_btn", lang_code), key="btn_back_home"):
+            st.session_state["view_result"] = False
+            st.rerun()
 
-else:
-    st.info("👆 Upload a crop leaf image above (and adjust soil moisture & temperature in the sidebar) to begin multimodal analysis.")
+        res = st.session_state.get("last_result")
+        if res is not None:
+            # ── A. REFUSAL STATES (OOD / ABSTAIN)
+            if res.get("is_ood"):
+                st.markdown(f"""
+                <div class="refusal-card">
+                    <div style="font-size:32px;margin-bottom:8px;">⚠️</div>
+                    <h3 style="margin:0;color:#275637;font-size:18px;">{get_ui_string('refusal_ood_title', lang_code)}</h3>
+                    <p style="margin:10px 0 0 0;font-size:14px;color:#556B5C;line-height:1.5;">
+                        {get_ui_string('refusal_ood_msg', lang_code)}
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+                if res.get("image") is not None:
+                    st.image(res["image"], caption=res.get("image_title", "Uploaded Image"), width=360)
+
+            elif res.get("is_abstain"):
+                st.markdown(f"""
+                <div class="refusal-card">
+                    <div style="font-size:32px;margin-bottom:8px;">⚠️</div>
+                    <h3 style="margin:0;color:#275637;font-size:18px;">{get_ui_string('refusal_abstain_title', lang_code)}</h3>
+                    <p style="margin:10px 0 0 0;font-size:14px;color:#556B5C;line-height:1.5;">
+                        {get_ui_string('refusal_abstain_msg', lang_code)}
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+                if res.get("image") is not None:
+                    st.image(res["image"], caption=res.get("image_title", "Uploaded Image"), width=360)
+
+            else:
+                # ── B. SUCCESSFUL SCAN RESULT SCREEN
+                status = res.get("status", "healthy")
+                if status == "healthy":
+                    badge_cls, badge_icon, badge_word = "badge-healthy", "🟢", get_ui_string("status_healthy", lang_code)
+                elif status == "no_cure":
+                    badge_cls, badge_icon, badge_word = "badge-no-cure", "🔴", get_ui_string("status_no_cure", lang_code)
+                else:
+                    badge_cls, badge_icon, badge_word = "badge-treat", "🟡", get_ui_string("status_treat", lang_code)
+
+                # 1. Status Banner
+                st.markdown(f"""
+                <div class="badge-status {badge_cls}">
+                    {badge_icon} {badge_word}
+                </div>
+                """, unsafe_allow_html=True)
+
+                # 2. Disease Name (Localized large, English small below)
+                active_crop = res.get("crop", "Paddy")
+                pred_cls = res.get("pred_cls", "normal")
+                display_name = res.get("display_name", "Disease")
+                loc_name = DISEASE_LOCALIZATION.get(active_crop, {}).get(pred_cls, {}).get(lang_code, display_name)
+
+                if lang_code != "en" and loc_name != display_name:
+                    st.markdown(f"""
+                    <div style="margin-bottom:12px;">
+                        <h2 style="margin:0;color:#275637;font-size:24px;">{loc_name}</h2>
+                        <div style="font-size:14px;color:#556B5C;">{display_name}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                    <div style="margin-bottom:12px;">
+                        <h2 style="margin:0;color:#275637;font-size:24px;">{display_name}</h2>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                # 3. Confidence Bar
+                dis_conf = res.get("confidence", 0.0)
+                st.progress(dis_conf, text=f"{get_ui_string('confidence_label', lang_code)}: {dis_conf:.1%}")
+
+                # 3b. Severity Card
+                res_grade = res.get("grade", 0)
+                sev_conf_val = res.get("sev_conf", 1.0)
+                cv_ratio_val = res.get("cv_ratio", 0.0)
+                if active_crop != "Apple" and status != "healthy":
+                    grade_labels = {
+                        1: "Grade 1: Mild Severity",
+                        2: "Grade 2: Moderate Severity",
+                        3: "Grade 3: Severe Severity"
+                    }
+                    grade_str = grade_labels.get(res_grade, f"Grade {res_grade}")
+                    st.markdown(f"""
+                    <div class="ui-card" style="padding:12px 16px;margin:10px 0;">
+                        <div style="font-weight:700;font-size:15px;color:#275637;">📊 {grade_str}</div>
+                        <div style="font-size:13px;color:#556B5C;margin-top:2px;">
+                            Confidence: {sev_conf_val:.1%} &nbsp;|&nbsp; Estimated Lesion Area: {cv_ratio_val:.1%}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    if active_crop == "Arecanut":
+                        st.caption(get_ui_string("areca_provisional", lang_code))
+                    elif active_crop == "Paddy":
+                        if pred_cls in ["hispa", "dead_heart"]:
+                            st.caption(get_ui_string("paddy_severity_fixed", lang_code))
+                        elif pred_cls not in ["normal"]:
+                            st.caption(get_ui_string("paddy_severity_qwk", lang_code))
+
+                # 4. Mandatory Captions & Warnings
+                if active_crop == "Apple":
+                    st.markdown(f"""
+                    <div style="font-size:13px;color:#B5483A;background:#FFFFFF;border:1px solid #91BA94;border-radius:10px;padding:8px 12px;margin:10px 0;">
+                        {get_ui_string('apple_public_banner', lang_code)}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                if active_crop == "Apple" and pred_cls == "cedar_apple_rust":
+                    st.caption(get_ui_string("cedar_rust_caption", lang_code))
+
+                if active_crop == "Arecanut" and pred_cls in ["bud_borer", "yellow_leaf_disease"]:
+                    st.markdown(f"""
+                    <div style="font-size:13px;color:#275637;background:#F6D05F;border-radius:10px;padding:8px 12px;margin:10px 0;font-weight:600;">
+                        {get_ui_string('areca_bud_borer_warning', lang_code)}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                if active_crop == "Paddy" and pred_cls in ["hispa", "downy_mildew"]:
+                    tungro_txt = res.get("tungro_note") or TUNGRO_SAFETY_NOTE.get(lang_code, TUNGRO_SAFETY_NOTE["en"])
+                    st.markdown(f"""
+                    <div style="font-size:13px;color:#275637;background:#F6D05F;border-radius:10px;padding:8px 12px;margin:10px 0;">
+                        ℹ️ <b>{get_ui_string('tungro_warning_title', lang_code)}:</b> {tungro_txt}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                # 5. "What to do" with organic steps first and chemical in expander
+                st.markdown(f"""
+                <div class="ui-card">
+                    <h3 style="margin:0;color:#275637;font-size:17px;">📋 {get_ui_string('what_to_do', lang_code)}</h3>
+                    <div style="margin-top:10px;font-size:15px;color:#275637;line-height:1.5;">
+                        <b>{get_ui_string('organic_title', lang_code)}:</b> {res.get('organic_advice', '')}
+                    </div>
+                    {f'<div style="margin-top:8px;font-size:14px;color:#275637;font-weight:600;">{res.get("action_modifier", "")}</div>' if res.get("action_modifier") else ''}
+                </div>
+                """, unsafe_allow_html=True)
+
+                # Chemical option inside expander
+                with st.expander(get_ui_string("severe_expander", lang_code), expanded=False):
+                    st.markdown(f"""
+                    <div style="font-size:15px;color:#275637;line-height:1.5;">
+                        {res.get('chemical_advice', '')}
+                    </div>
+                    <div style="margin-top:10px;font-size:12px;color:#556B5C;font-style:italic;">
+                        {get_ui_string('footer_disclaimer_tx', lang_code)}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                # 6. 48-Hour Alert Strip
+                weather_alert_res = res.get("weather_alert_res")
+                if weather_alert_res is not None:
+                    rcat = weather_alert_res["risk_cat"]
+                    border_color = THEME_CONFIG['danger'] if rcat == 'High' else THEME_CONFIG['warn_yellow']
+                    st.markdown(f"""
+                    <div class="ui-card" style="border-left: 5px solid {border_color};">
+                        <h4 style="margin:0;color:#275637;font-size:16px;">⏱️ {get_ui_string('weather_alert_title', lang_code)} ({rcat} Risk)</h4>
+                        <p style="margin:6px 0 0 0;font-size:14px;color:#275637;line-height:1.5;">
+                            {weather_alert_res['alert_text']}
+                        </p>
+                        <p style="margin:6px 0 0 0;font-size:11px;color:#556B5C;font-style:italic;">
+                            ⚠️ {get_ui_string('rule_based_tag', lang_code)}
+                        </p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    if use_live_weather and fetch_success:
+                        st.markdown(f"""
+                        <div class="ui-card" style="padding:10px 14px;">
+                            <span style="font-size:13px;color:#556B5C;font-style:italic;">ℹ️ No weather rule for this disease.</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"""
+                        <div class="ui-card" style="padding:10px 14px;">
+                            <span style="font-size:13px;color:#556B5C;font-style:italic;">ℹ️ 48-hour alert needs the live forecast.</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                # 7. Soil Card
+                st.markdown(f"""
+                <div class="ui-card">
+                    <h4 style="margin:0;color:#275637;font-size:16px;">🌱 {res.get('soil_title', '')}</h4>
+                    <p style="margin:8px 0 0 0;font-size:14px;color:#275637;line-height:1.5;">
+                        {res.get('soil_desc', '')}
+                    </p>
+                    <div style="margin-top:8px;font-size:12px;color:#556B5C;font-style:italic;">
+                        {get_ui_string('footer_disclaimer_soil', lang_code)}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                # 8. Audio Player
+                advisory_text = res.get("advisory_text", "")
+                if advisory_text:
+                    st.markdown(f"""
+                    <div class="ui-card" style="padding:12px 16px;">
+                        <div style="font-weight:700;font-size:15px;color:#275637;margin-bottom:8px;">
+                            🎙️ {get_ui_string('listen_audio', lang_code)}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    try:
+                        tts = gTTS(text=advisory_text, lang=lang_code, slow=False)
+                        tts.save("advisory_voice.mp3")
+                        st.audio("advisory_voice.mp3", format="audio/mp3")
+                        st.caption(f"🔊 Spoken Advisory in **{chosen_lang_name}**")
+                    except Exception:
+                        st.caption(f"🔊 {advisory_text}")
+
+                # 9. Collapsed "For experts and judges" Expander
+                st.markdown("---")
+                with st.expander("🔬 " + get_ui_string("experts_expander", lang_code), expanded=False):
+                    # Trust & Audit Panel
+                    st.markdown(f"#### 🛡️ {get_ui_string('trust_audit_title', lang_code)}")
+                    for k, v in TRUST_AND_AUDIT.items():
+                        st.markdown(f"- **{k.replace('_', ' ').title()}:** {v}")
+
+                    st.markdown("---")
+                    # Explainability Panels
+                    st.markdown("#### 🖼️ Explainability & Attention Panels")
+                    exp_col1, exp_col2 = st.columns(2)
+                    with exp_col1:
+                        if res.get("gradcam_img") is not None:
+                            st.markdown("**Attention Heatmap (Grad-CAM)**")
+                            st.image(res["gradcam_img"], use_container_width=True)
+                            st.caption(f"Grad-CAM Heatmap — red areas show features driving model decision for {display_name}. (Note: Pointing accuracy is only 5–14% on leaf pathology; heatmaps indicate salient regions rather than verified disease localization).")
+                    with exp_col2:
+                        if res.get("lesion_overlay") is not None:
+                            st.markdown("**Color-Threshold Lesion Mask**")
+                            st.image(res["lesion_overlay"], use_container_width=True)
+                            cv_ratio = res.get("cv_ratio", 0.0)
+                            st.caption(f"Lesion Mask — {cv_ratio:.1%} estimated lesion area.")
+
+                    # Paddy & Arecanut severity captions
+                    if active_crop == "Arecanut":
+                        st.caption(get_ui_string("areca_provisional", lang_code))
+                    elif active_crop == "Paddy":
+                        if pred_cls in ["hispa", "dead_heart"]:
+                            st.caption(get_ui_string("paddy_severity_fixed", lang_code))
+                        elif pred_cls not in ["normal"]:
+                            st.caption(get_ui_string("paddy_severity_qwk", lang_code))
+
+                    st.markdown("---")
+                    # Probability Distribution
+                    st.markdown("#### 📊 Disease Probability Distribution")
+                    dis_probs = res.get("dis_probs", {})
+                    if dis_probs:
+                        disp_map = PADDY_DISPLAY if active_crop == "Paddy" else (APPLE_DISPLAY if active_crop == "Apple" else ARECA_DISPLAY)
+                        df_dis = pd.DataFrame({
+                            "Disease": [disp_map.get(c, c) for c in dis_probs.keys()],
+                            "Probability": list(dis_probs.values())
+                        }).sort_values("Probability", ascending=False)
+                        st.bar_chart(df_dis.set_index("Disease"), height=180)
+
+                    st.markdown("---")
+                    # Severity Architecture Selector & Manual Weather Sliders
+                    st.markdown("#### ⚙️ Expert Controls")
+                    st.session_state["severity_arch"] = st.selectbox(
+                        "Severity AI Architecture", ["Ordinal CORN", "Baseline Softmax"],
+                        index=0 if st.session_state.get("severity_arch") == "Ordinal CORN" else 1
+                    )
+                    st.session_state["use_live_weather"] = st.toggle("Use live forecast", value=st.session_state.get("use_live_weather", True))
+                    if not st.session_state["use_live_weather"]:
+                        _ = st.slider("Manual Temperature (°C)", 10.0, 45.0, 26.0, 0.5)
+                        _ = st.slider("Manual Soil Moisture (%)", 10.0, 100.0, 72.0, 1.0)
+                        _ = st.slider("Manual Humidity (%)", 20.0, 100.0, 75.0, 1.0)
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# ─── VIEW 2: AI CHAT TAB (GROUNDED, NO LLM) ───────────────────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_chat:
+    st.markdown(f"""
+    <div style="padding: 6px 0 12px 0;">
+        <h2 style="margin:0;color:#275637;font-size:20px;">💬 {get_ui_string('chat_title', lang_code)}</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    last_scan = st.session_state.get("last_result")
+
+    # If no scan yet, show initial grounding notice
+    if not last_scan:
+        st.markdown(f"""
+        <div class="chat-bubble-ai">
+            🤖 {get_ui_string('chat_no_context', lang_code)}
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # Show render of chat message history
+        for msg in st.session_state.get("chat_history", []):
+            if msg["role"] == "user":
+                st.markdown(f"""<div class="chat-bubble-user">🧑‍🌾 {msg['text']}</div>""", unsafe_allow_html=True)
+            else:
+                st.markdown(f"""<div class="chat-bubble-ai">🤖 {msg['text']}</div>""", unsafe_allow_html=True)
+
+    # Quick reply chips
+    st.markdown("<p style='font-size:13px;color:#556B5C;margin:12px 0 6px 0;font-weight:600;'>Quick Questions:</p>", unsafe_allow_html=True)
+    chip_keys = [
+        ("chip_first", get_ui_string("chip_first", lang_code)),
+        ("chip_cure", get_ui_string("chip_cure", lang_code)),
+        ("chip_spray", get_ui_string("chip_spray", lang_code)),
+        ("chip_soil", get_ui_string("chip_soil", lang_code)),
+        ("chip_weather", get_ui_string("chip_weather", lang_code)),
+        ("chip_unsure", get_ui_string("chip_unsure", lang_code)),
+    ]
+
+    # Render chips as 2 rows of 3 buttons
+    r1_cols = st.columns(3)
+    for i in range(3):
+        k, lbl = chip_keys[i]
+        with r1_cols[i]:
+            if st.button(lbl, key=f"btn_chip_{k}"):
+                st.session_state["chat_history"].append({"role": "user", "text": lbl})
+                ans, _ = build_chat_response(lbl, last_scan, lang=lang_code)
+                st.session_state["chat_history"].append({"role": "ai", "text": ans})
+                st.rerun()
+
+    r2_cols = st.columns(3)
+    for i in range(3, 6):
+        k, lbl = chip_keys[i]
+        with r2_cols[i - 3]:
+            if st.button(lbl, key=f"btn_chip_{k}"):
+                st.session_state["chat_history"].append({"role": "user", "text": lbl})
+                ans, _ = build_chat_response(lbl, last_scan, lang=lang_code)
+                st.session_state["chat_history"].append({"role": "ai", "text": ans})
+                st.rerun()
+
+    # Free-form chat input
+    user_query = st.chat_input(get_ui_string("chat_placeholder", lang_code), key="chat_freeform_input")
+    if user_query:
+        st.session_state["chat_history"].append({"role": "user", "text": user_query})
+        ans, _ = build_chat_response(user_query, last_scan, lang=lang_code)
+        st.session_state["chat_history"].append({"role": "ai", "text": ans})
+        st.rerun()
+
+    # Fixed disclaimer and Clear Chat button
+    st.markdown(f"""
+    <div style="font-size:12px;color:#556B5C;margin-top:16px;font-style:italic;">
+        ⚠️ {get_ui_string('chat_disclaimer', lang_code)}
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button(get_ui_string("chat_clear_btn", lang_code), key="btn_clear_chat"):
+        st.session_state["chat_history"] = []
+        st.rerun()
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# ─── VIEW 3: WEATHER VIEW ────────────────═════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════════
+with tab_weather:
+    st.markdown(f"""
+    <div style="padding: 6px 0 12px 0;">
+        <h2 style="margin:0;color:#275637;font-size:20px;">🌦️ {get_ui_string('weather_view_title', lang_code)}</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # District Selector & Crop Chooser for Weather Risk
+    wx_c1, wx_c2 = st.columns([1.2, 1.0])
+    with wx_c1:
+        wx_district = st.selectbox(
+            "📍 " + get_ui_string("district_label", lang_code),
+            districts_list,
+            index=districts_list.index(selected_district) if selected_district in districts_list else 0,
+            key="wx_view_district"
+        )
+    with wx_c2:
+        wx_crop = st.selectbox(
+            "🌱 " + get_ui_string("choose_crop", lang_code),
+            ["Paddy", "Arecanut", "Apple"],
+            index=["Paddy", "Arecanut", "Apple"].index(st.session_state.get("active_crop", "Paddy")),
+            key="wx_view_crop"
+        )
+
+    # Fetch forecast for Weather view
+    wx_coords = DISTRICT_COORDINATES[wx_district]
+    try:
+        wx_forecast = fetch_forecast(wx_coords["lat"], wx_coords["lon"], timeout=8.0)
+        wx_hourly = wx_forecast["hourly"]
+        wx_success = True
+    except Exception:
+        wx_forecast = None
+        wx_success = False
+
+    if not wx_success or wx_forecast is None:
+        st.warning(f"⚠️ Unable to fetch live weather forecast for {wx_district}.")
+    else:
+        # 48-Hour Forecast Strip in 6-Hour Blocks
+        st.markdown(f"#### ⏱️ {get_ui_string('weather_6h_blocks', lang_code)}")
+
+        # 8 blocks of 6 hours
+        b_cols1 = st.columns(4)
+        b_cols2 = st.columns(4)
+
+        for b_idx in range(8):
+            start_h = b_idx * 6
+            end_h = start_h + 6
+            b_temp = np.mean(wx_hourly["temperature_2m"][start_h:end_h])
+            b_rh = np.mean(wx_hourly["relative_humidity_2m"][start_h:end_h])
+            b_rain = np.sum(wx_hourly["precipitation"][start_h:end_h])
+
+            target_col = b_cols1[b_idx] if b_idx < 4 else b_cols2[b_idx - 4]
+            with target_col:
+                st.markdown(f"""
+                <div class="weather-block-card">
+                    <div style="font-weight:700;font-size:12px;color:#275637;">+{start_h}h..+{end_h}h</div>
+                    <div style="font-size:13px;color:#275637;margin-top:4px;">🌡️ {b_temp:.1f}°C</div>
+                    <div style="font-size:12px;color:#556B5C;">🌧️ {b_rh:.0f}%</div>
+                    <div style="font-size:12px;color:#275637;font-weight:600;">💧 {b_rain:.1f}mm</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Crop Weather Risk Analysis
+        st.markdown("---")
+        st.markdown(f"#### 🌾 {get_ui_string('crop_weather_risk', lang_code)}: {wx_crop}")
+
+        # Compute rule-based hours of favourable weather
+        if wx_crop == "Paddy":
+            dis_key, dis_name = "blast", "Rice Blast"
+        elif wx_crop == "Arecanut":
+            dis_key, dis_name = "mahali_koleroga", "Mahali / Koleroga (Rot Disease)"
+        else:
+            dis_key, dis_name = "apple_scab", "Apple Scab"
+
+        crop_risk_res = compute_48h_disease_risk(wx_forecast, wx_crop, dis_name, pred_cls=dis_key)
+
+        if crop_risk_res is not None:
+            rcat = crop_risk_res["risk_cat"]
+            m_cnt = crop_risk_res["matched_count"]
+            r_border = THEME_CONFIG['danger'] if rcat == 'High' else THEME_CONFIG['warn_yellow']
+            st.markdown(f"""
+            <div class="ui-card" style="border-left: 5px solid {r_border};">
+                <h4 style="margin:0;color:#275637;font-size:16px;">
+                    {crop_risk_res['rule_name']} ({rcat} Risk — {m_cnt} Favourable Hours in Next 48h)
+                </h4>
+                <p style="margin:8px 0 0 0;font-size:14px;color:#275637;line-height:1.5;">
+                    {crop_risk_res['alert_text']}
+                </p>
+                <p style="margin:6px 0 0 0;font-size:11px;color:#556B5C;font-style:italic;">
+                    ⚠️ {get_ui_string('rule_based_tag', lang_code)}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div class="ui-card">
+                <p style="margin:0;font-size:14px;color:#556B5C;">
+                    {get_ui_string('no_rule_for_crop', lang_code)}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)

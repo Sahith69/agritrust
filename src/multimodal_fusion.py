@@ -89,6 +89,7 @@ def evaluate_environmental_risk(crop: str, disease_name: str, temp_c: float, soi
                 alerts.append("Optimal Blast Temperature & Saturated Soil (20-28°C, >75% moisture) accelerates sporulation!")
             elif soil_moisture_pct >= 70.0:
                 score += 30.0
+                alerts.append("Elevated soil moisture (>=70%) increases disease pressure.")
         elif "Bacterial Leaf Blight" in disease_name:
             # Blight favors warm (25-34°C) and waterlogged conditions
             if 25.0 <= temp_c <= 34.0 and soil_moisture_pct >= 70.0:
@@ -96,6 +97,7 @@ def evaluate_environmental_risk(crop: str, disease_name: str, temp_c: float, soi
                 alerts.append("Warm waterlogged environment (25-34°C) promotes rapid bacterial vascular exudation.")
             elif temp_c > 30.0:
                 score += 25.0
+                alerts.append("Elevated temperature (>30°C) accelerates bacterial spread.")
         else:
             if soil_moisture_pct >= 85.0:
                 score += 35.0
@@ -110,6 +112,7 @@ def evaluate_environmental_risk(crop: str, disease_name: str, temp_c: float, soi
                 alerts.append("Mills Infection Window Met (15-24°C, High Moisture): Ascomycete spores actively germinate within 6-9 hrs.")
             elif soil_moisture_pct >= 60.0:
                 score += 30.0
+                alerts.append("Elevated orchard moisture (>=60%) creates favourable infection conditions.")
         elif "Black Rot" in disease_name:
             if 24.0 <= temp_c <= 32.0 and soil_moisture_pct >= 60.0:
                 score += 50.0
@@ -128,6 +131,7 @@ def evaluate_environmental_risk(crop: str, disease_name: str, temp_c: float, soi
                 alerts.append("Severe Monsoon Rot Conditions (>80% Soil Moisture): Phytophthora zoospores actively wash down nut bunches.")
             elif soil_moisture_pct >= 70.0:
                 score += 35.0
+                alerts.append("High soil moisture (>=70%) increases nut rot vulnerability.")
         elif "Yellow Leaf" in disease_name:
             if soil_moisture_pct < 30.0 and temp_c > 32.0:
                 score += 40.0
@@ -154,5 +158,10 @@ def evaluate_environmental_risk(crop: str, disease_name: str, temp_c: float, soi
         risk_level = "LOW CLIMATIC PRESSURE"
         action_modifier = "🟢 Weather and soil moisture do not currently favor aggressive disease escalation."
 
-    main_alert = " | ".join(alerts) if alerts else "Soil moisture and temperature are within standard thresholds."
+    if alerts:
+        main_alert = " | ".join(alerts)
+    elif final_score >= 50.0:
+        main_alert = "Moderately elevated environmental conditions favor disease progression."
+    else:
+        main_alert = "Soil moisture and temperature are within standard thresholds."
     return final_score, risk_level, main_alert, action_modifier

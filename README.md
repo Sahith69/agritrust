@@ -1,8 +1,42 @@
 # AgriTrust AI — Multimodal Crop Disease & Severity Engine
 
-AgriTrust AI is a Streamlit prototype (needs internet for voice and weather) designed for crop pathology diagnosis and severity assessment across **Paddy**, **Arecanut**, and **Apple**. It combines ResNet-18 vision models, ordinal disease severity grading (CORN), user-entered field/weather condition synthesis, safety guardrails, and multilingual voice advisories (English, Kannada, Hindi).
+> **Research Prototype:** AgriTrust AI is an experimental multimodal decision support system for crop pathology. It is intended for research and extension demonstration, not as a replacement for certified agronomist diagnosis or statutory agricultural extension services.
+
+AgriTrust AI is designed for crop pathology diagnosis and severity assessment across **Paddy**, **Arecanut**, and **Apple**. It combines ResNet-18 vision models, ordinal disease severity grading (CORN), user-entered field/weather condition synthesis, safety guardrails, and multilingual voice advisories (English, Kannada, Hindi).
 
 ---
+
+## 🚀 Quick Start (4 Steps)
+
+```bash
+# 1. Clone repository
+git clone https://github.com/sahith77/agritrust.git && cd agritrust
+
+# 2. Create and activate virtual environment
+python3 -m venv venv && source venv/bin/activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Download and verify deployed model checkpoints (~345 MB)
+python download_models.py
+
+# Launch application
+streamlit run app.py
+```
+
+### 🌐 System Requirements & Data Notes
+- **Model Checkpoints Download Size:** ~345 MB across 9 deployed checkpoints (`outputs/models/*.pth` and `outputs/ood_params.pt`).
+- **Internet Connectivity Required:** The app requires an internet connection for:
+  - **Live Weather Forecasts:** 48-hour hourly bioclimatic risk projections from Open-Meteo API.
+  - **Multilingual Voice Advisories:** Text-to-speech audio rendering via `gTTS`.
+  - **First-Run Downloads:** Downloading deployed checkpoints (`python download_models.py`) and the DINOv2 vision transformer backbone (`dinov2_vits14`, ~85 MB) from PyTorch Hub.
+- **Training Data Directory (`data/`):** The `data/` directory (21 GB) is strictly for offline model training, dataset curation, and split reproduction audits. It is **not** required for deploying, serving, or running the Streamlit app.
+- **Data Source Notes & Provenance:**
+  - **Paddy:** Paddy Doctor dataset (10 classes: 9 disease types + healthy).
+  - **Arecanut:** Field dataset collected in Karnataka plantations (9 classes: 4 disease stages + 5 healthy anatomical views).
+  - **Apple:** PlantVillage laboratory benchmark and FGVC imagery (4 classes: apple scab, black rot, cedar apple rust, healthy).
+
 
 ## 🔍 Data Leakage Audit Findings
 

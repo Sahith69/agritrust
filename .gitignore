@@ -10,6 +10,7 @@ env/
 
 # Datasets and archives
 data/
+data/apple_fgvc/
 archive/
 paper_overleaf_package.zip
 *.zip
@@ -19,6 +20,7 @@ paper_overleaf_package.zip
 *.pth
 *.pt
 outputs/
+outputs/apple_fgvc/
 
 # Generated runtime media
 *.mp3

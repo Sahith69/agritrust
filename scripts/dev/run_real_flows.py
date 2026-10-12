@@ -115,6 +115,16 @@ def run_app_pipeline(image_path: str, crop: str, district: str, use_live_weather
             sev_conf = 1.0
             cv_ratio = 0.0
             sev_card_rendered = False
+        elif active_crop == "Paddy" and pred_cls == "hispa":
+            grade = 1
+            sev_conf = 1.0
+            cv_ratio = 0.0
+            sev_card_rendered = True
+        elif active_crop == "Paddy" and pred_cls == "dead_heart":
+            grade = 3
+            sev_conf = 1.0
+            cv_ratio = 0.0
+            sev_card_rendered = True
         else:
             grade, sev_conf, sev_probs, cv_ratio, lesion_overlay = \
                 app.run_severity(img, active_crop, "Ordinal CORN")
@@ -160,25 +170,28 @@ def run_app_pipeline(image_path: str, crop: str, district: str, use_live_weather
     # ── OUTPUT DISPLAY ──
     print("\n--- RENDERED UI COMPONENTS ---")
     print(f"🦠 [Disease Banner] Detected Disease: {display_name} | Confidence: {dis_conf:.1%}")
+    if active_crop == "Paddy" and pred_cls in ["hispa", "downy_mildew"]:
+        tungro_text = app.TUNGRO_SAFETY_NOTE.get(lang_code, app.TUNGRO_SAFETY_NOTE["en"])
+        print(f"  ℹ️ Tungro Warning Note: {tungro_text}")
     if active_crop == "Arecanut" and pred_cls in ["bud_borer", "yellow_leaf_disease"]:
         print("  ⚠️ Warning: Low Reliability Notice (Bud Borer / YLD confusion)")
     if active_crop == "Apple" and pred_cls == "cedar_apple_rust":
         print("  ⚠️ Caption: Class from US public data; confirm locally with your KVK.")
 
     print(f"\n🌦️ [Multimodal Card] Environmental Evaluation:")
-    env_source = f"Live forecast ({district})" if (use_live_weather and fetch_success) else "Field conditions (entered by user)"
-    moist_text = f"Topsoil moisture (model estimate): {soil_moist_display}" if (use_live_weather and fetch_success) else f"Soil Moisture: {soil_moist_pct:.0f}%"
-    print(f"  Conditions: {env_source}: Temp={temp_c:.1f}°C | {moist_text} | RH={humidity:.0f}%")
-    print(f"  Bioclimatic Outbreak Risk: {risk_score:.0f}% ({risk_level})")
-    print(f"  Agronomic Assessment: {env_alert}")
-
-    if not (use_live_weather and fetch_success):
-        print("  ⏱️ 48-Hour Alert: ℹ️ 48-hour alert needs the live forecast.")
-    elif weather_alert_res is not None:
-        print(f"  ⏱️ 48-Hour Alert ({weather_alert_res['risk_cat']} Risk): {weather_alert_res['alert_text']}")
-        print(f"     (Rule matched {weather_alert_res['matched_count']} hours in next 48 h)")
+    if use_live_weather and fetch_success:
+        moist_text = f"Topsoil moisture (model estimate): {soil_moist_display}"
+        print(f"  Conditions: Live forecast ({district}): Temp={temp_c:.1f}°C | {moist_text} | RH={humidity:.0f}%")
+        if weather_alert_res is not None:
+            print(f"  ⏱️ 48-Hour Alert ({weather_alert_res['risk_cat']} Risk): {weather_alert_res['alert_text']}")
+            print(f"     (Rule matched {weather_alert_res['matched_count']} hours in next 48 h)")
+        else:
+            print("  ⏱️ 48-Hour Alert: ℹ️ No weather rule for this disease.")
     else:
-        print("  ⏱️ 48-Hour Alert: [NONE - Disease class does not match Scab/Blast/Koleroga rules; strictly gated off]")
+        print(f"  Conditions: Field conditions (entered by user): Temp={temp_c:.1f}°C | Soil Moisture: {soil_moist_pct:.0f}% | RH={humidity:.0f}%")
+        print(f"  Bioclimatic Outbreak Risk: {risk_score:.0f}% ({risk_level})")
+        print(f"  Agronomic Assessment: {env_alert}")
+        print("  ⏱️ 48-Hour Alert: ℹ️ 48-hour alert needs the live forecast.")
 
     print(f"\n📊 [Severity Card]:")
     if active_crop == "Apple":
@@ -190,7 +203,10 @@ def run_app_pipeline(image_path: str, crop: str, district: str, use_live_weather
         if active_crop == "Arecanut":
             print("  Caption: 'Provisional: not independently validated.'")
         elif active_crop == "Paddy":
-            print("  Caption: 'Independent-test QWK about 0.67 (twin-free, lesion classes); headline 0.94 is inflated.'")
+            if pred_cls in ["hispa", "dead_heart"]:
+                print("  Caption: 'Severity is assigned by a fixed rule for this class.'")
+            elif pred_cls not in ["normal"]:
+                print("  Caption: 'Independent-test QWK about 0.67 (twin-free, lesion classes); headline 0.94 is inflated.'")
 
     print(f"\n💊 [Management Plan]:")
     print(f"  Title: {title_tx}")
