@@ -11,13 +11,18 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 import contrib.store as store
+from ui_theme import CSS_STYLES, render_sidebar
 
 # Page setup
 st.set_page_config(
     page_title="Contribute & Earn | AgriTrust AI",
     page_icon="🌾",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+st.markdown(CSS_STYLES, unsafe_allow_html=True)
+render_sidebar(current_page="bounty")
 
 # ── Custom AgriTrust Theme Styling ───────────────────────────────────────────
 st.markdown("""
@@ -132,19 +137,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Navigation & Simulated Header ─────────────────────────────────────────────
-nav_c1, nav_c2, nav_c3 = st.columns([1, 1.2, 1])
-with nav_c1:
-    if st.button("🔬 Home & Diagnostic Scan", key="nav_to_home", use_container_width=True):
-        st.switch_page("app.py")
-with nav_c2:
-    st.button("🌾 Bounty Contributor (Current)", key="nav_curr_contrib", disabled=True, use_container_width=True)
-with nav_c3:
-    if st.button("🗺️ Disease Outbreak Map", key="nav_to_map", use_container_width=True):
-        st.switch_page("pages/3_Outbreak_Map.py")
-
 st.markdown("""
-<div class="sim-badge" style="margin-top: 10px;">
+<div class="sim-badge">
     <span>⚠️</span>
     <div>
         <strong>SIMULATED RESEARCH FEATURE:</strong> For algorithmic integrity and crowd-sourcing evaluation only. No statutory payments or real INR currency processed.

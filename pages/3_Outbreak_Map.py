@@ -11,13 +11,18 @@ import pandas as pd
 import pydeck as pdk
 import weather_live
 import contrib.store as store
+from ui_theme import CSS_STYLES, render_sidebar
 
 # Page configuration
 st.set_page_config(
     page_title="Disease Outbreak Map | AgriTrust AI",
     page_icon="🗺️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+st.markdown(CSS_STYLES, unsafe_allow_html=True)
+render_sidebar(current_page="outbreak")
 
 # ── Custom AgriTrust Theme Styling ───────────────────────────────────────────
 st.markdown("""
@@ -116,19 +121,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Navigation & Simulated Header ─────────────────────────────────────────────
-nav_c1, nav_c2, nav_c3 = st.columns([1, 1.2, 1])
-with nav_c1:
-    if st.button("🔬 Home & Diagnostic Scan", key="nav_to_home_m", use_container_width=True):
-        st.switch_page("app.py")
-with nav_c2:
-    if st.button("🌾 Field Bounty Contributor", key="nav_to_contrib_m", use_container_width=True):
-        st.switch_page("pages/2_Contribute_and_Earn.py")
-with nav_c3:
-    st.button("🗺️ Outbreak Map (Current)", key="nav_curr_map", disabled=True, use_container_width=True)
-
 st.markdown("""
-<div class="sim-badge" style="margin-top: 10px;">
+<div class="sim-badge">
     <span>⚠️</span>
     <div>
         <strong>SIMULATED EPIDEMIOLOGICAL SURVEILLANCE:</strong> Regional aggregates demonstrate disease pressure surveillance and cluster tracking.

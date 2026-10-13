@@ -343,6 +343,51 @@ CSS_STYLES = f"""
         color: #275637 !important;
     }}
 
+    /* Sidebar Canvas & Content Styling */
+    section[data-testid="stSidebar"],
+    [data-testid="stSidebar"] {{
+        background-color: #FFFFFF !important;
+        border-right: 1.5px solid #D8E4DA !important;
+        box-shadow: 2px 0 16px rgba(39, 86, 55, 0.04) !important;
+    }}
+
+    [data-testid="stSidebarContent"] {{
+        padding: 1rem 0.8rem !important;
+    }}
+
+    /* Sidebar Navigation Links */
+    [data-testid="stSidebarNav"] {{
+        padding-top: 6px !important;
+        margin-bottom: 12px !important;
+    }}
+    [data-testid="stSidebarNavItems"] {{
+        gap: 6px !important;
+    }}
+    [data-testid="stSidebarNavLink"] {{
+        border-radius: 12px !important;
+        margin: 3px 6px !important;
+        padding: 10px 14px !important;
+        color: #275637 !important;
+        font-weight: 600 !important;
+        font-size: 14.5px !important;
+        transition: all 0.2s ease !important;
+        border: 1px solid transparent !important;
+    }}
+    [data-testid="stSidebarNavLink"]:hover {{
+        background-color: #EBF3ED !important;
+        border-color: #91BA94 !important;
+        color: #1B4E2E !important;
+    }}
+    [data-testid="stSidebarNavLink"][aria-current="page"] {{
+        background-color: #275637 !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(39, 86, 55, 0.18) !important;
+    }}
+    [data-testid="stSidebarNavLink"][aria-current="page"] * {{
+        color: #FFFFFF !important;
+    }}
+
     .block-container {{
         max-width: {THEME_CONFIG['max_width']} !important;
         margin: 0 auto !important;
@@ -1369,4 +1414,69 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
                 response = f"{response} Tungro Warning: {tungro_note}"
 
     return (response, is_matched)
+
+
+def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
+    """Renders sleek, unified AgriTrust branding and telemetry in the sidebar."""
+    import streamlit as st
+    with st.sidebar:
+        # 1. Brand Logo & Title Card
+        st.markdown("""
+        <div style="padding: 14px 10px 16px 10px; text-align: center; border-bottom: 1.5px solid #E3ECE5; margin-bottom: 14px;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #EBF3ED; border-radius: 14px; border: 1.5px solid #91BA94; font-size: 26px; margin-bottom: 8px;">
+                🌾
+            </div>
+            <div style="font-size: 20px; font-weight: 800; color: #275637; letter-spacing: -0.3px; line-height: 1.2;">
+                AgriTrust AI
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: #556B5C; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px;">
+                Clinical Crop Pathology
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # 2. System Guardrails Telemetry Card
+        st.markdown("""
+        <div style="background: #F4F7F4; border: 1px solid #D8E4DA; border-radius: 12px; padding: 12px 14px; margin-top: 10px; box-shadow: 0 1px 4px rgba(39,86,55,0.03);">
+            <div style="font-size: 11px; font-weight: 700; color: #556B5C; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> <span>Verified Guardrails</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #275637;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>• OOD Calibration:</span>
+                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">29.02 (v2)</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>• Privacy Shield:</span>
+                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">Centroid Only</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>• Inference Engine:</span>
+                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">Local CPU</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>• Monitored Crops:</span>
+                    <span style="font-weight:700; color:#275637; font-size:11px;">Paddy, Areca, Apple</span>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # 3. Quick Stats / Active District Tag
+        if "selected_district" in st.session_state:
+            dist = st.session_state["selected_district"]
+            st.markdown(f"""
+            <div style="margin-top: 10px; padding: 8px 12px; background: #FFFFFF; border: 1px solid #D8E4DA; border-radius: 10px; font-size: 12px; color: #275637; display: flex; align-items: center; justify-content: space-between;">
+                <span style="color: #556B5C;">📍 District:</span>
+                <span style="font-weight: 700;">{dist}</span>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # 4. Clean Audit Footer
+        st.markdown("""
+        <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid #E3ECE5; text-align: center; font-size: 11px; color: #738A7A; line-height: 1.4;">
+            <strong>AgriTrust AI v2.4</strong><br/>
+            ICAR & KVK Audited System
+        </div>
+        """, unsafe_allow_html=True)
 

@@ -29,7 +29,7 @@ from weather_live import DISTRICT_COORDINATES, fetch_forecast, compute_48h_disea
 
 from ui_theme import (
     APP_NAME, THEME_CONFIG, TRUST_AND_AUDIT, CSS_STYLES,
-    UI_STRINGS, get_ui_string, format_local_date, build_chat_response
+    UI_STRINGS, get_ui_string, format_local_date, build_chat_response, render_sidebar
 )
 
 # ─── PAGE CONFIG ─────────────────────────────────────────────────────────────
@@ -844,6 +844,9 @@ chosen_lang_name = st.radio(
 st.session_state["lang_code"] = lang_map[chosen_lang_name]
 lang_code = st.session_state["lang_code"]
 
+# Render unified sidebar branding and telemetry
+render_sidebar(current_page="home", lang_code=lang_code)
+
 # ─── LIVE WEATHER DATA FETCH ─────────────────────────────────────────────────
 districts_list = list(DISTRICT_COORDINATES.keys())
 selected_district = st.session_state.get("selected_district", "Mangaluru")
@@ -906,15 +909,6 @@ with tab_home:
                 key="home_district_selector"
             )
             st.session_state["selected_district"] = selected_district
-
-        # Direct navigation to community features
-        col_nav1, col_nav2 = st.columns(2)
-        with col_nav1:
-            if st.button("📤 Contribute & Earn Bounty", key="nav_btn_contrib", use_container_width=True):
-                st.switch_page("pages/2_Contribute_and_Earn.py")
-        with col_nav2:
-            if st.button("🗺️ Disease Outbreak Map", key="nav_btn_outbreak", use_container_width=True):
-                st.switch_page("pages/3_Outbreak_Map.py")
 
         # 2. Greeting & Weather summary
         col_greet, col_wx = st.columns([1.2, 1.0])
