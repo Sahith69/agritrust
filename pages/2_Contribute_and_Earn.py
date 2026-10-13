@@ -11,11 +11,13 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 import contrib.store as store
-from ui_theme import CSS_STYLES, render_sidebar
+from ui_theme import CSS_STYLES, render_sidebar, get_ui_string
+
+cur_lang = st.session_state.get("lang_code", "en")
 
 # Page setup
 st.set_page_config(
-    page_title="Contribute & Earn | AgriTrust AI",
+    page_title=f"{get_ui_string('contrib_page_title', cur_lang)} | AgriTrust AI",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -27,7 +29,7 @@ st.markdown(CSS_STYLES, unsafe_allow_html=True)
 from auth import require_auth
 require_auth(current_page="bounty")
 
-render_sidebar(current_page="bounty")
+render_sidebar(current_page="bounty", lang_code=cur_lang)
 
 # ── Custom AgriTrust Theme Styling ───────────────────────────────────────────
 st.markdown("""
@@ -142,42 +144,39 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown(f"""
 <div class="sim-badge">
     <span>⚠️</span>
     <div>
-        <strong>SIMULATED RESEARCH FEATURE:</strong> For algorithmic integrity and crowd-sourcing evaluation only. No statutory payments or real INR currency processed.
+        <strong>{get_ui_string('contrib_sim_banner', cur_lang)}</strong>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.title("🌾 Field Pathology Contribution & Farmer Bounty Wallet")
-st.markdown(
-    "Contribute verified field pathology images to close distribution shifts. "
-    "Every contribution undergoes **automated focus gating**, **leakage prevention**, and **expert agronomist verification**."
-)
+st.title(f"🌾 {get_ui_string('contrib_page_title', cur_lang)}")
+st.markdown(get_ui_string('contrib_page_desc', cur_lang))
 
 # ── Main Tabs ─────────────────────────────────────────────────────────────────
 tab_contribute, tab_wallet = st.tabs([
-    "📤 Submit Field Photo",
-    "👛 Farmer Bounty Wallet"
+    get_ui_string('contrib_tab_submit', cur_lang),
+    get_ui_string('contrib_tab_wallet', cur_lang)
 ])
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 1: SUBMIT FIELD PHOTO
 # ══════════════════════════════════════════════════════════════════════════════
 with tab_contribute:
-    st.markdown("""
+    st.markdown(f"""
     <div class="ui-card" style="margin-top: 10px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
             <div>
-                <h4 style="margin:0; color:#275637;">Bounty Incentive Structure</h4>
+                <h4 style="margin:0; color:#275637;">{get_ui_string('contrib_incentive_title', cur_lang)}</h4>
                 <p style="margin:4px 0 0 0; color:#556B5C; font-size:14px;">
-                    All crops and disease conditions earn a uniform ₹1.00 bounty upon expert agronomist verification.
+                    {get_ui_string('contrib_incentive_desc', cur_lang)}
                 </p>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <span class="tier-badge-std">🌾 Universal Bounty: ₹1.00 per verified photo</span>
+                <span class="tier-badge-std">{get_ui_string('contrib_universal_badge', cur_lang)}</span>
             </div>
         </div>
     </div>
@@ -186,18 +185,18 @@ with tab_contribute:
     col_form, col_preview = st.columns([1.1, 1], gap="large")
 
     with col_form:
-        st.markdown("#### 1. Submission Details")
+        st.markdown(f"#### {get_ui_string('contrib_sub_details', cur_lang)}")
         farmer_id = st.text_input(
-            "Farmer Identifier / Phone ID",
+            get_ui_string('contrib_farmer_id_label', cur_lang),
             value=st.session_state.get("user", "farmer_KA_101"),
             help="Your identifier used to track submissions and credit your bounty wallet."
         )
 
         col_crop, col_dist = st.columns(2)
         with col_crop:
-            crop = st.selectbox("Crop Type", options=["Paddy", "Arecanut", "Apple"])
+            crop = st.selectbox(get_ui_string('contrib_crop_type', cur_lang), options=["Paddy", "Arecanut", "Apple"])
         with col_dist:
-            district = st.selectbox("District (Location Centroid)", options=store.DISTRICTS)
+            district = st.selectbox(get_ui_string('contrib_district_label', cur_lang), options=store.DISTRICTS)
 
         diseases = store.CROP_CLASSES[crop]
         claimed_label = st.selectbox(
@@ -216,17 +215,17 @@ with tab_contribute:
 
         st.markdown("#### 2. Research & Location Consent")
         consent_given = st.checkbox(
-            "I grant consent to share this leaf photograph and district centroid for regional epidemiological tracking and open-source agricultural research.",
+            get_ui_string('contrib_consent_label', cur_lang),
             value=False
         )
 
         uploaded_file = st.file_uploader(
-            "Upload Field Photo (Leaf / Nut / Trunk)",
+            get_ui_string('contrib_photo_label', cur_lang),
             type=["jpg", "jpeg", "png"],
             help="Ensure good ambient daylight and focused close-up framing."
         )
 
-        submit_btn = st.button("🚀 Submit Contribution for Verification", type="primary", use_container_width=True)
+        submit_btn = st.button(get_ui_string('contrib_submit_btn', cur_lang), type="primary", use_container_width=True)
 
     with col_preview:
         st.markdown("#### 3. Real-time Quality Inspection")
@@ -304,9 +303,9 @@ with tab_contribute:
 # TAB 2: FARMER BOUNTY WALLET
 # ══════════════════════════════════════════════════════════════════════════════
 with tab_wallet:
-    st.markdown("#### Check Farmer Bounty Balance & Payout Status")
+    st.markdown(f"#### {get_ui_string('contrib_wallet_title', cur_lang)}")
     wallet_farmer_id = st.text_input(
-        "Enter Farmer Identifier",
+        get_ui_string('contrib_wallet_search', cur_lang),
         value=farmer_id if 'farmer_id' in locals() else "farmer_KA_101",
         key="wallet_search_input"
     ).strip()
@@ -328,20 +327,20 @@ with tab_wallet:
                 <div style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-top: 2px;">{wallet_farmer_id}</div>
             </div>
             <div style="background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                🌱 Active Contributor
+                🌱 {get_ui_string('login_status_active', cur_lang)}
             </div>
         </div>
         <div style="display: flex; gap: 36px; align-items: baseline; flex-wrap: wrap;">
             <div>
-                <div style="font-size: 12px; color: #C2E2CC; font-weight: 600;">Verified Available Balance</div>
+                <div style="font-size: 12px; color: #C2E2CC; font-weight: 600;">{get_ui_string('contrib_verified_balance', cur_lang)}</div>
                 <div style="font-size: 34px; font-weight: 800; color: #FFFFFF; line-height: 1.2;">₹{v_bal:.2f}</div>
             </div>
             <div>
-                <div style="font-size: 12px; color: #C2E2CC; font-weight: 600;">In-Review Escrow</div>
+                <div style="font-size: 12px; color: #C2E2CC; font-weight: 600;">{get_ui_string('contrib_pending_balance', cur_lang)}</div>
                 <div style="font-size: 22px; font-weight: 700; color: #F6D05F; line-height: 1.2;">₹{p_bal:.2f}</div>
             </div>
             <div>
-                <div style="font-size: 12px; color: #C2E2CC; font-weight: 600;">Approved Photos</div>
+                <div style="font-size: 12px; color: #C2E2CC; font-weight: 600;">{get_ui_string('contrib_approved_count', cur_lang)}</div>
                 <div style="font-size: 22px; font-weight: 700; color: #FFFFFF; line-height: 1.2;">{wallet_data['count_verified']}</div>
             </div>
             <div>

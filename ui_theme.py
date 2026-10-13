@@ -144,6 +144,94 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "models_missing_msg": "Model files not found. Run: python download_models.py",
         "cross_crop_refusal_title": "Crop Selection Mismatch",
         "cross_crop_refusal_msg": "This looks more like a {other_crop} photo. Check your crop selection.",
+        # Global & Multipage Navigation Strings
+        "lang_select_label": "Language / ಭಾಷೆ / भाषा",
+        "sidebar_subtitle": "Clinical Crop Pathology",
+        "sidebar_signed_in": "Signed In As",
+        "sidebar_guest": "Guest Farmer",
+        "sidebar_role_farmer": "Farmer",
+        "sidebar_role_agronomist": "Agronomist / Expert",
+        "sidebar_auth_req": "🔒 Authentication Required",
+        "sidebar_auth_msg": "Sign in or register an account to unlock all pathology tools.",
+        "sidebar_guardrails": "Verified Guardrails",
+        "sidebar_privacy_badge": "Centroid Only",
+        "sidebar_engine_badge": "Local CPU",
+        "sidebar_crops_badge": "Paddy, Areca, Apple",
+        "sidebar_district_label": "District",
+        "sidebar_audit_footer": "ICAR & KVK Audited System",
+        # Account / Login Page
+        "login_page_title": "Farmer & Specialist Account Portal",
+        "login_page_desc": "Sign in or register your account to track field pathology submissions, receive regional disease advisories, and access your digital bounty wallet.",
+        "login_active_badge": "Active Farmer Account",
+        "login_welcome_back": "Welcome back",
+        "login_role_label": "Role",
+        "login_status_label": "Status",
+        "login_status_active": "Verified Active",
+        "login_tab_signin": "🔐 Sign In to Account",
+        "login_tab_signup": "📝 Create New Account",
+        "login_username_label": "Username / Farmer ID",
+        "login_password_label": "Password",
+        "login_signin_btn": "🚀 Sign In",
+        "login_signup_btn": "🌱 Register Account",
+        "login_signout_btn": "🚪 Sign Out",
+        "login_new_user_label": "Choose a Unique Username",
+        "login_confirm_pass": "Confirm Password",
+        "login_account_type": "Account Type",
+        "login_err_empty": "⚠️ Please enter both username and password.",
+        "login_err_mismatch": "❌ Passwords do not match. Please verify your entries.",
+        "btn_advisory": "🌾 Plant Pathology Advisory",
+        "btn_bounty": "👛 Field Bounty Wallet",
+        "btn_map": "🗺️ Surveillance Map",
+        "btn_admin": "🔐 Agronomist Verification Desk",
+        # Contribute & Earn Page
+        "contrib_sim_banner": "SIMULATED RESEARCH FEATURE: For algorithmic integrity and crowd-sourcing evaluation only. No statutory payments or real INR currency processed.",
+        "contrib_page_title": "Field Pathology Contribution & Farmer Bounty Wallet",
+        "contrib_page_desc": "Contribute verified field pathology images to close distribution shifts. Every contribution undergoes automated focus gating, leakage prevention, and expert agronomist verification.",
+        "contrib_tab_submit": "📤 Submit Field Photo",
+        "contrib_tab_wallet": "👛 Farmer Bounty Wallet",
+        "contrib_incentive_title": "Bounty Incentive Structure",
+        "contrib_incentive_desc": "All crops and disease conditions earn a uniform ₹1.00 bounty upon expert agronomist verification.",
+        "contrib_universal_badge": "🌾 Universal Bounty: ₹1.00 per verified photo",
+        "contrib_sub_details": "1. Submission Details",
+        "contrib_farmer_id_label": "Farmer Identifier / Phone ID",
+        "contrib_crop_type": "Crop Type",
+        "contrib_district_label": "District (Location Centroid)",
+        "contrib_claimed_label": "Suspected Condition",
+        "contrib_field_notes": "Field Notes / Observations",
+        "contrib_photo_label": "Upload High-Resolution Photo",
+        "contrib_consent_label": "I confirm this is an authentic field photograph and consent to its use in ICAR/KVK research datasets.",
+        "contrib_submit_btn": "📤 Submit Field Photo for Verification",
+        "contrib_wallet_title": "Check Farmer Bounty Balance & Payout Status",
+        "contrib_wallet_search": "Enter Farmer Identifier",
+        "contrib_verified_balance": "Verified Bounty Balance",
+        "contrib_pending_balance": "Pending Verification",
+        "contrib_payout_threshold": "Payout Threshold: ₹100.00",
+        "contrib_history_title": "Submission & Verification History",
+        # Outbreak Map
+        "map_sim_banner": "SIMULATED EPIDEMIOLOGICAL SURVEILLANCE: Regional aggregates demonstrate disease pressure surveillance and cluster tracking.",
+        "map_page_title": "District-Level Crop Pathology Surveillance Map",
+        "map_page_desc": "Live spatial tracking of expert-verified crop disease reports across monitored agricultural districts. Features strict differential privacy: only coarse district centroid coordinates are rendered.",
+        "map_privacy_banner": "Strict Privacy Shield Active: Under no circumstances are farmer IDs, photo filenames, device metadata, or coordinates finer than the district centroid displayed or exported.",
+        "map_high_risk_badge": "High Risk Outbreak Zone",
+        "map_moderate_risk_badge": "Moderate Disease Pressure",
+        "map_low_risk_badge": "Low / Monitored Area",
+        "map_total_reports": "Total Verified Submissions",
+        "map_monitored_districts": "Monitored Agricultural Districts",
+        # Admin Portal
+        "admin_page_badge": "ICAR / KVK Verification Desk",
+        "admin_page_title": "Agronomist Verification Portal",
+        "admin_page_desc": "Expert review, disease reclassification, and cryptographic verification of field pathology photos.",
+        "admin_pass_label": "Enter Agronomist / Administrator Access Key",
+        "admin_pass_help": "Please enter the administrator access key to review pending field contributions.",
+        "admin_auth_success": "✅ Agronomist session authenticated.",
+        "admin_auth_failed": "❌ Authentication failed: Invalid access key.",
+        "admin_queue_metric": "Pending In Queue",
+        "admin_bounty_rate": "Active Bounty Rate",
+        "admin_reviewer_role": "Reviewer Session",
+        "admin_empty_queue": "Queue Clear! No pending submissions require verification.",
+        "admin_approve_btn": "✅ Approve & Credit Bounty (₹1.00)",
+        "admin_reject_btn": "❌ Reject Submission",
+        "admin_reclassify_label": "Reclassify Disease Label (if misidentified):",
     },
     "kn": {
         "app_name": "AgriTrust AI",
@@ -227,6 +315,94 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "models_missing_msg": "ಮಾದರಿ ಕಡತಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ಚಲಾಯಿಸಿ: python download_models.py",
         "cross_crop_refusal_title": "ಬೆಳೆ ಆಯ್ಕೆ ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿಲ್ಲ",
         "cross_crop_refusal_msg": "ಇದು {other_crop} ಫೋಟೋದಂತೆ ಕಾಣುತ್ತಿದೆ. ನಿಮ್ಮ ಬೆಳೆ ಆಯ್ಕೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
+        # Global & Multipage Navigation Strings
+        "lang_select_label": "ಭಾಷೆ / Language / भाषा",
+        "sidebar_subtitle": "ಬೆಳೆ ರೋಗಶಾಸ್ತ್ರ ಮತ್ತು ರಕ್ಷಣೆ",
+        "sidebar_signed_in": "ಲಾಗಿನ್ ಆದವರು",
+        "sidebar_guest": "ಅತಿಥಿ ರೈತ",
+        "sidebar_role_farmer": "ರೈತ",
+        "sidebar_role_agronomist": "ಕೃಷಿ ತಜ್ಞ / ಅಧಿಕಾರಿ",
+        "sidebar_auth_req": "🔒 ಲಾಗಿನ್ ಅಗತ್ಯವಿದೆ",
+        "sidebar_auth_msg": "ಎಲ್ಲಾ ಸೌಲಭ್ಯಗಳನ್ನು ಬಳಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ ಅಥವಾ ಖಾತೆ ತೆರೆಯಿರಿ.",
+        "sidebar_guardrails": "ದೃಢೀಕೃತ ಸುರಕ್ಷತಾ ಕ್ರಮಗಳು",
+        "sidebar_privacy_badge": "ಕೇಂದ್ರ ಬಿಂದು ಮಾತ್ರ",
+        "sidebar_engine_badge": "ಸ್ಥಳೀಯ CPU",
+        "sidebar_crops_badge": "ಭತ್ತ, ಅಡಿಕೆ, ಸೇಬು",
+        "sidebar_district_label": "ಜಿಲ್ಲೆ",
+        "sidebar_audit_footer": "ICAR ಮತ್ತು KVK ಪರಿಶೀಲಿತ ವ್ಯವಸ್ಥೆ",
+        # Account / Login Page
+        "login_page_title": "ರೈತ ಮತ್ತು ಕೃಷಿ ತಜ್ಞರ ಖಾತೆ ಪೋರ್ಟಲ್",
+        "login_page_desc": "ಬೆಳೆ ರೋಗ ಪತ್ತೆಹಚ್ಚುವಿಕೆ, ಪ್ರಾದೇಶಿಕ ಹವಾಮಾನ ಎಚ್ಚರಿಕೆಗಳು ಮತ್ತು ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಬಹುಮಾನ ವಾಲೆಟ್ ಪಡೆಯಲು ಲಾಗಿನ್ ಮಾಡಿ ಅಥವಾ ನೋಂದಾಯಿಸಿ.",
+        "login_active_badge": "ಸಕ್ರಿಯ ರೈತ ಖಾತೆ",
+        "login_welcome_back": "ಮತ್ತೆ ಸುಸ್ವಾಗತ",
+        "login_role_label": "ಪಾತ್ರ",
+        "login_status_label": "ಸ್ಥಿತಿ",
+        "login_status_active": "ದೃಢೀಕೃತ ಸಕ್ರಿಯ",
+        "login_tab_signin": "🔐 ಖಾತೆಗೆ ಲಾಗಿನ್ ಮಾಡಿ",
+        "login_tab_signup": "📝 ಹೊಸ ಖಾತೆ ತೆರೆಯಿರಿ",
+        "login_username_label": "ಬಳಕೆದಾರ ಹೆಸರು / ರೈತ ಐಡಿ",
+        "login_password_label": "ಗುಪ್ತಪದ (ಪಾಸ್‌ವರ್ಡ್)",
+        "login_signin_btn": "🚀 ಲಾಗಿನ್ ಮಾಡಿ",
+        "login_signup_btn": "🌱 ಹೊಸ ಖಾತೆ ನೋಂದಾಯಿಸಿ",
+        "login_signout_btn": "🚪 ಲಾಗೌಟ್ ಮಾಡಿ",
+        "login_new_user_label": "ವಿಶಿಷ್ಟ ಬಳಕೆದಾರ ಹೆಸರನ್ನು ಆರಿಸಿ",
+        "login_confirm_pass": "ಗುಪ್ತಪದವನ್ನು ದೃಢೀಕರಿಸಿ",
+        "login_account_type": "ಖಾತೆಯ ವಿಧ",
+        "login_err_empty": "⚠️ ದಯವಿಟ್ಟು ಬಳಕೆದಾರ ಹೆಸರು ಮತ್ತು ಗುಪ್ತಪದ ಎರಡನ್ನೂ ನಮೂದಿಸಿ.",
+        "login_err_mismatch": "❌ ನಮೂದಿಸಿದ ಗುಪ್ತಪದಗಳು ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿಲ್ಲ.",
+        "btn_advisory": "🌾 ಬೆಳೆ ರೋಗ ತಪಾಸಣೆ",
+        "btn_bounty": "👛 ರೈತ ಬಹುಮಾನ ವಾಲೆಟ್",
+        "btn_map": "🗺️ ರೋಗ ಹರಡುವಿಕೆ ನಕ್ಷೆ",
+        "btn_admin": "🔐 ಕೃಷಿ ತಜ್ಞರ ಪರಿಶೀಲನಾ ಡೆಸ್ಕ್",
+        # Contribute & Earn Page
+        "contrib_sim_banner": "ಸಂಶೋಧನಾ ವೈಶಿಷ್ಟ್ಯ: ಅಲ್ಗಾರಿದಮ್ ಸುಧಾರಣೆಗೆ ಮಾತ್ರ. ಯಾವುದೇ ನೈಜ ನಗದು ಪಾವತಿಗಳು ನಡೆಯುವುದಿಲ್ಲ.",
+        "contrib_page_title": "ಹೊಲದ ರೋಗ ಫೋಟೋ ಕೊಡುಗೆ ಮತ್ತು ರೈತ ಬಹುಮಾನ ವಾಲೆಟ್",
+        "contrib_page_desc": "ಉತ್ತಮ ಬೆಳೆ ರೋಗ ಮಾದರಿಗಳನ್ನು ರೂಪಿಸಲು ನಿಮ್ಮ ಹೊಲದ ಫೋಟೋಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಪ್ರತಿಯೊಂದು ಫೋಟೋ ತಜ್ಞರ ಪರಿಶೀಲನೆಗೆ ಒಳಪಡುತ್ತದೆ.",
+        "contrib_tab_submit": "📤 ಹೊಲದ ಫೋಟೋ ಸಲ್ಲಿಸಿ",
+        "contrib_tab_wallet": "👛 ರೈತ ಬಹುಮಾನ ವಾಲೆಟ್",
+        "contrib_incentive_title": "ಬಹುಮಾನ ಪ್ರೋತ್ಸಾಹಕ ವಿವರ",
+        "contrib_incentive_desc": "ತಜ್ಞರ ಅನುಮೋದನೆಯ ನಂತರ ಪ್ರತಿ ಪರಿಶೀಲಿತ ಫೋಟೋಗೆ ₹1.00 ಬಹುಮಾನ ಜಮೆಯಾಗುತ್ತದೆ.",
+        "contrib_universal_badge": "🌾 ನಿಗದಿತ ಬಹುಮಾನ: ಪ್ರತಿ ದೃಢೀಕೃತ ಫೋಟೋಗೆ ₹1.00",
+        "contrib_sub_details": "1. ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ",
+        "contrib_farmer_id_label": "ರೈತರ ಹೆಸರು / ಐಡಿ",
+        "contrib_crop_type": "ಬೆಳೆಯ ವಿಧ",
+        "contrib_district_label": "ಜಿಲ್ಲೆ (ಸ್ಥಳದ ವಿವರ)",
+        "contrib_claimed_label": "ಸಂಭಾವ್ಯ ರೋಗ ಅಥವಾ ಸಮಸ್ಯೆ",
+        "contrib_field_notes": "ಹೊಲದ ವಿವರಣೆ ಮತ್ತು ಅವಲೋಕನ",
+        "contrib_photo_label": "ಸ್ಪಷ್ಟವಾದ ಎಲೆ ಅಥವಾ ಹಣ್ಣಿನ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+        "contrib_consent_label": "ಇದು ನೈಜ ಫೋಟೋ ಎಂದು ನಾನು ದೃಢೀಕರಿಸುತ್ತೇನೆ ಮತ್ತು ಸಂಶೋಧನೆಗಾಗಿ ಬಳಸಲು ಒಪ್ಪಿಗೆ ನೀಡುತ್ತೇನೆ.",
+        "contrib_submit_btn": "📤 ತಜ್ಞರ ಪರಿಶೀಲನೆಗೆ ಸಲ್ಲಿಸಿ",
+        "contrib_wallet_title": "ರೈತ ಬಹುಮಾನ ಮೊತ್ತ ಮತ್ತು ಸ್ಥಿತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ",
+        "contrib_wallet_search": "ರೈತ ಐಡಿ ನಮೂದಿಸಿ",
+        "contrib_verified_balance": "ದೃಢೀಕೃತ ಒಟ್ಟು ಬಹುಮಾನ",
+        "contrib_pending_balance": "ಪರಿಶೀಲನೆಯಲ್ಲಿರುವ ಮೊತ್ತ",
+        "contrib_payout_threshold": "ಹಿಂಪಡೆಯುವ ಕನಿಷ್ಠ ಮಿತಿ: ₹100.00",
+        "contrib_history_title": "ಸಲ್ಲಿಸಿದ ಫೋಟೋಗಳ ಇತಿಹಾಸ",
+        # Outbreak Map
+        "map_sim_banner": "ಸಾಂಕ್ರಾಮಿಕ ರೋಗ ಮೇಲ್ವಿಚಾರಣೆ: ರೋಗದ ಒತ್ತಡ ಮತ್ತು ಸಮೂಹಗಳನ್ನು ಪತ್ತೆಹಚ್ಚಲು ಮಾದರಿ ನಕ್ಷೆ.",
+        "map_page_title": "ಜಿಲ್ಲಾವಾರು ಬೆಳೆ ರೋಗ ಹರಡುವಿಕೆ ನಕ್ಷೆ",
+        "map_page_desc": "ಕರ್ನಾಟಕ ಹಾಗೂ ನೆರೆಯ ತೋಟಗಾರಿಕಾ ಜಿಲ್ಲೆಗಳಲ್ಲಿ ತಜ್ಞರು ದೃಢಪಡಿಸಿದ ರೋಗ ಹರಡುವಿಕೆಯ ಲೈವ್ ನಕ್ಷೆ. ಕಟ್ಟುನಿಟ್ಟಾದ ಗೌಪ್ಯತೆ ರಕ್ಷಣೆ ಅನ್ವಯಿಸಲಾಗಿದೆ.",
+        "map_privacy_banner": "ಕಟ್ಟುನಿಟ್ಟಾದ ಗೌಪ್ಯತೆ ಸಕ್ರಿಯವಾಗಿದೆ: ರೈತರ ವೈಯಕ್ತಿಕ ಮಾಹಿತಿ, ಮೊಬೈಲ್ ವಿವರ ಅಥವಾ ಸೂಕ್ಷ್ಮ ಸ್ಥಳವನ್ನು ಎಂದಿಗೂ ಬಹಿರಂಗಪಡಿಸಲಾಗುವುದಿಲ್ಲ.",
+        "map_high_risk_badge": "ಹೆಚ್ಚು ಅಪಾಯವಿರುವ ವಲಯ",
+        "map_moderate_risk_badge": "ಮಧ್ಯಮ ರೋಗದ ಒತ್ತಡ",
+        "map_low_risk_badge": "ಕಡಿಮೆ / ಸುರಕ್ಷಿತ ಪ್ರದೇಶ",
+        "map_total_reports": "ದೃಢೀಕೃತ ಒಟ್ಟು ವರದಿಗಳು",
+        "map_monitored_districts": "ಮೇಲ್ವಿಚಾರಣೆಯಲ್ಲಿರುವ ಜಿಲ್ಲೆಗಳು",
+        # Admin Portal
+        "admin_page_badge": "ICAR / KVK ಪರಿಶೀಲನಾ ಡೆಸ್ಕ್",
+        "admin_page_title": "ಕೃಷಿ ತಜ್ಞರ ಪರಿಶೀಲನಾ ಪೋರ್ಟಲ್",
+        "admin_page_desc": "ರೈತರು ಸಲ್ಲಿಸಿದ ಫೋಟೋಗಳ ತಜ್ಞ ಪರಿಶೀಲನೆ, ರೋಗ ಮರು-ವರ್ಗೀಕರಣ ಮತ್ತು ಡಿಜಿಟಲ್ ದೃಢೀಕರಣ.",
+        "admin_pass_label": "ಕೃಷಿ ತಜ್ಞರ ಪ್ರವೇಶ ಕೀ ನಮೂದಿಸಿ",
+        "admin_pass_help": "ಬಾಕಿ ಇರುವ ಫೋಟೋಗಳನ್ನು ಪರಿಶೀಲಿಸಲು ದಯವಿಟ್ಟು ಪ್ರವೇಶ ಕೀ ನಮೂದಿಸಿ.",
+        "admin_auth_success": "✅ ಕೃಷಿ ತಜ್ಞರ ಅಧಿವೇಶನ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ.",
+        "admin_auth_failed": "❌ ದೃಢೀಕರಣ ವಿಫಲವಾಗಿದೆ: ತಪ್ಪಾದ ಪ್ರವೇಶ ಕೀ.",
+        "admin_queue_metric": "ಪರಿಶೀಲನೆಗೆ ಬಾಕಿ ಇರುವ ಫೋಟೋಗಳು",
+        "admin_bounty_rate": "ಸಕ್ರಿಯ ಬಹುಮಾನ ದರ",
+        "admin_reviewer_role": "ಪರಿಶೀಲಕರ ಖಾತೆ",
+        "admin_empty_queue": "ಯಾವುದೇ ಫೋಟೋಗಳು ಬಾಕಿ ಇಲ್ಲ! ಎಲ್ಲಾ ಸಲ್ಲಿಕೆಗಳು ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟಿವೆ.",
+        "admin_approve_btn": "✅ ಅನುಮೋದಿಸಿ ಮತ್ತು ಬಹುಮಾನ ನೀಡಿ (₹1.00)",
+        "admin_reject_btn": "❌ ಸಲ್ಲಿಕೆಯನ್ನು ತಿರಸ್ಕರಿಸಿ",
+        "admin_reclassify_label": "ರೋಗದ ಹೆಸರನ್ನು ಮರು-ವರ್ಗೀಕರಿಸಿ (ತಪ್ಪಾಗಿದ್ದರೆ):",
     },
     "hi": {
         "app_name": "AgriTrust AI",
@@ -310,6 +486,94 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "models_missing_msg": "मॉडल फ़ाइलें नहीं मिलीं। चलाएं: python download_models.py",
         "cross_crop_refusal_title": "गलत फसल का चयन",
         "cross_crop_refusal_msg": "यह {other_crop} की तस्वीर जैसी लग रही है। कृपया अपनी चुनी हुई फसल की जांच करें।",
+        # Global & Multipage Navigation Strings
+        "lang_select_label": "भाषा / ಭಾಷೆ / Language",
+        "sidebar_subtitle": "फसल रोग निदान एवं सुरक्षा",
+        "sidebar_signed_in": "लॉग इन उपयोगकर्ता",
+        "sidebar_guest": "अतिथि किसान",
+        "sidebar_role_farmer": "किसान",
+        "sidebar_role_agronomist": "कृषि विशेषज्ञ",
+        "sidebar_auth_req": "🔒 लॉगिन आवश्यक है",
+        "sidebar_auth_msg": "सभी सुविधाओं का उपयोग करने के लिए कृपया लॉगिन या पंजीकरण करें।",
+        "sidebar_guardrails": "सत्यापित सुरक्षा नियम",
+        "sidebar_privacy_badge": "केवल केंद्र निर्देशांक",
+        "sidebar_engine_badge": "स्थानीय CPU",
+        "sidebar_crops_badge": "धान, सुपारी, सेब",
+        "sidebar_district_label": "ज़िला",
+        "sidebar_audit_footer": "ICAR एवं KVK द्वारा परीक्षित प्रणाली",
+        # Account / Login Page
+        "login_page_title": "किसान एवं कृषि विशेषज्ञ खाता पोर्टल",
+        "login_page_desc": "फसल रोग पहचान, क्षेत्रीय मौसम अलर्ट और अपने डिजिटल इनाम वॉलेट का उपयोग करने के लिए लॉगिन या पंजीकरण करें।",
+        "login_active_badge": "सक्रिय किसान खाता",
+        "login_welcome_back": "फिर से स्वागत है",
+        "login_role_label": "भूमिका",
+        "login_status_label": "स्थिति",
+        "login_status_active": "सत्यापित सक्रिय",
+        "login_tab_signin": "🔐 खाते में लॉगिन करें",
+        "login_tab_signup": "📝 नया खाता बनाएं",
+        "login_username_label": "यूज़रनेम / किसान आईडी",
+        "login_password_label": "पासवर्ड",
+        "login_signin_btn": "🚀 लॉगिन करें",
+        "login_signup_btn": "🌱 नया खाता पंजीकृत करें",
+        "login_signout_btn": "🚪 लॉगआउट करें",
+        "login_new_user_label": "अनोखा यूज़रनेम चुनें",
+        "login_confirm_pass": "पासवर्ड की पुष्टि करें",
+        "login_account_type": "खाते का प्रकार",
+        "login_err_empty": "⚠️ कृपया यूज़रनेम और पासवर्ड दोनों दर्ज करें।",
+        "login_err_mismatch": "❌ दर्ज किए गए पासवर्ड मेल नहीं खा रहे हैं।",
+        "btn_advisory": "🌾 फसल रोग निदान",
+        "btn_bounty": "👛 किसान इनाम वॉलेट",
+        "btn_map": "🗺️ रोग निगरानी नक्शा",
+        "btn_admin": "🔐 विशेषज्ञ सत्यापन डेस्क",
+        # Contribute & Earn Page
+        "contrib_sim_banner": "सिम्युलेटेड अनुसंधान सुविधा: केवल मॉडल सुधार और क्राउड-सोर्सिंग के लिए। कोई वास्तविक नकद भुगतान नहीं किया जाता।",
+        "contrib_page_title": "खेत की रोग फोटो योगदान एवं किसान इनाम वॉलेट",
+        "contrib_page_desc": "बेहतर फसल रोग मॉडल तैयार करने के लिए अपने खेत की साफ तस्वीरें भेजें। प्रत्येक तस्वीर विशेषज्ञ जांच से गुजरती है।",
+        "contrib_tab_submit": "📤 खेत की फोटो भेजें",
+        "contrib_tab_wallet": "👛 किसान इनाम वॉलेट",
+        "contrib_incentive_title": "इनाम प्रोत्साहन संरचना",
+        "contrib_incentive_desc": "विशेषज्ञ अनुमोदन के बाद प्रत्येक सत्यापित फोटो पर ₹1.00 का इनाम मिलता है।",
+        "contrib_universal_badge": "🌾 सार्वभौमिक इनाम: ₹1.00 प्रति सत्यापित फोटो",
+        "contrib_sub_details": "1. विवरण दर्ज करें",
+        "contrib_farmer_id_label": "किसान पहचान / मोबाइल आईडी",
+        "contrib_crop_type": "फसल का प्रकार",
+        "contrib_district_label": "ज़िला (स्थान विवरण)",
+        "contrib_claimed_label": "संभावित बीमारी या समस्या",
+        "contrib_field_notes": "खेत का विवरण एवं अवलोकन",
+        "contrib_photo_label": "प्रभावित पत्ती या फल की स्पष्ट फोटो अपलोड करें",
+        "contrib_consent_label": "मैं पुष्टि करता हूँ कि यह वास्तविक खेत की तस्वीर है और अनुसंधान के लिए इसके उपयोग की अनुमति देता हूँ।",
+        "contrib_submit_btn": "📤 विशेषज्ञ सत्यापन के लिए भेजें",
+        "contrib_wallet_title": "किसान इनाम राशि और स्थिति देखें",
+        "contrib_wallet_search": "किसान आईडी दर्ज करें",
+        "contrib_verified_balance": "सत्यापित कुल इनाम राशि",
+        "contrib_pending_balance": "सत्यापन के लिए लंबित",
+        "contrib_payout_threshold": "निकासी की न्यूनतम सीमा: ₹100.00",
+        "contrib_history_title": "भेजी गई तस्वीरों का इतिहास",
+        # Outbreak Map
+        "map_sim_banner": "महामारी निगरानी सिमुलेशन: रोग दबाव और हॉटस्पॉट की पहचान के लिए लाइव नक्शा।",
+        "map_page_title": "ज़िला-स्तरीय फसल रोग निगरानी नक्शा",
+        "map_page_desc": "कर्नाटक एवं अन्य बागवानी ज़िलों में विशेषज्ञों द्वारा सत्यापित रोग रिपोर्टों का लाइव नक्शा। सख्त गोपनीयता सुरक्षा लागू।",
+        "map_privacy_banner": "सख्त गोपनीयता सक्रिय: किसान की व्यक्तिगत जानकारी, मोबाइल विवरण या सटीक लोकेशन कभी भी साझा नहीं की जाती।",
+        "map_high_risk_badge": "उच्च जोखिम वाला क्षेत्र",
+        "map_moderate_risk_badge": "मध्यम रोग दबाव",
+        "map_low_risk_badge": "सुरक्षित / कम जोखिम वाला क्षेत्र",
+        "map_total_reports": "कुल सत्यापित रिपोर्टें",
+        "map_monitored_districts": "निगरानी किए जा रहे ज़िले",
+        # Admin Portal
+        "admin_page_badge": "ICAR / KVK सत्यापन डेस्क",
+        "admin_page_title": "कृषि विशेषज्ञ सत्यापन पोर्टल",
+        "admin_page_desc": "किसानों द्वारा भेजी गई तस्वीरों की विशेषज्ञ समीक्षा, रोग पुनर्वर्गीकरण और डिजिटल सत्यापन।",
+        "admin_pass_label": "कृषि विशेषज्ञ एक्सेस कुंजी दर्ज करें",
+        "admin_pass_help": "लंबित तस्वीरों की समीक्षा करने के लिए कृपया एक्सेस कुंजी दर्ज करें।",
+        "admin_auth_success": "✅ कृषि विशेषज्ञ सत्र सत्यापित हो गया।",
+        "admin_auth_failed": "❌ सत्यापन विफल: अमान्य एक्सेस कुंजी।",
+        "admin_queue_metric": "समीक्षा के लिए लंबित तस्वीरें",
+        "admin_bounty_rate": "सक्रिय इनाम दर",
+        "admin_reviewer_role": "समीक्षक खाता",
+        "admin_empty_queue": "कतार खाली है! कोई भी तस्वीर सत्यापन के लिए लंबित नहीं है।",
+        "admin_approve_btn": "✅ स्वीकृत करें और इनाम दें (₹1.00)",
+        "admin_reject_btn": "❌ तस्वीर अस्वीकार करें",
+        "admin_reclassify_label": "रोग का नाम बदलें (यदि गलत पहचान हो):",
     }
 }
 
@@ -1558,11 +1822,13 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
 
 
 def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
-    """Renders sleek, unified AgriTrust branding and telemetry in the sidebar."""
+    """Renders sleek, unified AgriTrust branding, global language switcher, and telemetry in the sidebar."""
     import streamlit as st
+    cur_lang = st.session_state.get("lang_code", lang_code)
+
     with st.sidebar:
         # 1. Brand Logo & Title Card
-        st.markdown("""
+        st.markdown(f"""
         <div style="padding: 14px 10px 16px 10px; text-align: center; border-bottom: 1.5px solid #E3ECE5; margin-bottom: 14px;">
             <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #EBF3ED; border-radius: 14px; border: 1.5px solid #91BA94; font-size: 26px; margin-bottom: 8px;">
                 🌾
@@ -1571,41 +1837,65 @@ def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
                 AgriTrust AI
             </div>
             <div style="font-size: 11px; font-weight: 700; color: #556B5C; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px;">
-                Clinical Crop Pathology
+                {get_ui_string('sidebar_subtitle', cur_lang)}
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        # 1a. Global Language Switcher (Always available on every page)
+        lang_opts = ["English", "ಕನ್ನಡ", "हिन्दी"]
+        lang_map = {"English": "en", "ಕನ್ನಡ": "kn", "हिन्दी": "hi"}
+        inv_lang_map = {v: k for k, v in lang_map.items()}
+
+        st.markdown(f"""
+        <div style="font-size: 11px; font-weight: 700; color: #556B5C; text-transform: uppercase; letter-spacing: 0.6px; margin: 0 0 4px 2px;">
+            🌐 {get_ui_string('lang_select_label', cur_lang)}
+        </div>
+        """, unsafe_allow_html=True)
+
+        chosen_lang = st.segmented_control(
+            "Global Language",
+            options=lang_opts,
+            default=inv_lang_map.get(cur_lang, "English"),
+            selection_mode="single",
+            label_visibility="collapsed",
+            key=f"sidebar_lang_choice_{current_page}"
+        )
+        if chosen_lang and chosen_lang in lang_map and lang_map[chosen_lang] != cur_lang:
+            st.session_state["lang_code"] = lang_map[chosen_lang]
+            st.rerun()
 
         # 1b. User Account Status Card
         user = st.session_state.get("user")
         is_logged_in = st.session_state.get("is_logged_in", False)
         if is_logged_in and user:
-            role = st.session_state.get("user_role", "Farmer").title()
+            raw_role = st.session_state.get("user_role", "farmer").lower()
+            role_display = get_ui_string("sidebar_role_agronomist" if "agronomist" in raw_role else "sidebar_role_farmer", cur_lang)
             st.markdown(f"""
-            <div style="background: #EBF3ED; border: 1px solid #91BA94; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px;">
-                <div style="font-size: 10px; color: #556B5C; text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px;">Signed In As</div>
+            <div style="background: #EBF3ED; border: 1px solid #91BA94; border-radius: 12px; padding: 10px 14px; margin-top: 10px; margin-bottom: 12px;">
+                <div style="font-size: 10px; color: #556B5C; text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px;">{get_ui_string('sidebar_signed_in', cur_lang)}</div>
                 <div style="font-size: 13.5px; font-weight: 800; color: #275637;">👤 {user}</div>
-                <div style="font-size: 11px; color: #4F7358;">Role: {role}</div>
+                <div style="font-size: 11px; color: #4F7358;">{get_ui_string('login_role_label', cur_lang)}: {role_display}</div>
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.markdown("""
-            <div style="background: #FFF4E5; border: 1.5px solid #FFB020; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px;">
-                <div style="font-size: 10.5px; font-weight: 800; color: #8A5B00; text-transform: uppercase; letter-spacing: 0.6px;">🔒 Authentication Required</div>
-                <div style="font-size: 12px; color: #593E00; margin-top: 3px; line-height: 1.35;">Sign in or register an account to unlock all pathology tools.</div>
+            st.markdown(f"""
+            <div style="background: #FFF4E5; border: 1.5px solid #FFB020; border-radius: 12px; padding: 10px 12px; margin-top: 10px; margin-bottom: 12px;">
+                <div style="font-size: 10.5px; font-weight: 800; color: #8A5B00; text-transform: uppercase; letter-spacing: 0.6px;">{get_ui_string('sidebar_auth_req', cur_lang)}</div>
+                <div style="font-size: 12px; color: #593E00; margin-top: 3px; line-height: 1.35;">{get_ui_string('sidebar_auth_msg', cur_lang)}</div>
             </div>
             <style>
-                div[data-testid="stSidebarNav"] {
+                div[data-testid="stSidebarNav"] {{
                     display: none !important;
-                }
+                }}
             </style>
             """, unsafe_allow_html=True)
 
         # 2. System Guardrails Telemetry Card
-        st.markdown("""
+        st.markdown(f"""
         <div style="background: #F4F7F4; border: 1px solid #D8E4DA; border-radius: 12px; padding: 12px 14px; margin-top: 10px; box-shadow: 0 1px 4px rgba(39,86,55,0.03);">
             <div style="font-size: 11px; font-weight: 700; color: #556B5C; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                <span>🛡️</span> <span>Verified Guardrails</span>
+                <span>🛡️</span> <span>{get_ui_string('sidebar_guardrails', cur_lang)}</span>
             </div>
             <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #275637;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1614,15 +1904,15 @@ def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span>• Privacy Shield:</span>
-                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">Centroid Only</span>
+                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">{get_ui_string('sidebar_privacy_badge', cur_lang)}</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span>• Inference Engine:</span>
-                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">Local CPU</span>
+                    <span style="font-weight:700; background:#EBF3ED; padding:2px 8px; border-radius:10px; font-size:11px;">{get_ui_string('sidebar_engine_badge', cur_lang)}</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span>• Monitored Crops:</span>
-                    <span style="font-weight:700; color:#275637; font-size:11px;">Paddy, Areca, Apple</span>
+                    <span style="font-weight:700; color:#275637; font-size:11px;">{get_ui_string('sidebar_crops_badge', cur_lang)}</span>
                 </div>
             </div>
         </div>
@@ -1633,16 +1923,16 @@ def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
             dist = st.session_state["selected_district"]
             st.markdown(f"""
             <div style="margin-top: 10px; padding: 8px 12px; background: #FFFFFF; border: 1px solid #D8E4DA; border-radius: 10px; font-size: 12px; color: #275637; display: flex; align-items: center; justify-content: space-between;">
-                <span style="color: #556B5C;">📍 District:</span>
+                <span style="color: #556B5C;">📍 {get_ui_string('sidebar_district_label', cur_lang)}:</span>
                 <span style="font-weight: 700;">{dist}</span>
             </div>
             """, unsafe_allow_html=True)
 
         # 4. Clean Audit Footer
-        st.markdown("""
+        st.markdown(f"""
         <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid #E3ECE5; text-align: center; font-size: 11px; color: #738A7A; line-height: 1.4;">
             <strong>AgriTrust AI v2.4</strong><br/>
-            ICAR & KVK Audited System
+            {get_ui_string('sidebar_audit_footer', cur_lang)}
         </div>
         """, unsafe_allow_html=True)
 

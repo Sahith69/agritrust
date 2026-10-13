@@ -847,7 +847,10 @@ chosen_lang_name = st.segmented_control(
     key="lang_segmented_choice"
 )
 if chosen_lang_name and chosen_lang_name in lang_map:
-    st.session_state["lang_code"] = lang_map[chosen_lang_name]
+    new_code = lang_map[chosen_lang_name]
+    if new_code != st.session_state.get("lang_code", "en"):
+        st.session_state["lang_code"] = new_code
+        st.rerun()
 lang_code = st.session_state.get("lang_code", "en")
 
 # Render unified sidebar branding and telemetry

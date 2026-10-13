@@ -10,11 +10,13 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 import contrib.store as store
-from ui_theme import CSS_STYLES, render_sidebar
+from ui_theme import CSS_STYLES, render_sidebar, get_ui_string
+
+cur_lang = st.session_state.get("lang_code", "en")
 
 # Page setup
 st.set_page_config(
-    page_title="Agronomist Portal | AgriTrust AI",
+    page_title=f"{get_ui_string('admin_page_title', cur_lang)} | AgriTrust AI",
     page_icon="🔐",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -26,7 +28,7 @@ st.markdown(CSS_STYLES, unsafe_allow_html=True)
 from auth import require_auth
 require_auth(current_page="admin")
 
-render_sidebar(current_page="admin")
+render_sidebar(current_page="admin", lang_code=cur_lang)
 
 st.markdown("""
 <style>
@@ -55,18 +57,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown(f"""
 <div class="admin-header-card">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <div>
             <div style="font-size:12px; font-weight:700; color:#B1D27D !important; text-transform:uppercase; letter-spacing:0.8px;">
-                ICAR / KVK Verification Desk
+                {get_ui_string('admin_page_badge', cur_lang)}
             </div>
             <h2 style="margin:4px 0 0 0; color:#FFFFFF !important; font-size:26px; font-weight:800;">
-                🔐 Agronomist Verification Portal
+                🔐 {get_ui_string('admin_page_title', cur_lang)}
             </h2>
             <div style="margin-top:6px; font-size:13.5px; color:#E3ECE5;">
-                Expert review, disease reclassification, and cryptographic verification of field pathology photos.
+                {get_ui_string('admin_page_desc', cur_lang)}
             </div>
         </div>
         <div style="font-size:42px;">🔬</div>
@@ -81,39 +83,36 @@ if "ADMIN_PASS" not in os.environ:
 
 col_pass, _ = st.columns([1.5, 1])
 with col_pass:
-    admin_input = st.text_input("Enter Agronomist / Administrator Access Key", type="password")
+    admin_input = st.text_input(get_ui_string('admin_pass_label', cur_lang), type="password")
 
 if admin_input == admin_pass_env:
     admin_auth = True
-    st.success("✅ Agronomist session authenticated.")
+    st.success(get_ui_string('admin_auth_success', cur_lang))
 elif admin_input:
     admin_auth = False
-    st.error("❌ Authentication failed: Invalid access key.")
+    st.error(get_ui_string('admin_auth_failed', cur_lang))
 else:
     admin_auth = False
-    st.caption("🔒 Please enter the administrator access key to review pending field contributions.")
+    st.caption(f"🔒 {get_ui_string('admin_pass_help', cur_lang)}")
 
 if admin_auth:
     pending_items = store.get_pending_contributions()
 
     col_stat1, col_stat2, col_stat3 = st.columns(3)
     with col_stat1:
-        st.metric("Pending In Queue", f"{len(pending_items)} photos")
+        st.metric(get_ui_string('admin_queue_metric', cur_lang), f"{len(pending_items)} photos")
     with col_stat2:
-        st.metric("Active Bounty Rate", "₹1.00 / verified")
+        st.metric(get_ui_string('admin_bounty_rate', cur_lang), "₹1.00 / verified")
     with col_stat3:
-        st.metric("Reviewer Session", "admin_expert (KVK)")
+        st.metric(get_ui_string('admin_reviewer_role', cur_lang), "admin_expert (KVK)")
 
     st.markdown("---")
 
     if not pending_items:
-        st.markdown("""
+        st.markdown(f"""
         <div style="text-align: center; padding: 48px 24px; background: #FFFFFF; border-radius: 16px; border: 1.5px solid #D8E4DA; margin-top: 12px;">
             <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
-            <div style="font-weight: 700; font-size: 18px; color: #275637;">All Submissions Verified</div>
-            <p style="margin: 6px 0 0 0; font-size: 14px; color: #556B5C;">
-                There are no pending submissions awaiting review in the queue.
-            </p>
+            <div style="font-weight: 700; font-size: 18px; color: #275637;">{get_ui_string('admin_empty_queue', cur_lang)}</div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -161,7 +160,7 @@ if admin_auth:
 
                     col_btn1, col_btn2 = st.columns(2)
                     with col_btn1:
-                        if st.button(f"✅ Approve & Disburse ₹{item['reward']:.0f}", key=f"app_{item['id']}", type="primary", use_container_width=True):
+                        if st.button(get_ui_string("admin_approve_btn", cur_lang), key=f"app_{item['id']}", type="primary", use_container_width=True):
                             store.verify_contribution(
                                 contrib_id=item["id"],
                                 verified_by="admin_expert",
@@ -171,7 +170,7 @@ if admin_auth:
                             st.rerun()
 
                     with col_btn2:
-                        if st.button(f"❌ Reject Submission", key=f"rej_{item['id']}", use_container_width=True):
+                        if st.button(get_ui_string("admin_reject_btn", cur_lang), key=f"rej_{item['id']}", use_container_width=True):
                             store.reject_contribution(
                                 contrib_id=item["id"],
                                 verified_by="admin_expert"

@@ -11,11 +11,13 @@ import pandas as pd
 import pydeck as pdk
 import weather_live
 import contrib.store as store
-from ui_theme import CSS_STYLES, render_sidebar
+from ui_theme import CSS_STYLES, render_sidebar, get_ui_string
+
+cur_lang = st.session_state.get("lang_code", "en")
 
 # Page configuration
 st.set_page_config(
-    page_title="Disease Outbreak Map | AgriTrust AI",
+    page_title=f"{get_ui_string('map_page_title', cur_lang)} | AgriTrust AI",
     page_icon="🗺️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -27,7 +29,7 @@ st.markdown(CSS_STYLES, unsafe_allow_html=True)
 from auth import require_auth
 require_auth(current_page="outbreak")
 
-render_sidebar(current_page="outbreak")
+render_sidebar(current_page="outbreak", lang_code=cur_lang)
 
 # ── Custom AgriTrust Theme Styling ───────────────────────────────────────────
 st.markdown("""
@@ -126,25 +128,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown(f"""
 <div class="sim-badge">
     <span>⚠️</span>
     <div>
-        <strong>SIMULATED EPIDEMIOLOGICAL SURVEILLANCE:</strong> Regional aggregates demonstrate disease pressure surveillance and cluster tracking.
+        <strong>{get_ui_string('map_sim_banner', cur_lang)}</strong>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.title("🗺️ District-Level Crop Pathology Surveillance Map")
-st.markdown(
-    "Live spatial tracking of **expert-verified** crop disease reports across monitored agricultural districts. "
-    "Features **strict differential privacy**: only coarse district centroid coordinates are rendered."
-)
+st.title(f"🗺️ {get_ui_string('map_page_title', cur_lang)}")
+st.markdown(get_ui_string('map_page_desc', cur_lang))
 
 # ── Privacy Guarantee Alert ───────────────────────────────────────────────────
-st.markdown("""
+st.markdown(f"""
 <div style="background-color: #EBF3ED; border: 1px solid #91BA94; border-radius: 12px; padding: 12px 18px; margin-bottom: 20px; font-size: 13.5px; color: #275637;">
-    🔒 <strong>Strict Privacy Shield Active:</strong> Under no circumstances are farmer IDs, photo filenames, device metadata, or coordinates finer than the district centroid displayed or exported.
+    🔒 <strong>{get_ui_string('map_privacy_banner', cur_lang)}</strong>
 </div>
 """, unsafe_allow_html=True)
 
