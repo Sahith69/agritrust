@@ -34,11 +34,17 @@ st.markdown("""
     }
     .user-profile-badge {
         background: linear-gradient(135deg, #275637 0%, #1A472A 100%);
-        color: #FFFFFF;
+        color: #FFFFFF !important;
         border-radius: 16px;
         padding: 24px 28px;
         margin-bottom: 24px;
         box-shadow: 0 4px 14px rgba(39, 86, 55, 0.15);
+    }
+    .user-profile-badge h1,
+    .user-profile-badge h2,
+    .user-profile-badge h3 {
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -59,10 +65,10 @@ if is_logged_in and current_user:
     <div class="user-profile-badge">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
             <div>
-                <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#B1D27D;">
+                <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#B1D27D !important;">
                     Active Farmer Account
                 </div>
-                <h2 style="margin:4px 0 0 0; color:#FFFFFF; font-size:26px;">
+                <h2 style="margin:4px 0 0 0; color:#FFFFFF !important; font-size:26px; font-weight:800;">
                     Welcome back, {current_user}!
                 </h2>
                 <div style="margin-top:6px; font-size:13px; color:#E3ECE5;">

@@ -32,11 +32,17 @@ st.markdown("""
 <style>
     .admin-header-card {
         background: linear-gradient(135deg, #275637 0%, #153320 100%);
-        color: #FFFFFF;
+        color: #FFFFFF !important;
         border-radius: 16px;
         padding: 24px 28px;
         margin-bottom: 24px;
         box-shadow: 0 4px 16px rgba(39, 86, 55, 0.12);
+    }
+    .admin-header-card h1,
+    .admin-header-card h2,
+    .admin-header-card h3 {
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
     }
     .queue-card {
         background: #FFFFFF;
@@ -53,10 +59,10 @@ st.markdown("""
 <div class="admin-header-card">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <div>
-            <div style="font-size:12px; font-weight:700; color:#B1D27D; text-transform:uppercase; letter-spacing:0.8px;">
+            <div style="font-size:12px; font-weight:700; color:#B1D27D !important; text-transform:uppercase; letter-spacing:0.8px;">
                 ICAR / KVK Verification Desk
             </div>
-            <h2 style="margin:4px 0 0 0; color:#FFFFFF; font-size:26px;">
+            <h2 style="margin:4px 0 0 0; color:#FFFFFF !important; font-size:26px; font-weight:800;">
                 🔐 Agronomist Verification Portal
             </h2>
             <div style="margin-top:6px; font-size:13.5px; color:#E3ECE5;">

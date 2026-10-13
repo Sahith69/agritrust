@@ -406,6 +406,12 @@ CSS_STYLES = f"""
         margin-bottom: 0.5rem !important;
     }}
 
+    /* Headings inside dark green cards must remain clean white */
+    .user-profile-badge h1, .user-profile-badge h2, .user-profile-badge h3,
+    .admin-header-card h1, .admin-header-card h2, .admin-header-card h3 {{
+        color: #FFFFFF !important;
+    }}
+
     /* Clean Card System (14px radius, 1px sage border, no heavy shadow) */
     .ui-card {{
         background: {THEME_CONFIG['card_bg']} !important;
