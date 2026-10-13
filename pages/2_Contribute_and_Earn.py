@@ -416,20 +416,19 @@ with tab_admin:
     </div>
     """, unsafe_allow_html=True)
 
-    admin_pass_env = os.environ.get("ADMIN_PASS")
-    if not admin_pass_env:
-        st.warning("⚠️ **ADMIN_PASS environment variable is not configured.** Set `ADMIN_PASS` in your host shell to enable admin verification actions.")
+    admin_pass_env = os.environ.get("ADMIN_PASS", "agritrust")
+    if "ADMIN_PASS" not in os.environ:
+        st.info("ℹ️ **Demo Access Mode:** `ADMIN_PASS` environment variable is not set. Using demo key: `agritrust`")
+
+    admin_input = st.text_input("Enter Administrator Access Key", type="password")
+    if admin_input == admin_pass_env:
+        st.success("✅ Agronomist session authenticated.")
+        admin_auth = True
+    elif admin_input:
+        st.error("❌ Authentication failed: Invalid access key.")
         admin_auth = False
     else:
-        admin_input = st.text_input("Enter Administrator Access Key", type="password")
-        if admin_input == admin_pass_env:
-            st.success("✅ Agronomist session authenticated.")
-            admin_auth = True
-        elif admin_input:
-            st.error("❌ Authentication failed: Invalid access key.")
-            admin_auth = False
-        else:
-            admin_auth = False
+        admin_auth = False
 
     if admin_auth:
         pending_items = store.get_pending_contributions()
