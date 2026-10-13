@@ -38,7 +38,7 @@ st.set_page_config(
     page_title=f"{APP_NAME} — Multimodal Crop Disease & Severity Engine",
     page_icon="🌾",
     layout="centered",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ─── CSS STYLING (SINGLE BLOCK INJECTION FROM UI_THEME) ─────────────────────
@@ -622,9 +622,9 @@ REQUIRED_MODEL_FILES = [
     "outputs/models/arecanut_disease_classifier.pth",
     "outputs/models/arecanut_ordinal.pth",
     "outputs/models/arecanut_baseline.pth",
-    "outputs/models/apple_disease_classifier.pth",
+    "outputs/apple_fgvc/apple_disease_fgvc_v1.pth",
     "outputs/models/apple_ordinal.pth",
-    "outputs/ood_params.pt"
+    "outputs/ood_params_v2.pt"
 ]
 
 def check_missing_models() -> List[str]:
@@ -639,7 +639,10 @@ def check_missing_models() -> List[str]:
 @st.cache_resource
 def get_disease_classifier(crop_name: str):
     key = crop_name.lower()
-    pth = os.path.join(config.OUTPUTS_DIR, "models", f"{key}_disease_classifier.pth")
+    if key == "apple":
+        pth = os.path.join(config.OUTPUTS_DIR, "apple_fgvc", "apple_disease_fgvc_v1.pth")
+    else:
+        pth = os.path.join(config.OUTPUTS_DIR, "models", f"{key}_disease_classifier.pth")
     if not os.path.exists(pth):
         return None, None, None
 
@@ -810,8 +813,17 @@ if "severity_arch" not in st.session_state:
 if "use_live_weather" not in st.session_state:
     st.session_state["use_live_weather"] = True
 
+# ─── LANGUAGE SYNCHRONIZATION ────────────────────────────────────────────────
+lang_opts = ["English", "ಕನ್ನಡ", "हिन्दी"]
+lang_map = {"English": "en", "ಕನ್ನಡ": "kn", "हिन्दी": "hi"}
+inv_lang_map = {v: k for k, v in lang_map.items()}
+
+if "lang_radio_choice" in st.session_state and st.session_state["lang_radio_choice"] in lang_map:
+    st.session_state["lang_code"] = lang_map[st.session_state["lang_radio_choice"]]
+
+cur_lang = st.session_state.get("lang_code", "en")
+
 # ─── HEADER (APP NAME, LOCATION PIN, LOCALIZED DATE, LANGUAGE SWITCHER) ──────
-cur_lang = st.session_state["lang_code"]
 st.markdown(f"""
 <div style="padding: 2px 0 4px 0;">
     <h1 style="margin:0;font-size:26px;color:#275637;display:flex;align-items:center;gap:8px;">
@@ -823,9 +835,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-lang_opts = ["English", "ಕನ್ನಡ", "हिन्दी"]
-lang_map = {"English": "en", "ಕನ್ನಡ": "kn", "हिन्दी": "hi"}
-inv_lang_map = {v: k for k, v in lang_map.items()}
 chosen_lang_name = st.radio(
     "Language", lang_opts,
     index=lang_opts.index(inv_lang_map.get(st.session_state["lang_code"], "English")),
@@ -834,7 +843,6 @@ chosen_lang_name = st.radio(
     key="lang_radio_choice"
 )
 st.session_state["lang_code"] = lang_map[chosen_lang_name]
-
 lang_code = st.session_state["lang_code"]
 
 # ─── LIVE WEATHER DATA FETCH ─────────────────────────────────────────────────
@@ -899,6 +907,25 @@ with tab_home:
                 key="home_district_selector"
             )
             st.session_state["selected_district"] = selected_district
+
+        # Direct navigation to community features
+        col_nav1, col_nav2 = st.columns(2)
+        with col_nav1:
+            st.markdown(
+                '<a href="/Contribute_and_Earn" target="_self" style="text-decoration:none;">'
+                '<div style="background:#EBF3ED;padding:10px 14px;border-radius:10px;border:1px solid #91BA94;color:#275637;font-weight:600;text-align:center;">'
+                '📤 Contribute & Earn Bounty'
+                '</div></a>',
+                unsafe_allow_html=True
+            )
+        with col_nav2:
+            st.markdown(
+                '<a href="/Outbreak_Map" target="_self" style="text-decoration:none;">'
+                '<div style="background:#EBF3ED;padding:10px 14px;border-radius:10px;border:1px solid #91BA94;color:#275637;font-weight:600;text-align:center;">'
+                '📍 Disease Outbreak Map'
+                '</div></a>',
+                unsafe_allow_html=True
+            )
 
         # 2. Greeting & Weather summary
         col_greet, col_wx = st.columns([1.2, 1.0])
@@ -979,22 +1006,67 @@ with tab_home:
             input_image = Image.open(input_file).convert("RGB")
             image_title = getattr(input_file, "name", "Captured Photo")
 
-            # ── 0. OOD Guard Check
-            is_ood, ood_score, ood_thresh = check_ood(input_image, active_crop)
+            # ── 0. Multi-Crop OOD & Cross-Crop Guard Check
+            crops_list = ["Paddy", "Arecanut", "Apple"]
+            ood_ratios = {}
+            for c in crops_list:
+                _, sc, th = check_ood(input_image, c)
+                ood_ratios[c] = sc / th
 
-            if is_ood:
+            sel_ratio = ood_ratios[active_crop]
+            other_crops = [c for c in crops_list if c != active_crop]
+            min_other_crop = min(other_crops, key=lambda c: ood_ratios[c])
+            min_other_ratio = ood_ratios[min_other_crop]
+
+            all_above_1 = all(ood_ratios[c] > 1.0 for c in crops_list)
+            is_cross_crop = ((sel_ratio > 1.0 and min_other_ratio < 1.0) or (sel_ratio - min_other_ratio >= 0.25)) and not all_above_1
+
+            if is_cross_crop:
+                other_crop_loc = get_ui_string(f"crop_{min_other_crop.lower()}", lang_code)
+                refusal_msg = get_ui_string("cross_crop_refusal_msg", lang_code).replace("{other_crop}", other_crop_loc)
                 st.session_state["last_result"] = {
-                    "is_ood": True, "is_abstain": False, "status": "unsure",
-                    "crop": active_crop, "display_name": "Unknown / Out-of-Distribution",
-                    "confidence": 0.0, "organic_advice": get_ui_string("refusal_ood_msg", lang_code),
-                    "chemical_advice": "", "weather_alert_text": None, "date": format_local_date(datetime.date.today(), lang_code)
+                    "is_cross_crop": True,
+                    "suggested_crop": min_other_crop,
+                    "is_ood": False,
+                    "is_abstain": False,
+                    "status": "unsure",
+                    "crop": active_crop,
+                    "display_name": f"Check Selection ({min_other_crop})",
+                    "confidence": 0.0,
+                    "organic_advice": refusal_msg,
+                    "chemical_advice": "",
+                    "weather_alert_text": None,
+                    "date": format_local_date(datetime.date.today(), lang_code),
+                    "image": input_image,
+                    "image_title": image_title
                 }
                 st.session_state["scan_history"].append(st.session_state["last_result"])
                 if len(st.session_state["scan_history"]) > 10:
                     st.session_state["scan_history"].pop(0)
                 st.session_state["view_result"] = True
                 st.session_state["current_scan_eval"] = {
-                    "is_ood": True, "is_abstain": False, "image": input_image, "title": image_title
+                    "is_cross_crop": True, "is_ood": False, "is_abstain": False, "image": input_image, "title": image_title
+                }
+                st.rerun()
+
+            is_ood = (sel_ratio > 1.0)
+
+            if is_ood:
+                st.session_state["last_result"] = {
+                    "is_cross_crop": False,
+                    "is_ood": True, "is_abstain": False, "status": "unsure",
+                    "crop": active_crop, "display_name": "Unknown / Out-of-Distribution",
+                    "confidence": 0.0, "organic_advice": get_ui_string("refusal_ood_msg", lang_code),
+                    "chemical_advice": "", "weather_alert_text": None, "date": format_local_date(datetime.date.today(), lang_code),
+                    "image": input_image,
+                    "image_title": image_title
+                }
+                st.session_state["scan_history"].append(st.session_state["last_result"])
+                if len(st.session_state["scan_history"]) > 10:
+                    st.session_state["scan_history"].pop(0)
+                st.session_state["view_result"] = True
+                st.session_state["current_scan_eval"] = {
+                    "is_cross_crop": False, "is_ood": True, "is_abstain": False, "image": input_image, "title": image_title
                 }
                 st.rerun()
 
@@ -1194,8 +1266,23 @@ with tab_home:
 
         res = st.session_state.get("last_result")
         if res is not None:
-            # ── A. REFUSAL STATES (OOD / ABSTAIN)
-            if res.get("is_ood"):
+            # ── A. REFUSAL STATES (CROSS-CROP / OOD / ABSTAIN)
+            if res.get("is_cross_crop"):
+                other_crop_loc = get_ui_string(f"crop_{res.get('suggested_crop', 'Paddy').lower()}", lang_code)
+                refusal_text = get_ui_string("cross_crop_refusal_msg", lang_code).replace("{other_crop}", other_crop_loc)
+                st.markdown(f"""
+                <div class="ui-card" style="border-left: 5px solid #888888; background:#F9F9F6; padding: 18px 20px; margin: 16px 0;">
+                    <div style="font-size:28px;margin-bottom:8px;">⚠️</div>
+                    <h3 style="margin:0;color:#275637;font-size:18px;">{get_ui_string('cross_crop_refusal_title', lang_code)}</h3>
+                    <p style="margin:10px 0 0 0;font-size:15px;color:#556B5C;line-height:1.5;">
+                        {refusal_text}
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+                if res.get("image") is not None:
+                    st.image(res["image"], caption=res.get("image_title", "Uploaded Image"), width=360)
+
+            elif res.get("is_ood"):
                 st.markdown(f"""
                 <div class="refusal-card">
                     <div style="font-size:32px;margin-bottom:8px;">⚠️</div>

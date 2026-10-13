@@ -19,7 +19,8 @@ TRUST_AND_AUDIT = {
     "paddy_severity_qwk": "0.94 headline vs 0.67 twin-free lesion classes",
     "class_only_baseline": "0.91 full vs 0.00 lesion-only baseline",
     "abstain_threshold": "0.70 confidence threshold",
-    "apple_data_origin": "Apple models trained on public lab data (not field-validated)",
+    "apple_orchard_result": "Held-out orchard split of one public dataset, N=346: raw accuracy 96.0% [93.6%, 98.0%], guarded accuracy 89.9% (coverage 92.5%, diagnosed accuracy 97.2%); on images farthest from training: 95.7%. Not northern-India validated.",
+    "arecanut_weak_guard": "Arecanut weak OOD detection (heterogeneous palm views yield ~40% non-crop block)",
     "arecanut_severity": "Arecanut severity provisional (not independently validated)",
 }
 
@@ -103,7 +104,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "listen_audio": "Voice Advisory",
         "experts_expander": "For experts and judges",
         "trust_audit_title": "Trust and Audit Benchmarks",
-        "apple_public_banner": "⚠️ Trained on public lab data, not field-validated in orchards.",
+        "apple_public_banner": "Fine-tuned on lab (PlantVillage) and public orchard photos (Cornell dataset, not northern India). Black rot was trained on lab photos only. Severity grading is withheld.",
         "areca_provisional": "Provisional: not independently validated.",
         "paddy_severity_qwk": "Independent-test QWK about 0.67 (twin-free, lesion classes); headline 0.94 is inflated.",
         "paddy_severity_fixed": "Severity is assigned by a fixed rule for this class.",
@@ -141,6 +142,8 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "rule_based_tag": "rule-based estimate, not a forecast",
         "no_rule_for_crop": "ℹ️ No weather rule active for this condition in the next 48 hours.",
         "models_missing_msg": "Model files not found. Run: python download_models.py",
+        "cross_crop_refusal_title": "Crop Selection Mismatch",
+        "cross_crop_refusal_msg": "This looks more like a {other_crop} photo. Check your crop selection.",
     },
     "kn": {
         "app_name": "AgriTrust AI",
@@ -184,7 +187,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "listen_audio": "ವಾಯ್ಸ್‌ನಲ್ಲಿ ಕೇಳಿ (ಆಡಿಯೋ)",
         "experts_expander": "ತಜ್ಞರು ಮತ್ತು ತೀರ್ಪುಗಾರರಿಗೆ",
         "trust_audit_title": "ವಿಶ್ವಾಸಾರ್ಹತೆ ಮತ್ತು ಆಡಿಟ್ ಅಂಕಿಅಂಶಗಳು",
-        "apple_public_banner": "⚠️ ಸಾರ್ವಜನಿಕ ಲ್ಯಾಬ್ ಡೇಟಾದಲ್ಲಿ ತರಬೇತಿ ಪಡೆದಿದೆ, ತೋಟಗಳಲ್ಲಿ ಕ್ಷೇತ್ರ-ಪರೀಕ್ಷೆ ಮಾಡಲಾಗಿಲ್ಲ.",
+        "apple_public_banner": "ಪ್ರಯೋಗಾಲಯ (PlantVillage) ಮತ್ತು ಸಾರ್ವಜನಿಕ ತೋಟದ ಫೋಟೋಗಳಲ್ಲಿ (Cornell ಡೇಟಾಸೆಟ್, ಉತ್ತರ ಭಾರತವಲ್ಲ) ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಲಾಗಿದೆ. Black rot ಕೇವಲ ಲ್ಯಾಬ್ ಫೋಟೋಗಳಲ್ಲಿ ತರಬೇತಿ ಪಡೆದಿದೆ. ತೀವ್ರತೆಯ ಶ್ರೇಣೀಕರಣವನ್ನು ತಡೆಹಿಡಿಯಲಾಗಿದೆ.",
         "areca_provisional": "ತಾತ್ಕಾಲಿಕ: ಸ್ವತಂತ್ರವಾಗಿ ಮೌಲ್ಯೀಕರಿಸಲಾಗಿಲ್ಲ.",
         "paddy_severity_qwk": "ನಿಜ ತಪಾಸಣಾ ರಿಪೋರ್ಟ್: ರಿಯಲ್ ಫೀಲ್ಡ್ ಟೆಸ್ಟ್‌ನಲ್ಲಿ ಸ್ಕೋರ್ ಸುಮಾರು 0.67 ಇದೆ; ಹೊರಗಡೆ ಹೇಳುವ 0.94 ಸ್ಕೋರ್ ಜಾಸ್ತಿ ಮಾಡಿ ಹೇಳಿದ್ದು.",
         "paddy_severity_fixed": "ಈ ರೋಗಕ್ಕೆ ಸ್ಥಿರ ನಿಯಮದ ಮೂಲಕ ತೀವ್ರತೆಯನ್ನು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ.",
@@ -222,6 +225,8 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "rule_based_tag": "ನಿಯಮ-ಆಧಾರಿತ ಅಂದಾಜು, ಹವಾಮಾನ ಮುನ್ಸೂಚನೆಯಲ್ಲ",
         "no_rule_for_crop": "ℹ️ ಮುಂದಿನ 48 ಗಂಟೆಗಳಲ್ಲಿ ಈ ಸ್ಥಿತಿಗೆ ಯಾವುದೇ ಹವಾಮಾನ ನಿಯಮ ಅನ್ವಯಿಸುವುದಿಲ್ಲ.",
         "models_missing_msg": "ಮಾದರಿ ಕಡತಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ಚಲಾಯಿಸಿ: python download_models.py",
+        "cross_crop_refusal_title": "ಬೆಳೆ ಆಯ್ಕೆ ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿಲ್ಲ",
+        "cross_crop_refusal_msg": "ಇದು {other_crop} ಫೋಟೋದಂತೆ ಕಾಣುತ್ತಿದೆ. ನಿಮ್ಮ ಬೆಳೆ ಆಯ್ಕೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
     },
     "hi": {
         "app_name": "AgriTrust AI",
@@ -265,7 +270,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "listen_audio": "बोलकर सुनें (आवाज में सलाह)",
         "experts_expander": "विशेषज्ञों और परीक्षकों के लिए",
         "trust_audit_title": "विश्वसनीयता एवं ऑडिट रिपोर्ट",
-        "apple_public_banner": "⚠️ सार्वजनिक लैब डेटा पर प्रशिक्षित, बगीचों में फील्ड-परीक्षण नहीं किया गया।",
+        "apple_public_banner": "प्रयोगशाला (PlantVillage) और सार्वजनिक बगीचे की तस्वीरों (Cornell डेटासेट, उत्तर भारत नहीं) पर फाइन-ट्यून किया गया। Black rot को केवल लैब तस्वीरों पर प्रशिक्षित किया गया था। गंभीरता ग्रेडिंग रोक दी गई है।",
         "areca_provisional": "अनंतिम: स्वतंत्र रूप से मान्य नहीं किया गया।",
         "paddy_severity_qwk": "ईमानदार टेस्ट स्कोर: असली खेत के टेस्ट में स्कोर लगभग 0.67 है; मार्केट में बोला जाने वाला 0.94 का स्कोर बढ़ा-चढ़ाकर दिखाया गया है।",
         "paddy_severity_fixed": "इस वर्ग के लिए गंभीरता एक निश्चित नियम द्वारा निर्धारित की गई है।",
@@ -303,6 +308,8 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "rule_based_tag": "नियम-आधारित अनुमान, मौसम पूर्वानुमान नहीं",
         "no_rule_for_crop": "ℹ️ अगले 48 घंटों में इस रोग के लिए कोई मौसम नियम सक्रिय नहीं है।",
         "models_missing_msg": "मॉडल फ़ाइलें नहीं मिलीं। चलाएं: python download_models.py",
+        "cross_crop_refusal_title": "गलत फसल का चयन",
+        "cross_crop_refusal_msg": "यह {other_crop} की तस्वीर जैसी लग रही है। कृपया अपनी चुनी हुई फसल की जांच करें।",
     }
 }
 
@@ -327,11 +334,13 @@ CSS_STYLES = f"""
     /* Mobile First Centered Container (Max Width 760px) */
     header[data-testid="stHeader"], [data-testid="stHeader"] {{
         background: transparent !important;
-        pointer-events: none !important;
-        height: 0px !important;
     }}
-    header[data-testid="stHeader"] *, [data-testid="stHeader"] * {{
+    [data-testid="stSidebarCollapsedControl"] {{
+        display: flex !important;
+        visibility: visible !important;
         pointer-events: auto !important;
+        z-index: 999999 !important;
+        color: #275637 !important;
     }}
 
     .block-container {{
@@ -1148,6 +1157,7 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
     cedar_note = last_scan.get("cedar_note", None)
     is_ood = last_scan.get("is_ood", False)
     is_abstain = last_scan.get("is_abstain", False)
+    is_cross_crop = last_scan.get("is_cross_crop", False)
     conf = last_scan.get("confidence", 0.0)
     grade = last_scan.get("grade", 1)
 
@@ -1186,7 +1196,9 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
 
     # 1. WHAT SHOULD I DO FIRST?
     if any(k in q for k in first_keywords) or q == get_ui_string("chip_first", lang).lower():
-        if is_ood or is_abstain:
+        if is_cross_crop:
+            response = last_scan.get("organic_advice", get_ui_string("cross_crop_refusal_msg", lang))
+        elif is_ood or is_abstain:
             response = get_ui_string("refusal_abstain_msg" if is_abstain else "refusal_ood_msg", lang)
         elif status == "healthy":
             if lang == "kn":
@@ -1212,7 +1224,9 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
 
     # 2. IS THERE A CURE?
     elif any(k in q for k in cure_keywords) or q == get_ui_string("chip_cure", lang).lower():
-        if is_ood or is_abstain:
+        if is_cross_crop:
+            response = last_scan.get("organic_advice", get_ui_string("cross_crop_refusal_msg", lang))
+        elif is_ood or is_abstain:
             response = get_ui_string("refusal_abstain_msg" if is_abstain else "refusal_ood_msg", lang)
         elif status == "healthy":
             if lang == "kn":
@@ -1238,7 +1252,9 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
 
     # 3. WHEN SHOULD I SPRAY?
     elif any(k in q for k in spray_keywords) or q == get_ui_string("chip_spray", lang).lower():
-        if is_ood or is_abstain:
+        if is_cross_crop:
+            response = last_scan.get("organic_advice", get_ui_string("cross_crop_refusal_msg", lang))
+        elif is_ood or is_abstain:
             response = get_ui_string("refusal_abstain_msg" if is_abstain else "refusal_ood_msg", lang)
         elif status == "healthy":
             if lang == "kn":
@@ -1310,7 +1326,9 @@ def build_chat_response(query: str, last_scan: Optional[Dict[str, Any]], lang: s
 
     # 6. WHY ARE YOU UNSURE?
     elif any(k in q for k in unsure_keywords) or q == get_ui_string("chip_unsure", lang).lower():
-        if is_ood:
+        if is_cross_crop:
+            response = last_scan.get("organic_advice", get_ui_string("cross_crop_refusal_msg", lang))
+        elif is_ood:
             response = get_ui_string("refusal_ood_msg", lang)
         elif is_abstain:
             if lang == "kn":

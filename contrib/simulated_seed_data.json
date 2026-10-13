@@ -1,0 +1,18 @@
+[
+  {"district": "Mangaluru", "crop": "Paddy", "disease": "blast", "count": 14, "is_simulated": true},
+  {"district": "Mangaluru", "crop": "Paddy", "disease": "bacterial_leaf_blight", "count": 6, "is_simulated": true},
+  {"district": "Mangaluru", "crop": "Arecanut", "disease": "mahali_koleroga", "count": 18, "is_simulated": true},
+  {"district": "Udupi", "crop": "Paddy", "disease": "blast", "count": 9, "is_simulated": true},
+  {"district": "Udupi", "crop": "Arecanut", "disease": "mahali_koleroga", "count": 12, "is_simulated": true},
+  {"district": "Udupi", "crop": "Arecanut", "disease": "bud_borer", "count": 4, "is_simulated": true},
+  {"district": "Shivamogga", "crop": "Arecanut", "disease": "yellow_leaf_disease", "count": 15, "is_simulated": true},
+  {"district": "Shivamogga", "crop": "Paddy", "disease": "brown_spot", "count": 7, "is_simulated": true},
+  {"district": "Mysuru", "crop": "Paddy", "disease": "tungro", "count": 8, "is_simulated": true},
+  {"district": "Mysuru", "crop": "Paddy", "disease": "hispa", "count": 5, "is_simulated": true},
+  {"district": "Srinagar", "crop": "Apple", "disease": "apple_scab", "count": 22, "is_simulated": true},
+  {"district": "Srinagar", "crop": "Apple", "disease": "cedar_apple_rust", "count": 3, "is_simulated": true},
+  {"district": "Shimla", "crop": "Apple", "disease": "apple_scab", "count": 16, "is_simulated": true},
+  {"district": "Shimla", "crop": "Apple", "disease": "black_rot", "count": 8, "is_simulated": true},
+  {"district": "Kullu", "crop": "Apple", "disease": "apple_scab", "count": 11, "is_simulated": true},
+  {"district": "Dehradun", "crop": "Paddy", "disease": "blast", "count": 7, "is_simulated": true}
+]

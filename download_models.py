@@ -60,11 +60,11 @@ DEPLOYED_MODELS: Dict[str, Dict[str, Any]] = {
         "sha256": "8ca9aa3defe19d7fa27c6b9c9268c8b272bc35462a20626e8b64835debc51644",
         "description": "Arecanut ResNet-18 baseline severity model (Standard Softmax)",
     },
-    "apple_disease_classifier.pth": {
-        "dest": "outputs/models/apple_disease_classifier.pth",
-        "size_bytes": 44794251,
-        "sha256": "047575112bc1d1a4887dbcd875c19dcfc5f5e7236363920638622491eee54a7a",
-        "description": "Apple ResNet-18 disease classifier (4 classes)",
+    "apple_disease_fgvc_v1.pth": {
+        "dest": "outputs/apple_fgvc/apple_disease_fgvc_v1.pth",
+        "size_bytes": 44793803,
+        "sha256": "203cd33839a3ba496f067f1b0001680520c00d6ddd76eb59d5ad1bf7ae33eff3",
+        "description": "Apple ResNet-18 fine-tuned disease classifier (FGVC + PlantVillage, 4 classes)",
     },
     "apple_ordinal.pth": {
         "dest": "outputs/models/apple_ordinal.pth",
@@ -72,11 +72,11 @@ DEPLOYED_MODELS: Dict[str, Dict[str, Any]] = {
         "sha256": "8615a23a73e0fea5b5abb13cfde4f5ff2cb156ebb00c53859edfacff018d462a",
         "description": "Apple ResNet-18 severity model (Ordinal CORN)",
     },
-    "ood_params.pt": {
-        "dest": "outputs/ood_params.pt",
-        "size_bytes": 3226681,
-        "sha256": "83170bbc2e67729786291eb12f71632e57f50b759df3666cc90a4163db22593c",
-        "description": "Mahalanobis OOD guard calibrated class means and shrinkage precision",
+    "ood_params_v2.pt": {
+        "dest": "outputs/ood_params_v2.pt",
+        "size_bytes": 3220957,
+        "sha256": "43689bf162ef66bcae8479b543bdf4a6e8a99e3b42afc7540c668d22ab6798bc",
+        "description": "Mahalanobis OOD guard calibrated class means and shrinkage precision (v2 with FGVC apple)",
     },
 }
 

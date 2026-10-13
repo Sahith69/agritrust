@@ -30,3 +30,7 @@ outputs/apple_fgvc/
 .idea/
 .vscode/
 venv
+
+# Contributed pool and contribution database
+contributed_pool/
+contrib/contrib.db

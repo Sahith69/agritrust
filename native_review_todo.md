@@ -342,3 +342,31 @@ When any of the 9 deployed checkpoints or `ood_params.pt` is missing from the lo
 - **Kannada (`kn`):** `"ಮಾದರಿ ಕಡತಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ಚಲಾಯಿಸಿ: python download_models.py"` # REVIEW
 - **Hindi (`hi`):** `"मॉडल फ़ाइलें नहीं मिलीं। चलाएं: python download_models.py"` # REVIEW
 
+---
+
+## 12. 🔄 Cross-Crop Selection Mismatch Notification Strings
+
+When an uploaded image is blocked by the cross-crop guard:
+
+- **Card Title:**
+  - **English (`en`):** `"Crop Selection Mismatch"`
+  - **Kannada (`kn`):** `"ಬೆಳೆ ಆಯ್ಕೆ ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿಲ್ಲ"` # REVIEW
+  - **Hindi (`hi`):** `"गलत फसल का चयन"` # REVIEW
+- **Calm Refusal Card Message:**
+  - **English (`en`):** `"This looks more like a {other_crop} photo. Check your crop selection."`
+  - **Kannada (`kn`):** `"ಇದು {other_crop} ಫೋಟೋದಂತೆ ಕಾಣುತ್ತಿದೆ. ನಿಮ್ಮ ಬೆಳೆ ಆಯ್ಕೆಯನ್ನು ಪರಿಶೀಲಿಸಿ."` # REVIEW
+  - **Hindi (`hi`):** `"यह {other_crop} की तस्वीर जैसी लग रही है। कृपया अपनी चुनी हुई फसल की जांच करें।"` # REVIEW
+
+---
+
+## 13. 🍎 Apple Fine-Tuning & Orchard Provenance Banner Strings
+
+Displayed prominently in the diagnosis view for Apple:
+
+- **English (`en`):** `"Fine-tuned on lab (PlantVillage) and public orchard photos (Cornell dataset, not northern India). Black rot was trained on lab photos only. Severity grading is withheld."`
+- **Kannada (`kn`):** `"ಪ್ರಯೋಗಾಲಯ (PlantVillage) ಮತ್ತು ಸಾರ್ವಜನಿಕ ತೋಟದ ಫೋಟೋಗಳಲ್ಲಿ (Cornell ಡೇಟಾಸೆಟ್, ಉತ್ತರ ಭಾರತವಲ್ಲ) ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಲಾಗಿದೆ. Black rot ಕೇವಲ ಲ್ಯಾಬ್ ಫೋಟೋಗಳಲ್ಲಿ ತರಬೇತಿ ಪಡೆದಿದೆ. ತೀವ್ರತೆಯ ಶ್ರೇಣೀಕರಣವನ್ನು ತಡೆಹಿಡಿಯಲಾಗಿದೆ."` *(Verified native script)*
+- **Hindi (`hi`):** `"प्रयोगशाला (PlantVillage) और सार्वजनिक बगीचे की तस्वीरों (Cornell डेटासेट, उत्तर भारत नहीं) पर फाइन-ट्यून किया गया। Black rot को केवल लैब तस्वीरों पर प्रशिक्षित किया गया था। गंभीरता ग्रेडिंग रोक दी गई है।"` *(Verified native script)*
+
+
+
+

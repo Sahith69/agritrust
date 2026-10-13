@@ -350,3 +350,15 @@ No words have been changed or replaced with bookish/formal equivalents. Loanword
 
 > - **"ಚಳಿಗಾಲದಲ್ಲಿ ಗಿಡ ಬುಡಕ್ಕೆ ಕಳಿತ ಕೊಟ್ಟಿಗೆ ಗೊಬ್ಬರ ಹಾಕಿ ಎಲೆ ಮಲ್ಚಿಂಗ್ ಮಾಡಿ। ಕ್ಯಾಲ್ಸಿಯಂ ಅಥವಾ ಬೋರಾನ್ ಕೊಡೋಕಿಂತ ಮುಂಚೆ ಸಾಯಿಲ್ ಟೆಸ್ಟ್ ಮಾಡಿಸಿ."**
 
+
+## 8. 🍎 Apple Fine-Tuning & Orchard Provenance Banner
+
+- **English:** `"Fine-tuned on lab (PlantVillage) and public orchard photos (Cornell dataset, not northern India). Black rot was trained on lab photos only. Severity grading is withheld."`
+
+- **🗣️ बोलचाल हिंदी (Devanagari):**
+
+> - **"प्रयोगशाला (PlantVillage) और सार्वजनिक बगीचे की तस्वीरों (Cornell डेटासेट, उत्तर भारत नहीं) पर फाइन-ट्यून किया गया। Black rot को केवल लैब तस्वीरों पर प्रशिक्षित किया गया था। गंभीरता ग्रेडिंग रोक दी गई है।"**
+
+- **🗣️ ಆಡುಮಾತು ಕನ್ನಡ (Kannada Script):**
+
+> - **"ಪ್ರಯೋಗಾಲಯ (PlantVillage) ಮತ್ತು ಸಾರ್ವಜನಿಕ ತೋಟದ ಫೋಟೋಗಳಲ್ಲಿ (Cornell ಡೇಟಾಸೆಟ್, ಉತ್ತರ ಭಾರತವಲ್ಲ) ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಲಾಗಿದೆ. Black rot ಕೇವಲ ಲ್ಯಾಬ್ ಫೋಟೋಗಳಲ್ಲಿ ತರಬೇತಿ ಪಡೆದಿದೆ. ತೀವ್ರತೆಯ ಶ್ರೇಣೀಕರಣವನ್ನು ತಡೆಹಿಡಿಯಲಾಗಿದೆ."**

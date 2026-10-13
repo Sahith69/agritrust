@@ -14,11 +14,14 @@ from torchvision import models, transforms
 
 import config
 
-OOD_PARAMS_FILE = os.path.join(config.OUTPUTS_DIR, "ood_params.pt")
+OOD_PARAMS_FILE = os.path.join(config.OUTPUTS_DIR, "ood_params_v2.pt")
 
 def get_feature_extractor(crop_name: str):
     key = crop_name.lower()
-    pth = os.path.join(config.OUTPUTS_DIR, "models", f"{key}_disease_classifier.pth")
+    if key == "apple":
+        pth = os.path.join(config.OUTPUTS_DIR, "apple_fgvc", "apple_disease_fgvc_v1.pth")
+    else:
+        pth = os.path.join(config.OUTPUTS_DIR, "models", f"{key}_disease_classifier.pth")
     if not os.path.exists(pth):
         raise FileNotFoundError(f"Model checkpoint not found: {pth}")
 
