@@ -1369,13 +1369,6 @@ with tab_home:
                             st.caption(get_ui_string("paddy_severity_qwk", lang_code))
 
                 # 4. Mandatory Captions & Warnings
-                if active_crop == "Apple":
-                    st.markdown(f"""
-                    <div style="font-size:13px;color:#B5483A;background:#FFFFFF;border:1px solid #91BA94;border-radius:10px;padding:8px 12px;margin:10px 0;">
-                        {get_ui_string('apple_public_banner', lang_code)}
-                    </div>
-                    """, unsafe_allow_html=True)
-
                 if active_crop == "Apple" and pred_cls == "cedar_apple_rust":
                     st.caption(get_ui_string("cedar_rust_caption", lang_code))
 
