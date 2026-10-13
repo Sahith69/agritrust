@@ -1000,9 +1000,11 @@ with tab_home:
 
             # ── 0. Multi-Crop OOD & Cross-Crop Guard Check
             crops_list = ["Paddy", "Arecanut", "Apple"]
+            ood_scores = {}
             ood_ratios = {}
             for c in crops_list:
                 _, sc, th = check_ood(input_image, c)
+                ood_scores[c] = sc
                 ood_ratios[c] = sc / th
 
             sel_ratio = ood_ratios[active_crop]
