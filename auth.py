@@ -148,3 +148,42 @@ def get_user(username: str, db_path: str = DB_PATH_DEFAULT) -> Optional[Dict[str
         return None
     finally:
         conn.close()
+
+
+def require_auth(current_page: str = "app") -> bool:
+    """
+    Enforces authentication across all app pages.
+    If the user is not authenticated:
+    1. Attempts to switch to pages/1_Login_and_Signup.py.
+    2. Renders an authentication wall card and calls st.stop() to halt any page logic or data leakage.
+    Returns True if user is logged in.
+    """
+    import streamlit as st
+
+    if st.session_state.get("is_logged_in", False) and st.session_state.get("user"):
+        return True
+
+    # Not logged in: Redirect or display access restriction
+    try:
+        st.switch_page("pages/1_Login_and_Signup.py")
+    except Exception:
+        pass
+
+    # Fallback gate rendering in case switch_page is not executed
+    st.markdown("""
+    <div style="background: #FFFFFF; border: 2px solid #B5483A; border-radius: 16px; padding: 28px; max-width: 600px; margin: 2rem auto; text-align: center; box-shadow: 0 4px 20px rgba(181, 72, 58, 0.08);">
+        <div style="font-size: 42px; margin-bottom: 8px;">🔒</div>
+        <h2 style="color: #B5483A; margin: 0 0 8px 0; font-size: 22px;">Authentication Required</h2>
+        <p style="color: #556B5C; font-size: 14.5px; line-height: 1.5; margin: 0 0 20px 0;">
+            You must <strong>Sign In</strong> or <strong>Create an Account</strong> before accessing AgriTrust AI clinical crop pathology tools, bounty wallets, and regional disease surveillance.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("🔑 Proceed to Login / Sign Up Page", type="primary", use_container_width=True):
+        try:
+            st.switch_page("pages/1_Login_and_Signup.py")
+        except Exception:
+            pass
+    st.stop()
+    return False
+

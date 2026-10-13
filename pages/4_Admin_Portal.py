@@ -21,6 +21,11 @@ st.set_page_config(
 )
 
 st.markdown(CSS_STYLES, unsafe_allow_html=True)
+
+# ─── ACCESS GATE: REQUIRE AUTHENTICATION ─────────────────────────────────────
+from auth import require_auth
+require_auth(current_page="admin")
+
 render_sidebar(current_page="admin")
 
 st.markdown("""

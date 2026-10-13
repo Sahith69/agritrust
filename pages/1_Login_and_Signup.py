@@ -74,7 +74,7 @@ if is_logged_in and current_user:
     </div>
     """, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("🌾 Plant Pathology Advisory", use_container_width=True):
             st.switch_page("app.py")
@@ -82,6 +82,9 @@ if is_logged_in and current_user:
         if st.button("👛 Field Bounty Wallet", use_container_width=True):
             st.switch_page("pages/2_Contribute_and_Earn.py")
     with col3:
+        if st.button("🗺️ Surveillance Map", use_container_width=True):
+            st.switch_page("pages/3_Outbreak_Map.py")
+    with col4:
         if st.button("🚪 Sign Out", type="secondary", use_container_width=True):
             st.session_state["is_logged_in"] = False
             st.session_state["user"] = None
@@ -112,7 +115,10 @@ else:
                         st.session_state["user"] = user_data["username"]
                         st.session_state["user_role"] = user_data["role"]
                         st.success(f"✅ Welcome back, **{user_data['username']}**!")
-                        st.rerun()
+                        try:
+                            st.switch_page("app.py")
+                        except Exception:
+                            st.rerun()
                     else:
                         st.error(f"❌ {msg}")
 
@@ -167,6 +173,9 @@ else:
                         st.session_state["user"] = new_username
                         st.session_state["user_role"] = "agronomist" if "Agronomist" in new_role else "farmer"
                         st.success(f"🎉 Account created successfully! Logged in as **{new_username}**.")
-                        st.rerun()
+                        try:
+                            st.switch_page("app.py")
+                        except Exception:
+                            st.rerun()
                     else:
                         st.error(f"❌ {reg_msg}")

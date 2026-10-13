@@ -1584,10 +1584,15 @@ def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div style="background: #FFFFFF; border: 1px solid #D8E4DA; border-radius: 12px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 12px; color: #556B5C;">👤 Guest Farmer</span>
-                <span style="font-size: 11px; font-weight: 700; color: #275637; background: #EBF3ED; padding: 3px 8px; border-radius: 8px; border: 1px solid #91BA94;">🔑 Account</span>
+            <div style="background: #FFF4E5; border: 1.5px solid #FFB020; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px;">
+                <div style="font-size: 10.5px; font-weight: 800; color: #8A5B00; text-transform: uppercase; letter-spacing: 0.6px;">🔒 Authentication Required</div>
+                <div style="font-size: 12px; color: #593E00; margin-top: 3px; line-height: 1.35;">Sign in or register an account to unlock all pathology tools.</div>
             </div>
+            <style>
+                div[data-testid="stSidebarNav"] {
+                    display: none !important;
+                }
+            </style>
             """, unsafe_allow_html=True)
 
         # 2. System Guardrails Telemetry Card

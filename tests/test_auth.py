@@ -66,6 +66,26 @@ class TestAuth(unittest.TestCase):
         ok, msg = auth.register_user("validuser", "12", db_path=self.db_path)
         self.assertFalse(ok)
 
+    def test_get_user(self):
+        auth.register_user("farmer_suman", "pass789", role="farmer", db_path=self.db_path)
+        user = auth.get_user("farmer_suman", db_path=self.db_path)
+        self.assertIsNotNone(user)
+        self.assertEqual(user["username"], "farmer_suman")
+        self.assertEqual(user["role"], "farmer")
+
+        # Nonexistent user
+        self.assertIsNone(auth.get_user("ghost_user", db_path=self.db_path))
+
+    def test_require_auth_when_authenticated(self):
+        import streamlit as st
+        st.session_state["is_logged_in"] = True
+        st.session_state["user"] = "farmer_suman"
+        self.assertTrue(auth.require_auth("app"))
+
+        # Clean up session state
+        st.session_state["is_logged_in"] = False
+        st.session_state["user"] = None
+
 
 if __name__ == "__main__":
     unittest.main()

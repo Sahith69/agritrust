@@ -43,6 +43,10 @@ st.set_page_config(
 # ─── CSS STYLING (SINGLE BLOCK INJECTION FROM UI_THEME) ─────────────────────
 st.markdown(CSS_STYLES, unsafe_allow_html=True)
 
+# ─── ACCESS GATE: REQUIRE AUTHENTICATION ─────────────────────────────────────
+from auth import require_auth
+require_auth(current_page="app")
+
 # ─── DISPLAY NAMES & FACTS ───────────────────────────────────────────────────
 PADDY_DISPLAY = {
     "bacterial_leaf_blight":   "Bacterial Leaf Blight",
