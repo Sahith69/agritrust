@@ -1011,7 +1011,7 @@ with tab_home:
             min_other_ratio = ood_ratios[min_other_crop]
 
             all_above_1 = all(ood_ratios[c] > 1.0 for c in crops_list)
-            is_cross_crop = ((sel_ratio > 1.0 and min_other_ratio < 1.0) or (sel_ratio - min_other_ratio >= 0.25)) and not all_above_1
+            is_cross_crop = ((sel_ratio > 1.0 and min_other_ratio < 1.0) or (sel_ratio - min_other_ratio >= 0.10)) and not all_above_1
 
             if is_cross_crop:
                 other_crop_loc = get_ui_string(f"crop_{min_other_crop.lower()}", lang_code)
