@@ -169,12 +169,11 @@ with tab_contribute:
             <div>
                 <h4 style="margin:0; color:#275637;">Bounty Incentive Structure</h4>
                 <p style="margin:4px 0 0 0; color:#556B5C; font-size:14px;">
-                    Submissions are credited upon expert confirmation by agricultural officers.
+                    All crops and disease conditions earn a uniform ₹1.00 bounty upon expert agronomist verification.
                 </p>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <span class="tier-badge-std">🌾 Standard Class: ₹1.00</span>
-                <span class="tier-badge-rare">⭐ Rare Pathology Bonus: ₹10.00</span>
+                <span class="tier-badge-std">🌾 Universal Bounty: ₹1.00 per verified photo</span>
             </div>
         </div>
     </div>
@@ -200,19 +199,13 @@ with tab_contribute:
         claimed_label = st.selectbox(
             "Observed Disease Condition",
             options=diseases,
-            format_func=lambda x: f"{x} — ⭐ ₹10.00 (Rare)" if x in store.RARE_CLASSES else f"{x} — ₹1.00 (Standard)"
+            format_func=lambda x: f"{x} (₹1.00 Bounty)"
         )
 
-        # Bounty Tier preview chip
-        is_rare = claimed_label in store.RARE_CLASSES
-        reward_preview = store.REWARD_RARE if is_rare else store.REWARD_STANDARD
-        tier_label = "⭐ Rare Disease Bounty" if is_rare else "🌾 Standard Disease Bounty"
-        badge_class = "tier-badge-rare" if is_rare else "tier-badge-std"
-
-        st.markdown(f"""
+        st.markdown("""
         <div style="margin: 8px 0 16px 0;">
-            <span class="{badge_class}">
-                {tier_label}: <strong>₹{reward_preview:.2f} credited upon verification</strong>
+            <span class="tier-badge-std">
+                🌾 Field Bounty: <strong>₹1.00 credited upon verification</strong>
             </span>
         </div>
         """, unsafe_allow_html=True)
@@ -290,8 +283,7 @@ with tab_contribute:
                 <div style="background-color: #E8F5E9; border-left: 5px solid #275637; border-radius: 12px; padding: 18px 22px; margin-top: 14px;">
                     <h4 style="margin: 0; color: #275637;">🛡️ Gating Verification Summary</h4>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; font-size: 13.5px; color: #275637;">
-                        <div>• <strong>Submission ID:</strong> #{res['id']}</div>
-                        <div>• <strong>Reserved Bounty:</strong> ₹{res['reward']:.2f} ({'Rare Pathology' if is_rare else 'Standard'})</div>
+                        <div>• <strong>Reserved Bounty:</strong> ₹{res['reward']:.2f} (Universal Bounty)</div>
                         <div>• <strong>Focus Score:</strong> {res['laplacian_var']:.1f} (≥ {store.BLUR_THRESHOLD:.1f})</div>
                         <div>• <strong>Cluster ID:</strong> <code>{res['cluster_id']}</code></div>
                         <div>• <strong>Evaluation Split Shield:</strong> 0 matches (Leakage Clean)</div>

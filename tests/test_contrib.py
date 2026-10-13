@@ -161,7 +161,7 @@ class TestContribStore(unittest.TestCase):
             farmer_id=farmer_id,
             crop="Arecanut",
             district="Shivamogga",
-            claimed_label="bud_borer",  # Rare class: Rs 10
+            claimed_label="bud_borer",  # Universal bounty: Rs 1
             consent_given=True,
             img_bytes=img_rare,
             filename="rare.jpg",
@@ -174,7 +174,7 @@ class TestContribStore(unittest.TestCase):
         # Check initial wallet state (pending, 0 verified)
         wallet = store.get_farmer_wallet(farmer_id, db_path=self.test_db)
         self.assertEqual(wallet["verified_balance"], 0.0)
-        self.assertEqual(wallet["pending_balance"], 10.0)
+        self.assertEqual(wallet["pending_balance"], 1.0)
         self.assertEqual(wallet["count_verified"], 0)
         self.assertEqual(wallet["count_pending"], 1)
 
@@ -182,9 +182,9 @@ class TestContribStore(unittest.TestCase):
         success = store.verify_contribution(contrib_id, verified_by="admin_test", db_path=self.test_db)
         self.assertTrue(success)
 
-        # Check updated wallet (Rs 10 credited)
+        # Check updated wallet (Rs 1 credited)
         wallet_verified = store.get_farmer_wallet(farmer_id, db_path=self.test_db)
-        self.assertEqual(wallet_verified["verified_balance"], 10.0)
+        self.assertEqual(wallet_verified["verified_balance"], 1.0)
         self.assertEqual(wallet_verified["pending_balance"], 0.0)
         self.assertEqual(wallet_verified["count_verified"], 1)
 
@@ -194,7 +194,7 @@ class TestContribStore(unittest.TestCase):
             farmer_id=farmer_id,
             crop="Paddy",
             district="Mangaluru",
-            claimed_label="blast",  # Standard class: Rs 1
+            claimed_label="blast",  # Universal class: Rs 1
             consent_given=True,
             img_bytes=img_std,
             filename="std.jpg",
@@ -205,7 +205,7 @@ class TestContribStore(unittest.TestCase):
         store.reject_contribution(res_std["id"], verified_by="admin_test", db_path=self.test_db)
 
         wallet_after_rej = store.get_farmer_wallet(farmer_id, db_path=self.test_db)
-        self.assertEqual(wallet_after_rej["verified_balance"], 10.0)
+        self.assertEqual(wallet_after_rej["verified_balance"], 1.0)
         self.assertEqual(wallet_after_rej["count_rejected"], 1)
 
     def test_privacy_guarantee(self):

@@ -90,7 +90,7 @@ BLUR_THRESHOLD = 30.0
 DAILY_UPLOAD_CAP = 10
 PAYOUT_THRESHOLD = 50.0
 REWARD_STANDARD = 1.0
-REWARD_RARE = 10.0
+REWARD_RARE = 1.0
 
 
 # ── Database Initialization
@@ -311,7 +311,7 @@ def validate_contribution(
             pass
 
     cluster_id = matched_cluster if matched_cluster else f"cluster_{uuid.uuid4().hex[:8]}"
-    reward = REWARD_RARE if claimed_label in RARE_CLASSES else REWARD_STANDARD
+    reward = REWARD_STANDARD
 
     return {
         "valid": True,
@@ -421,7 +421,7 @@ def verify_contribution(
     with conn:
         cursor = conn.cursor()
         if corrected_label:
-            reward = REWARD_RARE if corrected_label in RARE_CLASSES else REWARD_STANDARD
+            reward = REWARD_STANDARD
             cursor.execute("""
                 UPDATE contributions
                 SET status = 'verified',
