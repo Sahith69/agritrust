@@ -476,25 +476,18 @@ CSS_STYLES = f"""
         display: flex !important;
         flex-direction: row !important;
         justify-content: stretch !important;
+        align-items: stretch !important;
         gap: 10px !important;
         width: 100% !important;
         flex-wrap: nowrap !important;
     }}
-    div[data-testid="stRadio"] [data-testid="stRadioOption"] {{
-        flex: 1 1 auto !important;
-        min-width: 95px !important;
-        display: flex !important;
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }}
+    div[data-testid="stRadio"] [data-testid="stRadioOption"],
     div[data-testid="stRadio"] label {{
-        flex: 1 1 100% !important;
+        flex: 1 1 0 !important;
         width: 100% !important;
         justify-content: center !important;
         cursor: pointer !important;
-        padding: 8px 14px !important;
+        padding: 10px 14px !important;
         background-color: #FFFFFF !important;
         border: 1.5px solid {THEME_CONFIG['sage']} !important;
         border-radius: 12px !important;
@@ -508,7 +501,20 @@ CSS_STYLES = f"""
         white-space: nowrap !important;
         word-break: keep-all !important;
         hyphens: none !important;
+        box-sizing: border-box !important;
         transition: all 0.2s ease !important;
+    }}
+    /* Hide the radio dot so the options look like clean segmented pills */
+    div[data-testid="stRadio"] input[type="radio"],
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div > div:first-child:not([data-testid="stMarkdownContainer"]) {{
+        display: none !important;
+    }}
+    /* Ensure the text container inside is centered and non-wrapping */
+    div[data-testid="stRadio"] label > div {{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
     }}
     div[data-testid="stRadio"] [data-testid="stRadioOption"] *,
     div[data-testid="stRadio"] label *,
@@ -525,20 +531,25 @@ CSS_STYLES = f"""
         hyphens: none !important;
         text-overflow: clip !important;
         margin: 0 !important;
+        padding: 0 !important;
         line-height: 1.2 !important;
+        text-align: center !important;
         visibility: visible !important;
         opacity: 1 !important;
     }}
+    div[data-testid="stRadio"] [data-testid="stRadioOption"]:hover,
     div[data-testid="stRadio"] label:hover {{
         background-color: #F1F5EE !important;
         border-color: {THEME_CONFIG['primary']} !important;
     }}
+    div[data-testid="stRadio"] [data-testid="stRadioOption"][data-selected="true"],
     div[data-testid="stRadio"] label[data-selected="true"],
     div[data-testid="stRadio"] label:has(input:checked) {{
         background-color: {THEME_CONFIG['light_green']} !important;
         border-color: {THEME_CONFIG['primary']} !important;
-        box-shadow: 0 2px 6px rgba(39, 86, 55, 0.10) !important;
+        box-shadow: 0 2px 6px rgba(39, 86, 55, 0.12) !important;
     }}
+    div[data-testid="stRadio"] [data-testid="stRadioOption"][data-selected="true"] *,
     div[data-testid="stRadio"] label[data-selected="true"] *,
     div[data-testid="stRadio"] label:has(input:checked) *,
     div[data-testid="stRadio"] label:has(input:checked) p {{
