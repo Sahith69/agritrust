@@ -117,13 +117,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Navigation & Simulated Header ─────────────────────────────────────────────
+nav_c1, nav_c2, nav_c3 = st.columns([1, 1.2, 1])
+with nav_c1:
+    if st.button("🔬 Home & Diagnostic Scan", key="nav_to_home_m", use_container_width=True):
+        st.switch_page("app.py")
+with nav_c2:
+    if st.button("🌾 Field Bounty Contributor", key="nav_to_contrib_m", use_container_width=True):
+        st.switch_page("pages/2_Contribute_and_Earn.py")
+with nav_c3:
+    st.button("🗺️ Outbreak Map (Current)", key="nav_curr_map", disabled=True, use_container_width=True)
+
 st.markdown("""
-<div class="nav-bar">
-    <a href="/" target="_self" class="nav-link">🔬 Home & Diagnostic Scan</a>
-    <a href="/Contribute_and_Earn" target="_self" class="nav-link">🌾 Field Bounty Contributor</a>
-    <a href="/Outbreak_Map" target="_self" class="nav-link active">🗺️ Disease Outbreak Map</a>
-</div>
-<div class="sim-badge">
+<div class="sim-badge" style="margin-top: 10px;">
     <span>⚠️</span>
     <div>
         <strong>SIMULATED EPIDEMIOLOGICAL SURVEILLANCE:</strong> Regional aggregates demonstrate disease pressure surveillance and cluster tracking.

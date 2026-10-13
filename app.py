@@ -910,21 +910,11 @@ with tab_home:
         # Direct navigation to community features
         col_nav1, col_nav2 = st.columns(2)
         with col_nav1:
-            st.markdown(
-                '<a href="/Contribute_and_Earn" target="_self" style="text-decoration:none;">'
-                '<div style="background:#EBF3ED;padding:10px 14px;border-radius:10px;border:1px solid #91BA94;color:#275637;font-weight:600;text-align:center;">'
-                '📤 Contribute & Earn Bounty'
-                '</div></a>',
-                unsafe_allow_html=True
-            )
+            if st.button("📤 Contribute & Earn Bounty", key="nav_btn_contrib", use_container_width=True):
+                st.switch_page("pages/2_Contribute_and_Earn.py")
         with col_nav2:
-            st.markdown(
-                '<a href="/Outbreak_Map" target="_self" style="text-decoration:none;">'
-                '<div style="background:#EBF3ED;padding:10px 14px;border-radius:10px;border:1px solid #91BA94;color:#275637;font-weight:600;text-align:center;">'
-                '📍 Disease Outbreak Map'
-                '</div></a>',
-                unsafe_allow_html=True
-            )
+            if st.button("🗺️ Disease Outbreak Map", key="nav_btn_outbreak", use_container_width=True):
+                st.switch_page("pages/3_Outbreak_Map.py")
 
         # 2. Greeting & Weather summary
         col_greet, col_wx = st.columns([1.2, 1.0])

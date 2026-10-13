@@ -133,13 +133,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Navigation & Simulated Header ─────────────────────────────────────────────
+nav_c1, nav_c2, nav_c3 = st.columns([1, 1.2, 1])
+with nav_c1:
+    if st.button("🔬 Home & Diagnostic Scan", key="nav_to_home", use_container_width=True):
+        st.switch_page("app.py")
+with nav_c2:
+    st.button("🌾 Bounty Contributor (Current)", key="nav_curr_contrib", disabled=True, use_container_width=True)
+with nav_c3:
+    if st.button("🗺️ Disease Outbreak Map", key="nav_to_map", use_container_width=True):
+        st.switch_page("pages/3_Outbreak_Map.py")
+
 st.markdown("""
-<div class="nav-bar">
-    <a href="/" target="_self" class="nav-link">🔬 Home & Diagnostic Scan</a>
-    <a href="/Contribute_and_Earn" target="_self" class="nav-link active">🌾 Field Bounty Contributor</a>
-    <a href="/Outbreak_Map" target="_self" class="nav-link">🗺️ Disease Outbreak Map</a>
-</div>
-<div class="sim-badge">
+<div class="sim-badge" style="margin-top: 10px;">
     <span>⚠️</span>
     <div>
         <strong>SIMULATED RESEARCH FEATURE:</strong> For algorithmic integrity and crowd-sourcing evaluation only. No statutory payments or real INR currency processed.
