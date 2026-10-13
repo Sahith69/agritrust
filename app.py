@@ -1013,6 +1013,15 @@ with tab_home:
             all_above_1 = all(ood_ratios[c] > 1.0 for c in crops_list)
             is_cross_crop = ((sel_ratio > 1.0 and min_other_ratio < 1.0) or (sel_ratio - min_other_ratio >= 0.10)) and not all_above_1
 
+            if not is_cross_crop and not all_above_1:
+                for oc in other_crops:
+                    if ood_ratios[oc] <= 0.95 and ood_scores[oc] < ood_scores[active_crop] - 2.0:
+                        pred_oc, conf_oc, _, _, _, _ = run_disease_classification(input_image, oc)
+                        if conf_oc >= 0.85 and pred_oc not in ["healthy", "normal"]:
+                            is_cross_crop = True
+                            min_other_crop = oc
+                            break
+
             if is_cross_crop:
                 other_crop_loc = get_ui_string(f"crop_{min_other_crop.lower()}", lang_code)
                 refusal_msg = get_ui_string("cross_crop_refusal_msg", lang_code).replace("{other_crop}", other_crop_loc)
