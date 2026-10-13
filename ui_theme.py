@@ -504,28 +504,35 @@ CSS_STYLES = f"""
         box-sizing: border-box !important;
         transition: all 0.2s ease !important;
     }}
-    /* Hide the radio dot so the options look like clean segmented pills */
+    /* Hide the radio dot safely without hiding the text container */
     div[data-testid="stRadio"] input[type="radio"],
-    div[data-testid="stRadio"] div[role="radiogroup"] label > div > div:first-child:not([data-testid="stMarkdownContainer"]) {{
+    div[data-testid="stRadio"] div[role="radiogroup"] label svg,
+    div[data-testid="stRadio"] div[role="radiogroup"] label div:has(+ [data-testid="stMarkdownContainer"]) {{
         display: none !important;
     }}
-    /* Ensure the text container inside is centered and non-wrapping */
+    /* Ensure the text container inside is centered, visible, and non-wrapping */
     div[data-testid="stRadio"] label > div {{
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         width: 100% !important;
     }}
-    div[data-testid="stRadio"] [data-testid="stRadioOption"] *,
-    div[data-testid="stRadio"] label *,
+    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] {{
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        text-align: center !important;
+    }}
+    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] p,
     div[data-testid="stRadio"] label p,
-    div[data-testid="stRadio"] label span,
-    div[data-testid="stRadio"] label div,
-    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"],
-    div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] p {{
+    div[data-testid="stRadio"] label span {{
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
         color: {THEME_CONFIG['primary']} !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
+        font-weight: 700 !important;
+        font-size: 15px !important;
         white-space: nowrap !important;
         word-break: keep-all !important;
         hyphens: none !important;
@@ -534,8 +541,6 @@ CSS_STYLES = f"""
         padding: 0 !important;
         line-height: 1.2 !important;
         text-align: center !important;
-        visibility: visible !important;
-        opacity: 1 !important;
     }}
     div[data-testid="stRadio"] [data-testid="stRadioOption"]:hover,
     div[data-testid="stRadio"] label:hover {{
