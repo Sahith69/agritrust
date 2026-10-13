@@ -834,15 +834,17 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-chosen_lang_name = st.radio(
-    "Language", lang_opts,
-    index=lang_opts.index(inv_lang_map.get(st.session_state["lang_code"], "English")),
-    horizontal=True,
+chosen_lang_name = st.segmented_control(
+    "Language",
+    options=lang_opts,
+    default=inv_lang_map.get(st.session_state.get("lang_code", "en"), "English"),
+    selection_mode="single",
     label_visibility="collapsed",
-    key="lang_radio_choice"
+    key="lang_segmented_choice"
 )
-st.session_state["lang_code"] = lang_map[chosen_lang_name]
-lang_code = st.session_state["lang_code"]
+if chosen_lang_name and chosen_lang_name in lang_map:
+    st.session_state["lang_code"] = lang_map[chosen_lang_name]
+lang_code = st.session_state.get("lang_code", "en")
 
 # Render unified sidebar branding and telemetry
 render_sidebar(current_page="home", lang_code=lang_code)

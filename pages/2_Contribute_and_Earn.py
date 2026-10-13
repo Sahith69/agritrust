@@ -153,10 +153,9 @@ st.markdown(
 )
 
 # ── Main Tabs ─────────────────────────────────────────────────────────────────
-tab_contribute, tab_wallet, tab_admin = st.tabs([
+tab_contribute, tab_wallet = st.tabs([
     "📤 Submit Field Photo",
-    "👛 Farmer Bounty Wallet",
-    "🔐 Agronomist Verification Desk"
+    "👛 Farmer Bounty Wallet"
 ])
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -185,7 +184,7 @@ with tab_contribute:
         st.markdown("#### 1. Submission Details")
         farmer_id = st.text_input(
             "Farmer Identifier / Phone ID",
-            value="farmer_KA_101",
+            value=st.session_state.get("user", "farmer_KA_101"),
             help="Your identifier used to track submissions and credit your bounty wallet."
         )
 
@@ -391,107 +390,6 @@ with tab_wallet:
 
         st.dataframe(display_ledger, use_container_width=True, hide_index=True)
 
+    st.markdown("---")
+    st.info("🔬 **Agronomists & Researchers:** Expert submission certification has moved to the dedicated **[🔐 Agronomist Verification Portal](Admin_Portal)**.")
 
-# ══════════════════════════════════════════════════════════════════════════════
-# TAB 3: AGRONOMIST VERIFICATION DESK
-# ══════════════════════════════════════════════════════════════════════════════
-with tab_admin:
-    st.markdown("""
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-        <div>
-            <h3 style="margin:0; color:#275637;">🔐 Agronomist Verification Portal</h3>
-            <p style="margin:4px 0 0 0; color:#556B5C; font-size:14px;">
-                Review, correct, and certify community field pathology submissions prior to wallet disbursement.
-            </p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    admin_pass_env = os.environ.get("ADMIN_PASS", "agritrust")
-    if "ADMIN_PASS" not in os.environ:
-        st.info("ℹ️ **Demo Access Mode:** `ADMIN_PASS` environment variable is not set. Using demo key: `agritrust`")
-
-    admin_input = st.text_input("Enter Administrator Access Key", type="password")
-    if admin_input == admin_pass_env:
-        st.success("✅ Agronomist session authenticated.")
-        admin_auth = True
-    elif admin_input:
-        st.error("❌ Authentication failed: Invalid access key.")
-        admin_auth = False
-    else:
-        admin_auth = False
-
-    if admin_auth:
-        pending_items = store.get_pending_contributions()
-        if not pending_items:
-            st.markdown("""
-            <div style="text-align: center; padding: 40px 20px; background: #FFFFFF; border-radius: 14px; border: 1px solid #D8E4DA;">
-                <div style="font-size: 36px; margin-bottom: 8px;">🎉</div>
-                <div style="font-weight: 700; font-size: 16px; color: #275637;">All Submissions Verified</div>
-                <p style="margin: 6px 0 0 0; font-size: 13.5px; color: #556B5C;">
-                    There are no pending submissions awaiting review in the queue.
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"**{len(pending_items)} submission(s) awaiting expert verification:**")
-
-            for item in pending_items:
-                with st.container():
-                    st.markdown(f"""
-                    <div style="background:#FFFFFF; border:1px solid #91BA94; border-radius:14px; padding:18px 22px; margin-bottom:16px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                            <span style="font-weight:700; color:#275637; font-size:16px;">Submission #{item['id']}</span>
-                            <span style="background:#E8F0E9; color:#275637; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:600;">
-                                Farmer: {item['farmer_id']} • {item['district']}
-                            </span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-                    col_img, col_detail = st.columns([1, 1.4], gap="medium")
-
-                    with col_img:
-                        if os.path.exists(item["filename"]):
-                            st.image(item["filename"], caption=f"Cluster: {item['cluster_id']}", use_container_width=True)
-                        else:
-                            st.warning("Image file missing from pool.")
-
-                    with col_detail:
-                        st.markdown(f"""
-                        - **Crop:** `{item['crop']}`
-                        - **Farmer Claimed Condition:** `{item['claimed_label']}`
-                        - **Submitted At:** `{item['timestamp']}`
-                        - **Bounty:** **₹{item['reward']:.2f}**
-                        - **Perceptual Cluster ID:** `{item['cluster_id']}`
-                        """)
-
-                        all_crop_diseases = store.CROP_CLASSES.get(item["crop"], [item["claimed_label"]])
-                        corrected_label = st.selectbox(
-                            f"Confirm / Correct Disease Diagnosis (ID #{item['id']})",
-                            options=all_crop_diseases,
-                            index=all_crop_diseases.index(item["claimed_label"]) if item["claimed_label"] in all_crop_diseases else 0,
-                            key=f"label_{item['id']}"
-                        )
-
-                        col_btn1, col_btn2 = st.columns(2)
-                        with col_btn1:
-                            if st.button(f"✅ Approve & Disburse ₹{item['reward']:.0f}", key=f"app_{item['id']}", type="primary", use_container_width=True):
-                                store.verify_contribution(
-                                    contrib_id=item["id"],
-                                    verified_by="admin_expert",
-                                    corrected_label=corrected_label
-                                )
-                                st.success(f"Submission #{item['id']} verified & credited!")
-                                st.rerun()
-
-                        with col_btn2:
-                            if st.button(f"❌ Reject Submission", key=f"rej_{item['id']}", use_container_width=True):
-                                store.reject_contribution(
-                                    contrib_id=item["id"],
-                                    verified_by="admin_expert"
-                                )
-                                st.warning(f"Submission #{item['id']} rejected.")
-                                st.rerun()
-
-                    st.markdown("---")

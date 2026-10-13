@@ -464,13 +464,113 @@ CSS_STYLES = f"""
         border-radius: 12px !important;
     }}
 
-    /* Language Selector & Radio Group Styling */
-    div[data-testid="stRadio"] {{
-        z-index: 1000 !important;
-        position: relative !important;
+    /* Segmented Control & Language Selector Styling */
+    div[data-testid="stButtonGroup"] {{
+        display: flex !important;
         width: 100% !important;
         margin: 6px 0 16px 0 !important;
+        border: 1.5px solid {THEME_CONFIG['sage']} !important;
+        border-radius: 14px !important;
+        background: #FFFFFF !important;
+        padding: 4px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        gap: 6px !important;
     }}
+    div[data-testid="stButtonGroup"] button {{
+        flex: 1 1 0 !important;
+        min-height: 44px !important;
+        font-family: {THEME_CONFIG['font_stack']} !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        color: {THEME_CONFIG['primary']} !important;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 10px !important;
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        box-shadow: none !important;
+    }}
+    div[data-testid="stButtonGroup"] button * {{
+        color: {THEME_CONFIG['primary']} !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }}
+    div[data-testid="stButtonGroup"] button:hover {{
+        background-color: #EBF3ED !important;
+        color: #1A472A !important;
+    }}
+    div[data-testid="stButtonGroup"] button[aria-pressed="true"],
+    div[data-testid="stButtonGroup"] button[aria-checked="true"],
+    div[data-testid="stButtonGroup"] button[data-active="true"] {{
+        background-color: {THEME_CONFIG['light_green']} !important;
+        color: {THEME_CONFIG['primary']} !important;
+        border: 1px solid {THEME_CONFIG['primary']} !important;
+        box-shadow: 0 2px 8px rgba(39, 86, 55, 0.14) !important;
+    }}
+    div[data-testid="stButtonGroup"] button[aria-pressed="true"] *,
+    div[data-testid="stButtonGroup"] button[aria-checked="true"] *,
+    div[data-testid="stButtonGroup"] button[data-active="true"] * {{
+        color: {THEME_CONFIG['primary']} !important;
+        font-weight: 800 !important;
+    }}
+
+    /* Mobile-Responsive Polish (Phones & Small Tablets) */
+    @media (max-width: 768px) {{
+        .block-container {{
+            max-width: 100% !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+            padding-top: 1.2rem !important;
+            padding-bottom: 3.5rem !important;
+        }}
+        h1 {{
+            font-size: 22px !important;
+            line-height: 1.25 !important;
+        }}
+        h2 {{
+            font-size: 18px !important;
+        }}
+        h3 {{
+            font-size: 16px !important;
+        }}
+        h4 {{
+            font-size: 14px !important;
+        }}
+        .ui-card, .admin-header-card, .auth-card, .queue-card, .wallet-card {{
+            padding: 16px 14px !important;
+            border-radius: 12px !important;
+        }}
+        div[data-testid="stButtonGroup"] button {{
+            font-size: 13.5px !important;
+            min-height: 40px !important;
+            padding: 6px 6px !important;
+        }}
+        div[data-testid="column"] {{
+            width: 100% !important;
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            margin-bottom: 8px !important;
+        }}
+        [data-testid="stDataFrame"], [data-testid="stTable"] {{
+            overflow-x: auto !important;
+            max-width: 100% !important;
+        }}
+        .stButton > button {{
+            min-height: 48px !important;
+            font-size: 14px !important;
+        }}
+        [data-testid="stImage"] img {{
+            max-width: 100% !important;
+            height: auto !important;
+        }}
+    }}
+
     div[data-testid="stRadio"] [data-testid="stRadioGroup"],
     div[data-testid="stRadio"] > div[role="radiogroup"] {{
         display: flex !important;
@@ -1469,6 +1569,26 @@ def render_sidebar(current_page: str = "home", lang_code: str = "en") -> None:
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        # 1b. User Account Status Card
+        user = st.session_state.get("user")
+        is_logged_in = st.session_state.get("is_logged_in", False)
+        if is_logged_in and user:
+            role = st.session_state.get("user_role", "Farmer").title()
+            st.markdown(f"""
+            <div style="background: #EBF3ED; border: 1px solid #91BA94; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px;">
+                <div style="font-size: 10px; color: #556B5C; text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px;">Signed In As</div>
+                <div style="font-size: 13.5px; font-weight: 800; color: #275637;">👤 {user}</div>
+                <div style="font-size: 11px; color: #4F7358;">Role: {role}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div style="background: #FFFFFF; border: 1px solid #D8E4DA; border-radius: 12px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 12px; color: #556B5C;">👤 Guest Farmer</span>
+                <span style="font-size: 11px; font-weight: 700; color: #275637; background: #EBF3ED; padding: 3px 8px; border-radius: 8px; border: 1px solid #91BA94;">🔑 Account</span>
+            </div>
+            """, unsafe_allow_html=True)
 
         # 2. System Guardrails Telemetry Card
         st.markdown("""
