@@ -18,7 +18,6 @@ import numpy as np
 from PIL import Image
 import torchvision.transforms as transforms
 import cv2
-from gtts import gTTS
 
 from src.model import CropSeverityModel
 from src.corn_loss import corn_probs_to_grade
@@ -1467,25 +1466,7 @@ with tab_home:
                 </div>
                 """, unsafe_allow_html=True)
 
-                # 8. Audio Player
-                advisory_text = res.get("advisory_text", "")
-                if advisory_text:
-                    st.markdown(f"""
-                    <div class="ui-card" style="padding:12px 16px;">
-                        <div style="font-weight:700;font-size:15px;color:#275637;margin-bottom:8px;">
-                            🎙️ {get_ui_string('listen_audio', lang_code)}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    try:
-                        tts = gTTS(text=advisory_text, lang=lang_code, slow=False)
-                        tts.save("advisory_voice.mp3")
-                        st.audio("advisory_voice.mp3", format="audio/mp3")
-                        st.caption(f"🔊 Spoken Advisory in **{chosen_lang_name}**")
-                    except Exception:
-                        st.caption(f"🔊 {advisory_text}")
-
-                # 9. Collapsed "For experts and judges" Expander
+                # 8. Collapsed "For experts and judges" Expander
                 st.markdown("---")
                 with st.expander("🔬 " + get_ui_string("experts_expander", lang_code), expanded=False):
                     # Trust & Audit Panel

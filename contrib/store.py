@@ -503,6 +503,21 @@ def get_farmer_wallet(farmer_id: str, db_path: str = DB_PATH_DEFAULT) -> Dict[st
     }
 
 
+def get_farmer_history(farmer_id: str, db_path: str = DB_PATH_DEFAULT) -> List[Dict[str, Any]]:
+    """Retrieves itemized contribution history for a given farmer."""
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, crop, claimed_label, district, timestamp, cluster_id, status, reward, filename
+        FROM contributions
+        WHERE farmer_id = ?
+        ORDER BY id DESC
+    """, (farmer_id,))
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return rows
+
+
 def get_pending_contributions(db_path: str = DB_PATH_DEFAULT) -> List[Dict[str, Any]]:
     conn = get_db(db_path)
     cursor = conn.cursor()
